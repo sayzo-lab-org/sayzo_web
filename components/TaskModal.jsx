@@ -122,10 +122,10 @@ const TaskModal = ({ isOpen, onClose }) => {
                 /* ✅ SUCCESS SCREEN */
                 <div className="flex flex-col items-center justify-center py-20 text-center">
                   <h3 className="text-white text-xl font-semibold">
-                    Task Posted Successfully
+                    Task Posted Successfully 🎉
                   </h3>
                   <p className="text-zinc-400 mt-2">
-                    We'll get back to you shortly.
+                    We'll get back to you shortly. 🚀
                   </p>
 
                   <button
