@@ -95,7 +95,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur flex items-center justify-center p-4"
+          className="fixed inset-0 z-[999] bg-black/80 backdrop-blur flex items-center justify-center p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
