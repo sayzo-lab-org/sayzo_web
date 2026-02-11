@@ -2,6 +2,7 @@ export const blogs = [
   {
     id: '1',
     title: "The Neighborhood Economy",
+    slug: "the-neighborhood-economy",
 
     desc1:
       "For decades, the true potential of local neighborhoods has remained hidden in plain sight. In almost every street, there are skilled individuals—a designer, electrician, tutor, or technician—yet their abilities often go unnoticed. Despite living just a few houses away, people still search across the city or online platforms for help, wasting time and missing nearby opportunities.",
@@ -27,6 +28,7 @@ export const blogs = [
   {
     id: '2',
     title: "Monetizing Your Micro-Skills",
+    slug: "monetizing-your-micro-skills",
 
     desc1:
       "The traditional 9-to-5 career is no longer the only path to financial stability. Many people possess micro-skills—small, specific abilities that may not define their main profession but hold real value in daily life. These skills often remain unused simply because they are difficult to discover.",
@@ -52,6 +54,8 @@ export const blogs = [
   {
     id: '3',
     title: "The End of WhatsApp Chaos",
+    slug: "the-end-of-whatsapp-chaos",
+
 
     desc1:
       "Finding reliable help through WhatsApp groups is frustrating. Important messages get buried, recommendations become outdated, and conversations quickly derail into noise. This chaotic system makes it difficult to find trustworthy help when it’s needed most.",
@@ -77,6 +81,7 @@ export const blogs = [
   {
     id: '4',
     title: "Smart Matching for Busy Lives",
+    slug: "smart-matching-for-busy-lives",
 
     desc1:
       "Time is the most valuable resource in today’s fast-paced world. Searching endlessly for help wastes energy and delays important tasks.",
@@ -102,6 +107,7 @@ export const blogs = [
   {
     id: '5',
     title: "Building Trust in a Local World",
+    slug: "building-trust-in-a-local-world",
 
     desc1:
       "Trust is the foundation of every strong community, yet it is one of the hardest elements to establish in digital marketplaces.",
