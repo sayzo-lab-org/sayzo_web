@@ -17,6 +17,34 @@ const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
 });
 
+export const metadata = {
+  title: "Sayzo — Get Tasks Done Fast | Find Local Help Anytime",
+  description:
+    "Sayzo helps you get everyday tasks done quickly by connecting you with trusted local helpers. Post a task, set your budget, and get it completed fast — anytime, anywhere.",
+
+  keywords: [
+    "task marketplace",
+    "local services",
+    "hire helpers",
+    "post tasks online",
+    "get work done fast",
+    "Sayzo India",
+    "freelance tasks",
+  ],
+
+  metadataBase: new URL("https://sayzo.in"),
+
+  openGraph: {
+    title: "Sayzo — Get Tasks Done Fast",
+    description:
+      "Post tasks, set your budget, and get help from trusted local people instantly.",
+    url: "https://sayzo.in",
+    siteName: "Sayzo",
+    type: "website",
+  },
+};
+
+
 export default function RootLayout({ children }) {
   
   return (

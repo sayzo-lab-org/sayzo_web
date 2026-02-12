@@ -3,6 +3,17 @@
 import { useState } from "react";
 const CONTACT_SHEET_URL = "https://script.google.com/macros/s/AKfycbzG0ug3rWotNj6snWHnWkKV8FjI1i_ya5M98w4uM0C40kWevaC5jNKJXX2C3la75lEQjA/exec";
 
+
+export const metadata = {
+  title: "Contact Us | SAYZO Support",
+  description: "Have questions? Talk to our support team. We are here to help you navigate the SAYZO neighborhood economy.",
+  openGraph: {
+    title: "Contact SAYZO Support",
+    description: "Reach out to us for any queries or support regarding our platform.",
+    url: "https://sayzo.in/contact",
+  },
+};
+
 const Page = () => {
   const [form, setForm] = useState({
     name: "",

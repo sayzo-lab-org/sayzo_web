@@ -3,7 +3,26 @@ import Link from "next/link";
 import { getCategoryBySlug } from "@/public/data/categories";
 import { ArrowLeft, ArrowRight, ChevronRight, Plus, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import MegaMenu from "@/components/MegaMenu";
+
+export async function generateMetadata({ params }) {
+  const { categorySlug } = await params;
+  const category = getCategoryBySlug(categorySlug);
+
+  if (!category) {
+    return { title: "Category Not Found" };
+  }
+
+  return {
+    title: `${category.name} Services | Explore Neighborhood Skills`,
+    description: category.description,
+    openGraph: {
+      title: `${category.name} | SAYZO Neighborhood Economy`,
+      description: category.description,
+      url: `https://sayzo.in/category/${categorySlug}`,
+      type: 'website',
+    },
+  };
+}
 
 export default async function CategoryPage({ params }) {
   const { categorySlug } = await params;

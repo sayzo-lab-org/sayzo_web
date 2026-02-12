@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { NAV_ITEMS } from "@/public/data/policy";
-import { usePolicy } from "@/app/Context/PolicyContext";
+
 import {MOCK_DATA} from "@/public/data/policy"
 
 const PolicyNavbar = ({ activeTab, onTabChange,openDropdown,nonToggleDropdown}) => {

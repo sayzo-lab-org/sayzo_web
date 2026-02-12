@@ -4,11 +4,31 @@ import ExpectationsSection from "@/components/subcategory/ExpectationsSection";
 import RealProblemsSection from "@/components/subcategory/RealProblemsSection";
 import SampleTasksSection from "@/components/subcategory/SampleTasksSection";
 import SkillsSection from "@/components/subcategory/SkillsSection";
-import CTASection from "@/components/subcategory/CTASection";
-import MegaMenu from "@/components/MegaMenu";
+
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import Header2 from "@/components/Header2";
+
+
+export async function generateMetadata({ params }) {
+  const { categorySlug, subCategorySlug } = await params;
+  const category = getCategoryBySlug(categorySlug);
+  const subCategory = category?.subCategories.find((s) => s.slug === subCategorySlug);
+
+  if (!category || !subCategory) {
+    return { title: "Page Not Found" };
+  }
+
+  return {
+    title: `${subCategory.name} | ${category.name} Services on SAYZO`,
+    description: subCategory.description || `Find expert ${subCategory.name} help in your neighborhood. Discover skills, tasks, and local experts on SAYZO.`,
+    openGraph: {
+      title: `${subCategory.name} - ${category.name}`,
+      description: subCategory.description,
+      url: `https://sayzo.in/category/${categorySlug}/${subCategorySlug}`,
+      type: 'website',
+    },
+  };
+}
 
 export default async function SubCategoryPage({ params }) {
   const { categorySlug, subCategorySlug } =await  params;

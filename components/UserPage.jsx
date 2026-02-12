@@ -10,6 +10,15 @@ import SearchWithPagination from "@/components/SearchWithPagination";
 import CustomIcons from "@/components/CustomIcons";
 import MegaMenu from "./MegaMenu";
 
+export const metadata = {
+  title: "Use Cases | How to use SAYZO",
+  description: "Discover real-world examples of how people are using SAYZO to solve problems and find local help.",
+  openGraph: {
+    title: "SAYZO Use Cases",
+    url: "https://sayzo.in/use-cases",
+  },
+};
+
 const UserPage = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);

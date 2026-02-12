@@ -8,6 +8,16 @@ import { MOCK_JOBS, CATEGORY_STATS } from '@/public/data/MockJob';
 
 const JOBS_PER_PAGE = 5;
 
+export const metadata = {
+  title: "Careers | Join the SAYZO Team",
+  description: "Explore open positions at SAYZO. We have 17 open positions right now! Join us in building the future of neighborhood services.",
+  openGraph: {
+    title: "Work at SAYZO",
+    description: "Check out our latest job openings and be part of a community-first team.",
+    url: "https://sayzo.in/careers",
+  },
+};
+
 const Page = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);

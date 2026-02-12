@@ -4,35 +4,43 @@ import { categories } from "@/public/data/categories";
 export default function sitemap() {
   const baseUrl = "https://sayzo.in";
 
-  // 1️⃣ Static Routes
+  // Done Static Routes with Priority
   const staticRoutes = [
-    "",
-    "/contact",
-    "/blog",
-    "/careers",
-    "/policies",
-    "/use-cases",
+    { path: "", priority: 1.0, changefreq: "daily" },
+    { path: "/contact", priority: 0.5, changefreq: "monthly" },
+    { path: "/blog", priority: 0.8, changefreq: "daily" },
+    { path: "/careers", priority: 0.5, changefreq: "monthly" },
+    { path: "/policies", priority: 0.3, changefreq: "monthly" },
+    { path: "/use-cases", priority: 0.7, changefreq: "monthly" },
   ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date(),
+    url: `${baseUrl}${route.path}`,
+    lastModified: new Date().toISOString(),
+    changeFrequency: route.changefreq,
+    priority: route.priority,
   }));
 
-  // 2️⃣ Blog Routes → /blog/[slug]
+  // Done Blog Routes (Safely parsing dates)
   const blogRoutes = blogs.map((blog) => ({
     url: `${baseUrl}/blog/${blog.slug}`,
-    lastModified: new Date(blog.date),
+    lastModified: new Date(blog.date).toISOString(),
+    changeFrequency: "weekly",
+    priority: 0.6,
   }));
 
-  // 3️⃣ Category + SubCategory Routes
+  // Done Category & Subcategory Routes
   const categoryRoutes = categories.flatMap((category) => {
     const mainCategory = {
       url: `${baseUrl}/category/${category.slug}`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
+      changeFrequency: "weekly",
+      priority: 0.7,
     };
 
     const subRoutes = category.subCategories.map((sub) => ({
       url: `${baseUrl}/category/${category.slug}/${sub.slug}`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
+      changeFrequency: "weekly",
+      priority: 0.6,
     }));
 
     return [mainCategory, ...subRoutes];

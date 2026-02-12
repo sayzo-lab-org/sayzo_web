@@ -9,7 +9,7 @@ const BlogCard = ({ blog }) => {
 
   return (
     <div
-      onClick={() => router.push(`/blog/${blog.id}`)}
+      onClick={() => router.push(`/blog/${blog.slug}`)}
       className="px-2 sm:px-0 cursor-pointer"
     >
       {/* IMAGE */}
