@@ -42,6 +42,22 @@ export const metadata = {
     siteName: "Sayzo",
     type: "website",
   },
+  verification: {
+    google: "863C8rGepBCeS7A97VIQdnrSCu3LpQiUZtSv7_1uj5g",
+  },
+  icons: {
+   
+    icon: [
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    
+    shortcut: '/favicon.ico',
+   
+    apple: '/apple-touch-icon.png',
+  },
+  
+  manifest: '/site.webmanifest',
 };
 
 
@@ -49,6 +65,7 @@ export default function RootLayout({ children }) {
   
   return (
     <html lang="en"  className={`${inter.variable} ${instrumentSerif.variable}`}>
+      
       <PolicyProvider>
       <body>
         {/* FULL WIDTH */}
