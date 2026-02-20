@@ -1,8 +1,8 @@
 'use client';
 
-import { Pencil, Trash2, Calendar } from 'lucide-react';
+import { Pencil, Trash2, Calendar, Users } from 'lucide-react';
 
-const AdminJobCard = ({ job, onEdit, onDelete, onTogglePublish, isDeleting = false, isTogglingPublish = false }) => {
+const AdminJobCard = ({ job, onEdit, onDelete, onTogglePublish, onViewApplications, applicationCount = 0, isDeleting = false, isTogglingPublish = false }) => {
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -82,6 +82,17 @@ const AdminJobCard = ({ job, onEdit, onDelete, onTogglePublish, isDeleting = fal
         </p>
 
         <div className="flex items-center gap-2">
+          {/* View Applications Button */}
+          <button
+            onClick={() => onViewApplications?.(job)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 transition"
+            title="View Applications"
+          >
+            <Users className="w-4 h-4" />
+            {applicationCount > 0 && (
+              <span className="text-xs font-medium">{applicationCount}</span>
+            )}
+          </button>
           <button
             onClick={() => onEdit(job)}
             className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition"

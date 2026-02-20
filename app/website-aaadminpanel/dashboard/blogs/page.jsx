@@ -2,21 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Plus, ChevronDown, X, Briefcase } from 'lucide-react';
+import { Loader2, Plus, ChevronDown, X, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/app/Context/AuthContext';
-import { subscribeToJobs, addJob, updateJob, deleteJob, toggleJobPublished, getJobApplicationCount } from '@/lib/firebase';
-import { JOB_CATEGORIES } from '@/lib/constants';
+import { subscribeToBlogsAdmin, addBlog, updateBlog, deleteBlog, toggleBlogPublished } from '@/lib/firebase';
+import { BLOG_CATEGORIES } from '@/lib/constants';
 import AdminLayout from '@/components/admin/AdminLayout';
-import AdminJobCard from '@/components/admin/AdminJobCard';
-import JobFormModal from '@/components/admin/JobFormModal';
-import JobApplicationsModal from '@/components/admin/JobApplicationsModal';
+import AdminBlogCard from '@/components/admin/AdminBlogCard';
+import BlogFormModal from '@/components/admin/BlogFormModal';
 
-export default function JobsManagementPage() {
+export default function BlogsManagementPage() {
   const router = useRouter();
   const { user, isAdmin, isLoading: authLoading } = useAuth();
 
-  const [jobs, setJobs] = useState([]);
+  const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -27,16 +26,11 @@ export default function JobsManagementPage() {
 
   // Modal states
   const [showFormModal, setShowFormModal] = useState(false);
-  const [editingJob, setEditingJob] = useState(null);
+  const [editingBlog, setEditingBlog] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
-  // Applications modal states
-  const [showApplicationsModal, setShowApplicationsModal] = useState(false);
-  const [selectedJobForApplications, setSelectedJobForApplications] = useState(null);
-  const [applicationCounts, setApplicationCounts] = useState({});
-
-  // Subscribe to jobs
+  // Subscribe to blogs
   useEffect(() => {
     if (authLoading) return;
     if (!user || !isAdmin) {
@@ -45,14 +39,14 @@ export default function JobsManagementPage() {
     }
 
     setLoading(true);
-    const unsubscribe = subscribeToJobs(
-      (jobsData) => {
-        setJobs(jobsData);
+    const unsubscribe = subscribeToBlogsAdmin(
+      (blogsData) => {
+        setBlogs(blogsData);
         setLoading(false);
       },
       (err) => {
-        console.error('Jobs subscription error:', err);
-        setError('Failed to load jobs. Please refresh the page.');
+        console.error('Blogs subscription error:', err);
+        setError('Failed to load blogs. Please refresh the page.');
         setLoading(false);
       }
     );
@@ -60,46 +54,21 @@ export default function JobsManagementPage() {
     return () => unsubscribe();
   }, [user, isAdmin, authLoading, router]);
 
-  // Fetch application counts when jobs change
-  useEffect(() => {
-    const fetchCounts = async () => {
-      const counts = {};
-      for (const job of jobs) {
-        try {
-          counts[job.id] = await getJobApplicationCount(job.id);
-        } catch (error) {
-          counts[job.id] = 0;
-        }
-      }
-      setApplicationCounts(counts);
-    };
-
-    if (jobs.length > 0) {
-      fetchCounts();
-    }
-  }, [jobs]);
-
-  // Handle view applications
-  const handleViewApplications = (job) => {
-    setSelectedJobForApplications(job);
-    setShowApplicationsModal(true);
-  };
-
-  // Filter jobs by category and status
-  const filteredJobs = jobs.filter((job) => {
-    const categoryMatch = categoryFilter === 'All' || job.category === categoryFilter;
+  // Filter blogs by category and status
+  const filteredBlogs = blogs.filter((blog) => {
+    const categoryMatch = categoryFilter === 'All' || blog.category === categoryFilter;
     const statusMatch = statusFilter === 'All' ||
-      (statusFilter === 'Published' && job.published) ||
-      (statusFilter === 'Drafts' && !job.published);
+      (statusFilter === 'Published' && blog.published) ||
+      (statusFilter === 'Drafts' && !blog.published);
     return categoryMatch && statusMatch;
   });
 
   // Handle toggle publish
-  const handleTogglePublish = async (jobId, currentStatus) => {
-    setTogglingPublishId(jobId);
+  const handleTogglePublish = async (blogId, currentStatus) => {
+    setTogglingPublishId(blogId);
     try {
-      await toggleJobPublished(jobId, currentStatus);
-      toast.success(currentStatus ? 'Job unpublished' : 'Job published');
+      await toggleBlogPublished(blogId, currentStatus);
+      toast.success(currentStatus ? 'Blog unpublished' : 'Blog published');
     } catch (err) {
       toast.error(err.message || 'Failed to update status');
     } finally {
@@ -107,69 +76,69 @@ export default function JobsManagementPage() {
     }
   };
 
-  // Handle create job
-  const handleCreateJob = async (formData) => {
+  // Handle create blog
+  const handleCreateBlog = async (formData) => {
     setFormLoading(true);
     try {
-      await addJob(formData);
-      toast.success('Job created successfully!');
+      await addBlog(formData);
+      toast.success('Blog created successfully!');
       setShowFormModal(false);
     } catch (err) {
-      toast.error(err.message || 'Failed to create job');
+      toast.error(err.message || 'Failed to create blog');
       throw err;
     } finally {
       setFormLoading(false);
     }
   };
 
-  // Handle edit job
-  const handleEditJob = async (formData) => {
-    if (!editingJob) return;
+  // Handle edit blog
+  const handleEditBlog = async (formData) => {
+    if (!editingBlog) return;
     setFormLoading(true);
     try {
-      await updateJob(editingJob.id, formData);
-      toast.success('Job updated successfully!');
+      await updateBlog(editingBlog.id, formData);
+      toast.success('Blog updated successfully!');
       setShowFormModal(false);
-      setEditingJob(null);
+      setEditingBlog(null);
     } catch (err) {
-      toast.error(err.message || 'Failed to update job');
+      toast.error(err.message || 'Failed to update blog');
       throw err;
     } finally {
       setFormLoading(false);
     }
   };
 
-  // Handle delete job
-  const handleDeleteJob = async (jobId) => {
-    if (!confirm('Are you sure you want to delete this job? This action cannot be undone.')) {
+  // Handle delete blog
+  const handleDeleteBlog = async (blogId) => {
+    if (!confirm('Are you sure you want to delete this blog? This action cannot be undone.')) {
       return;
     }
-    setDeletingId(jobId);
+    setDeletingId(blogId);
     try {
-      await deleteJob(jobId);
-      toast.success('Job deleted successfully!');
+      await deleteBlog(blogId);
+      toast.success('Blog deleted successfully!');
     } catch (err) {
-      toast.error(err.message || 'Failed to delete job');
+      toast.error(err.message || 'Failed to delete blog');
     } finally {
       setDeletingId(null);
     }
   };
 
   // Open edit modal
-  const openEditModal = (job) => {
-    setEditingJob(job);
+  const openEditModal = (blog) => {
+    setEditingBlog(blog);
     setShowFormModal(true);
   };
 
   // Open create modal
   const openCreateModal = () => {
-    setEditingJob(null);
+    setEditingBlog(null);
     setShowFormModal(true);
   };
 
   const filterOptions = [
-    { id: 'All', label: 'All Jobs' },
-    ...JOB_CATEGORIES.map((cat) => ({ id: cat, label: cat })),
+    { id: 'All', label: 'All Blogs' },
+    ...BLOG_CATEGORIES.map((cat) => ({ id: cat, label: cat })),
   ];
 
   const statusOptions = [
@@ -188,9 +157,9 @@ export default function JobsManagementPage() {
         <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-xl font-bold text-gray-800">Jobs Management</h1>
+              <h1 className="text-xl font-bold text-gray-800">Blogs Management</h1>
               <p className="text-sm text-gray-500 mt-1">
-                {jobs.length} job{jobs.length !== 1 ? 's' : ''} posted
+                {blogs.length} blog{blogs.length !== 1 ? 's' : ''} posted
               </p>
             </div>
 
@@ -271,13 +240,13 @@ export default function JobsManagementPage() {
                 )}
               </div>
 
-              {/* Add Job Button */}
+              {/* Add Blog Button */}
               <button
                 onClick={openCreateModal}
                 className="flex items-center gap-2 px-4 py-2 bg-[#13a884] hover:bg-[#0f8c6e] text-white rounded-lg text-sm font-medium transition"
               >
                 <Plus className="w-4 h-4" />
-                Add Job
+                Add Blog
               </button>
             </div>
           </div>
@@ -303,38 +272,36 @@ export default function JobsManagementPage() {
               <div className="flex items-center justify-center py-20">
                 <div className="text-center">
                   <Loader2 className="w-10 h-10 animate-spin text-[#13a884] mx-auto mb-4" />
-                  <p className="text-gray-500">Loading jobs...</p>
+                  <p className="text-gray-500">Loading blogs...</p>
                 </div>
               </div>
-            ) : filteredJobs.length === 0 ? (
+            ) : filteredBlogs.length === 0 ? (
               <div className="text-center py-20">
-                <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-500 mb-4">
                   {categoryFilter === 'All'
-                    ? 'No jobs posted yet'
-                    : `No jobs in ${categoryFilter} category`}
+                    ? 'No blogs posted yet'
+                    : `No blogs in ${categoryFilter} category`}
                 </p>
                 <button
                   onClick={openCreateModal}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-[#13a884] hover:bg-[#0f8c6e] text-white rounded-lg text-sm font-medium transition"
                 >
                   <Plus className="w-4 h-4" />
-                  Create your first job
+                  Create your first blog
                 </button>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredJobs.map((job) => (
-                  <AdminJobCard
-                    key={job.id}
-                    job={job}
+                {filteredBlogs.map((blog) => (
+                  <AdminBlogCard
+                    key={blog.id}
+                    blog={blog}
                     onEdit={openEditModal}
-                    onDelete={handleDeleteJob}
+                    onDelete={handleDeleteBlog}
                     onTogglePublish={handleTogglePublish}
-                    onViewApplications={handleViewApplications}
-                    applicationCount={applicationCounts[job.id] || 0}
-                    isDeleting={deletingId === job.id}
-                    isTogglingPublish={togglingPublishId === job.id}
+                    isDeleting={deletingId === blog.id}
+                    isTogglingPublish={togglingPublishId === blog.id}
                   />
                 ))}
               </div>
@@ -342,26 +309,16 @@ export default function JobsManagementPage() {
           </div>
         </div>
 
-        {/* Job Form Modal */}
-        <JobFormModal
+        {/* Blog Form Modal */}
+        <BlogFormModal
           isOpen={showFormModal}
           onClose={() => {
             setShowFormModal(false);
-            setEditingJob(null);
+            setEditingBlog(null);
           }}
-          onSubmit={editingJob ? handleEditJob : handleCreateJob}
-          initialData={editingJob}
+          onSubmit={editingBlog ? handleEditBlog : handleCreateBlog}
+          initialData={editingBlog}
           isLoading={formLoading}
-        />
-
-        {/* Job Applications Modal */}
-        <JobApplicationsModal
-          isOpen={showApplicationsModal}
-          onClose={() => {
-            setShowApplicationsModal(false);
-            setSelectedJobForApplications(null);
-          }}
-          job={selectedJobForApplications}
         />
       </div>
     </AdminLayout>

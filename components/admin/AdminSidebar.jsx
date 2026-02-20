@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ClipboardList, Briefcase, LogOut } from 'lucide-react';
+import { ClipboardList, Briefcase, FileText, LogOut } from 'lucide-react';
 import { useAuth } from '@/app/Context/AuthContext';
 
 const AdminSidebar = ({ isMobile = false, onNavigate }) => {
@@ -20,6 +20,11 @@ const AdminSidebar = ({ isMobile = false, onNavigate }) => {
       href: '/website-aaadminpanel/dashboard/jobs',
       label: 'Jobs',
       icon: Briefcase,
+    },
+    {
+      href: '/website-aaadminpanel/dashboard/blogs',
+      label: 'Blogs',
+      icon: FileText,
     },
   ];
 

@@ -32,6 +32,9 @@ export function AuthProvider({ children }) {
   // Track pending profile fetch to avoid duplicate requests
   const profileFetchRef = useRef(null);
 
+  // Track logout timeout to properly clean it up and prevent stale timeouts
+  const logoutTimeoutRef = useRef(null);
+
   // Fetch user profile with deduplication
   const fetchUserProfile = useCallback(async (uid) => {
     // If already fetching this user's profile, return existing promise
@@ -119,9 +122,17 @@ export function AuthProvider({ children }) {
           return;
         }
 
-        // Double-check after a short delay to be extra safe
+        // Clear any existing logout timeout before setting a new one
+        // This prevents stale timeouts from accumulating
+        if (logoutTimeoutRef.current) {
+          clearTimeout(logoutTimeoutRef.current);
+          logoutTimeoutRef.current = null;
+        }
+
+        // Double-check after a delay to be extra safe
         // This handles edge cases where the SDK is still initializing
-        const timeoutId = setTimeout(() => {
+        // Using 200ms instead of 50ms for more reliable detection on slower devices
+        logoutTimeoutRef.current = setTimeout(() => {
           if (!auth.currentUser && hasSeenUserRef.current) {
             // User is actually logged out
             console.log("AuthContext: User logged out");
@@ -130,13 +141,19 @@ export function AuthProvider({ children }) {
             setIsAdmin(false);
             hasSeenUserRef.current = false;
           }
-        }, 50);
-
-        return () => clearTimeout(timeoutId);
+          logoutTimeoutRef.current = null;
+        }, 200);
       }
     });
 
-    return () => unsubscribe();
+    // Proper cleanup: unsubscribe from auth listener AND clear any pending timeout
+    return () => {
+      unsubscribe();
+      if (logoutTimeoutRef.current) {
+        clearTimeout(logoutTimeoutRef.current);
+        logoutTimeoutRef.current = null;
+      }
+    };
   }, [fetchUserProfile]);
 
   const value = {

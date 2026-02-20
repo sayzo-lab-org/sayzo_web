@@ -20,6 +20,7 @@ import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 const mapTaskToJob = (task) => ({
   id: task.id,
   giverId: task.giverId, // Preserve for ownership check
+  status: task.status, // For completed task check
   type: task.taskType || "online",
   title: task.taskName || "Untitled Task",
   deadline: task.duration || "Flexible",

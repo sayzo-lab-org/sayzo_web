@@ -199,6 +199,16 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
                 <ArrowUpRight className="w-4 h-4" />
               </Link>
             </div>
+          ) : job.status === 'completed' ? (
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+              <div className="flex items-center justify-center gap-2">
+                <CheckCircle className="w-5 h-5 text-gray-400" />
+                <span className="text-gray-600 font-medium">Task Completed</span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                No longer accepting applications
+              </p>
+            </div>
           ) : (
             <button
               onClick={handleApplyClick}

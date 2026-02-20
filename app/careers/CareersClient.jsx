@@ -4,7 +4,10 @@ import Sidebar from '@/components/Career/Sidebar';
 import JobCard from '@/components/Career/JobCard';
 import Pagination from '@/components/Career/Pagination';
 import { MOCK_JOBS } from '@/public/data/MockJob';
-import { getPublishedJobs } from '@/lib/firebase';
+import { getPublishedJobs, subscribeToJobApplicationsByApplicant } from '@/lib/firebase';
+import { useAuth } from '@/app/Context/AuthContext';
+import TaskDoerAuthModal from '@/components/TaskDoerAuthModal';
+import JobApplicationModal from '@/components/Career/JobApplicationModal';
 
 const JOBS_PER_PAGE = 5;
 
@@ -13,6 +16,56 @@ const CareersClient = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [firebaseJobs, setFirebaseJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Auth and modal state
+  const { user, isAuthenticated } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showApplicationModal, setShowApplicationModal] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [myJobApplications, setMyJobApplications] = useState([]);
+
+  // Subscribe to user's job applications when authenticated
+  useEffect(() => {
+    if (!isAuthenticated || !user) {
+      setMyJobApplications([]);
+      return;
+    }
+
+    const unsubscribe = subscribeToJobApplicationsByApplicant(
+      user.uid,
+      (apps) => setMyJobApplications(apps),
+      (err) => console.error('Job applications subscription error:', err)
+    );
+
+    return () => unsubscribe();
+  }, [isAuthenticated, user]);
+
+  // Helper to check if user has applied to a job
+  const hasAppliedToJob = (jobId) => {
+    return myJobApplications.some(app => app.jobId === jobId);
+  };
+
+  // Handle apply click - check auth first
+  const handleApply = (job) => {
+    setSelectedJob(job);
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+    } else {
+      setShowApplicationModal(true);
+    }
+  };
+
+  // Handle auth success - close auth modal and open application modal
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+    setShowApplicationModal(true);
+  };
+
+  // Handle application success
+  const handleApplicationSuccess = () => {
+    setShowApplicationModal(false);
+    setSelectedJob(null);
+  };
 
   // Fetch published jobs from Firebase
   useEffect(() => {
@@ -91,7 +144,7 @@ const CareersClient = () => {
               {currentJobs.length > 0 ? (
                 <>
                   {currentJobs.map((job) => (
-                    <JobCard key={job.id} job={job} />
+                    <JobCard key={job.id} job={job} onApply={handleApply} hasApplied={hasAppliedToJob(job.id)} />
                   ))}
                   {totalPages > 1 && (
                     <Pagination
@@ -112,6 +165,28 @@ const CareersClient = () => {
           </main>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <TaskDoerAuthModal
+        isOpen={showAuthModal}
+        onClose={() => {
+          setShowAuthModal(false);
+          setSelectedJob(null);
+        }}
+        onSuccess={handleAuthSuccess}
+      />
+
+      {/* Job Application Modal */}
+      <JobApplicationModal
+        isOpen={showApplicationModal}
+        onClose={() => {
+          setShowApplicationModal(false);
+          setSelectedJob(null);
+        }}
+        job={selectedJob}
+        currentUser={user}
+        onSuccess={handleApplicationSuccess}
+      />
     </div>
   );
 };

@@ -14,6 +14,18 @@ const nextConfig = {
         protocol: "https",
         hostname: "picsum.photos",
       },
+      {
+        protocol: "https",
+        hostname: "www.sayzo.in",
+      },
+      {
+        protocol: "https",
+        hostname: "sayzo.in",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
     ],
   },
 };

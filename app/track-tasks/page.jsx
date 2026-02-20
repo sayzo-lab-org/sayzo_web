@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronRight, ChevronDown, ChevronLeft, Loader2, Clock, CheckCircle, XCircle, Eye, X } from 'lucide-react'
+import { ChevronRight, ChevronDown, ChevronLeft, Loader2, Clock, CheckCircle, XCircle, Eye, X, Info } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import TaskGiverAuthModal from '@/components/TaskGiverAuthModal'
-import { subscribeToTasksByGiver, subscribeToApplicationsByTask, subscribeToApplicationsByApplicant, updateApplicationStatus, getTaskById } from '@/lib/firebase'
+import { subscribeToTasksByGiver, subscribeToApplicationsByTask, subscribeToApplicationsByApplicant, updateApplicationStatus, getTaskById, markTaskAsComplete } from '@/lib/firebase'
 import { TASK_STATUS, APPLICATION_STATUS } from '@/lib/constants'
 import { useAuth } from '@/app/Context/AuthContext'
 
@@ -26,6 +26,8 @@ export default function TrackTasksPage() {
   const [actionLoading, setActionLoading] = useState(null)
   const [error, setError] = useState("")
   const [showTaskDetailsModal, setShowTaskDetailsModal] = useState(false)
+  const [showCompleteConfirmModal, setShowCompleteConfirmModal] = useState(false)
+  const [completeLoading, setCompleteLoading] = useState(false)
 
   // Doer view state
   const [viewMode, setViewMode] = useState('giver')  // 'giver' or 'doer'
@@ -33,6 +35,8 @@ export default function TrackTasksPage() {
   const [doerTasks, setDoerTasks] = useState({})  // Cache task details by taskId
   const [selectedApplicationId, setSelectedApplicationId] = useState(null)
   const [doerLoading, setDoerLoading] = useState(false)
+  const [showBetaInfo, setShowBetaInfo] = useState(false)
+  const [showDoerInfo, setShowDoerInfo] = useState(false)
 
   const unsubscribeTasksRef = useRef(null)
 
@@ -244,6 +248,25 @@ export default function TrackTasksPage() {
     }
   }, [])
 
+  // Handle marking task as complete
+  const handleMarkComplete = useCallback(async () => {
+    if (!selectedTask) return
+
+    setCompleteLoading(true)
+    setError("")
+
+    try {
+      await markTaskAsComplete(selectedTask.id, selectedTask.giverId)
+      setShowCompleteConfirmModal(false)
+      // The subscription will auto-update the task status
+    } catch (err) {
+      console.error('Error completing task:', err)
+      setError(err.message || "Failed to mark task as complete. Please try again.")
+    } finally {
+      setCompleteLoading(false)
+    }
+  }, [selectedTask])
+
   // Get status badge for tasks
   const getStatusBadge = (status) => {
     switch (status) {
@@ -267,6 +290,13 @@ export default function TrackTasksPage() {
           <span className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">
             <XCircle className="w-3 h-3" />
             Rejected
+          </span>
+        )
+      case TASK_STATUS.COMPLETED:
+        return (
+          <span className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+            <CheckCircle className="w-3 h-3" />
+            Completed
           </span>
         )
       default:
@@ -319,7 +349,41 @@ export default function TrackTasksPage() {
       {isAuthenticated && (
       <div className="max-w-350 mx-auto px-4">
         {/* Banner */}
-        <div className="text-white px-4 py-6 md:px-8 md:py-8 rounded-2xl" style={{ background: 'linear-gradient(to right, #22E200, #02D04D)' }}>
+        <div className="relative text-white px-4 py-6 md:px-8 md:py-8 rounded-2xl" style={{ background: 'linear-gradient(to right, #22E200, #02D04D)' }}>
+          {/* Info button with hover (desktop) and click (mobile) tooltip */}
+          <div className="absolute top-3 right-3 group">
+            <button
+              onClick={() => setShowBetaInfo(!showBetaInfo)}
+              className="w-6 h-6 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+            >
+              <Info className="w-4 h-4 text-white" />
+            </button>
+            {/* Tooltip - visible on hover (desktop) or click (mobile) */}
+            <div className={`absolute right-0 top-10 w-72 md:w-80 bg-white rounded-lg shadow-xl z-50 transition-all duration-200 overflow-hidden
+              ${showBetaInfo ? 'opacity-100 visible' : 'opacity-0 invisible lg:group-hover:opacity-100 lg:group-hover:visible'}`}
+            >
+              {/* Arrow pointer */}
+              <div className="absolute -top-2 right-3 w-4 h-4 bg-white rotate-45 shadow-sm"></div>
+              {/* Header */}
+              <div className="relative flex items-center justify-between p-3 border-b border-gray-100 bg-white">
+                <div className="flex items-center gap-2">
+                  <Info className="w-4 h-4 text-gray-800" />
+                  <span className="font-semibold text-gray-800">Disclaimer</span>
+                </div>
+                {/* Close button - visible on mobile */}
+                <button
+                  onClick={(e) => { e.stopPropagation(); setShowBetaInfo(false); }}
+                  className="lg:hidden w-5 h-5 flex items-center justify-center text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              {/* Content */}
+              <p className="p-3 text-gray-600 text-sm leading-relaxed">
+                You're in our Beta phase. No algorithms yet, just real execution. Even in this early version, 100+ TaskGivers have been served. We've transitioned from a WhatsApp community model to a proper web platform. Beta 2.0 launches soon, bringing the true 10-minute matching magic.
+              </p>
+            </div>
+          </div>
           <h1 className="font-semibold text-center text-pretty text-xl md:text-2xl lg:text-[34px] lg:leading-tight">
             Beta Access: Find verified skills (online & offline) in 10<br className="hidden md:block" />
             minutes. Zero platform fee for Beta users.
@@ -511,7 +575,7 @@ export default function TrackTasksPage() {
         </div>
 
           {/* Right Panel - Applicants (Giver) or Application Details (Doer) */}
-          <div className={`bg-white rounded-lg p-4 md:p-6 ${
+          <div className={`relative bg-white rounded-lg p-4 md:p-6 ${
             viewMode === 'giver'
               ? (!selectedTaskId ? 'hidden lg:block' : 'block')
               : (!selectedApplicationId ? 'hidden lg:block' : 'block')
@@ -524,6 +588,44 @@ export default function TrackTasksPage() {
               <ChevronLeft className="w-5 h-5" />
               Back to {viewMode === 'giver' ? 'tasks' : 'applications'}
             </button>
+
+            {/* Doer Info Button - only visible in doer view */}
+            {viewMode === 'doer' && (
+              <div className="absolute top-4 right-4 group z-10">
+                <button
+                  onClick={() => setShowDoerInfo(!showDoerInfo)}
+                  className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                >
+                  <Info className="w-4 h-4 text-gray-800" />
+                </button>
+                {/* Tooltip - visible on hover (desktop) or click (mobile) */}
+                <div className={`absolute right-0 top-10 w-72 md:w-80 bg-white rounded-lg shadow-xl z-50 transition-all duration-200 overflow-hidden
+                  ${showDoerInfo ? 'opacity-100 visible' : 'opacity-0 invisible lg:group-hover:opacity-100 lg:group-hover:visible'}`}
+                >
+                  {/* Arrow pointer */}
+                  <div className="absolute -top-2 right-3 w-4 h-4 bg-white rotate-45 shadow-sm"></div>
+                  {/* Header */}
+                  <div className="relative flex items-center justify-between p-3 border-b border-gray-100 bg-white">
+                    <div className="flex items-center gap-2">
+                      <Info className="w-4 h-4 text-gray-800" />
+                      <span className="font-semibold text-gray-800">Disclaimer</span>
+                    </div>
+                    {/* Close button - visible on mobile */}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setShowDoerInfo(false); }}
+                      className="lg:hidden w-5 h-5 flex items-center justify-center text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  {/* Content - two paragraphs */}
+                  <div className="p-3 text-gray-600 text-sm leading-relaxed space-y-3">
+                    <p>When you accept a task as a TaskDoer, your application is sent to the TaskGiver. They review all applicants and select the best fit based on their requirements. If selected, you'll be able to view the TaskGiver's contact details and connect directly to begin the work. You can track your application status anytime within the platform.</p>
+                    <p>For now, Sayzo operates solely as a connecting platform. With the full app launch, we'll evolve into a stronger infrastructure, helping you receive consistent tasks, greater opportunities, and additional support as a facilitator. Beta 2.0 is launching soon.</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {viewMode === 'giver' ? (
               // Task Giver View - Applicants Panel
@@ -538,13 +640,24 @@ export default function TrackTasksPage() {
                     )}
                   </h2>
                   {selectedTask && (
-                    <button
-                      onClick={() => setShowTaskDetailsModal(true)}
-                      className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
-                    >
-                      <Eye className="w-4 h-4" />
-                      View Task
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setShowTaskDetailsModal(true)}
+                        className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+                      >
+                        <Eye className="w-4 h-4" />
+                        View Task
+                      </button>
+                      {(selectedTask.status === TASK_STATUS.APPROVED || selectedTask.status === TASK_STATUS.ACTIVE) && (
+                        <button
+                          onClick={() => setShowCompleteConfirmModal(true)}
+                          className="flex items-center gap-2 px-3 py-2 text-sm bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                          Mark Complete
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -571,6 +684,19 @@ export default function TrackTasksPage() {
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
                     <p className="text-green-700 text-sm">
                       <strong>Approved:</strong> The task you posted has been verified and is now live on sayzo.in. Keep checking — you'll get interested applicants soon!
+                    </p>
+                  </div>
+                )}
+
+                {/* Show completed notice */}
+                {selectedTask?.status === TASK_STATUS.COMPLETED && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center gap-2 text-blue-700 font-medium mb-1">
+                      <CheckCircle className="w-5 h-5" />
+                      Task Completed
+                    </div>
+                    <p className="text-sm text-blue-600">
+                      This task has been marked as complete. It is no longer visible to new applicants on the browse page.
                     </p>
                   </div>
                 )}
@@ -961,6 +1087,89 @@ export default function TrackTasksPage() {
                   <p className="text-white">{selectedTask.customerName}</p>
                   <p className="text-zinc-400 text-sm">{selectedTask.phone}</p>
                 </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mark Complete Confirmation Modal */}
+      <AnimatePresence>
+        {showCompleteConfirmModal && selectedTask && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[999] bg-black/80 backdrop-blur flex items-center justify-center p-4"
+            onClick={() => setShowCompleteConfirmModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-2xl w-full max-w-md p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Icon */}
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-green-600" />
+                </div>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-xl font-semibold text-gray-900 text-center mb-2">
+                Mark Task as Complete?
+              </h3>
+
+              {/* Task Name */}
+              <p className="text-center text-gray-500 mb-4">
+                <span className="font-medium text-gray-700">{selectedTask.taskName}</span>
+              </p>
+
+              {/* Warning */}
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6">
+                <p className="text-sm text-yellow-700">
+                  <strong>Note:</strong> Once marked as complete, this task will be hidden from the browse page and no new applications will be accepted. Existing applicants will still be visible.
+                </p>
+              </div>
+
+              {/* Error Display */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowCompleteConfirmModal(false)
+                    setError("")
+                  }}
+                  disabled={completeLoading}
+                  className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleMarkComplete}
+                  disabled={completeLoading}
+                  className="flex-1 py-3 px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {completeLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Completing...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      Yes, Complete
+                    </>
+                  )}
+                </button>
               </div>
             </motion.div>
           </motion.div>

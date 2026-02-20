@@ -18,6 +18,7 @@ const TaskModal = ({ isOpen, onClose }) => {
   const [success, setSuccess] = useState(false);
   const [taskType, setTaskType] = useState("online");
   const [error, setError] = useState("");
+  const [formPhase, setFormPhase] = useState("edit"); // "edit" | "preview" | "confirm"
 
   // Auth states
   const [emailSent, setEmailSent] = useState(false);
@@ -42,6 +43,32 @@ const TaskModal = ({ isOpen, onClose }) => {
 
   const input =
     "w-full bg-[#18181B] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border border-zinc-800 focus:outline-none focus:border-zinc-600";
+
+  // Restore form draft from localStorage (saved before magic link)
+  const restoreFormDraft = () => {
+    const draftStr = localStorage.getItem("sayzo_task_draft");
+    if (!draftStr) return false;
+
+    try {
+      const draft = JSON.parse(draftStr);
+
+      // Check if draft is less than 24 hours old
+      const isExpired = Date.now() - draft.timestamp > 24 * 60 * 60 * 1000;
+      if (isExpired) {
+        localStorage.removeItem("sayzo_task_draft");
+        return false;
+      }
+
+      // Restore form data
+      setForm(draft.form);
+      setTaskType(draft.taskType);
+      setEmail(draft.email);
+      return true;
+    } catch (e) {
+      localStorage.removeItem("sayzo_task_draft");
+      return false;
+    }
+  };
 
   // Helper function to check profile and set up form
   const checkUserProfileAndSetup = async (user) => {
@@ -86,6 +113,9 @@ const TaskModal = ({ isOpen, onClose }) => {
     // Use auth context user if available
     if (contextUser) {
       checkUserProfileAndSetup(contextUser);
+
+      // Restore draft if exists (e.g., after returning from magic link)
+      restoreFormDraft();
     }
   }, [isOpen, contextUser, authContextLoading]);
 
@@ -115,6 +145,17 @@ const TaskModal = ({ isOpen, onClose }) => {
     try {
       // Store return URL for after auth
       localStorage.setItem("sayzo_auth_return", window.location.pathname);
+
+      // Save form draft so it can be restored after magic link auth
+      const draft = {
+        form,
+        taskType,
+        email,
+        timestamp: Date.now()
+      };
+      localStorage.setItem("sayzo_task_draft", JSON.stringify(draft));
+      localStorage.setItem("sayzo_pending_task", "true");
+
       await sendMagicLink(email);
       setEmailSent(true);
     } catch (err) {
@@ -157,6 +198,16 @@ const TaskModal = ({ isOpen, onClose }) => {
     return "";
   };
 
+  const handlePreview = () => {
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    setError("");
+    setFormPhase("preview");
+  };
+
   const submitTask = async () => {
     const validationError = validate();
     if (validationError) {
@@ -195,6 +246,11 @@ const TaskModal = ({ isOpen, onClose }) => {
       localStorage.setItem("sayzo_user_name", form.customerName);
 
       await addTask(taskData);
+
+      // Clear draft from localStorage after successful submission
+      localStorage.removeItem("sayzo_task_draft");
+      localStorage.removeItem("sayzo_pending_task");
+
       setSuccess(true);
     } catch (err) {
       console.error("Submit Error:", err);
@@ -208,6 +264,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     setSuccess(false);
     setError("");
     setEmailSent(false);
+    setFormPhase("edit");
 
     // Don't reset auth state if user is still logged in
     const currentUser = auth.currentUser;
@@ -255,7 +312,9 @@ const TaskModal = ({ isOpen, onClose }) => {
             <motion.div className="w-full max-w-md bg-black border border-zinc-800 rounded-2xl">
               <div className="flex justify-between items-center px-6 py-4 border-b border-zinc-800">
                 <h2 className="text-xl text-white font-semibold">
-                  Create a Task
+                  {formPhase === "edit" && "Create a Task"}
+                  {formPhase === "preview" && "Preview Task"}
+                  {formPhase === "confirm" && "Confirm Task"}
                 </h2>
                 <button onClick={resetAndClose}>
                   <X className="text-zinc-400 hover:text-white" />
@@ -279,7 +338,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                       Close
                     </button>
                   </div>
-                ) : (
+                ) : formPhase === "edit" ? (
                   <>
                     {/* Task Type Toggle */}
                     <div className="flex gap-2 mb-4">
@@ -462,19 +521,131 @@ const TaskModal = ({ isOpen, onClose }) => {
                     )}
 
                     <button
-                      disabled={loading || !isVerified}
-                      onClick={submitTask}
+                      disabled={!isVerified}
+                      onClick={handlePreview}
                       className="w-full mt-4 bg-white text-black py-4 rounded-full font-semibold disabled:opacity-50 flex items-center justify-center gap-2"
                     >
-                      {loading ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          Posting...
-                        </>
-                      ) : (
-                        "Post Task"
-                      )}
+                      Preview
                     </button>
+                  </>
+                ) : formPhase === "preview" ? (
+                  <>
+                    {/* Preview Phase - Read-only task details */}
+                    <div className="space-y-3">
+                      <div className="bg-zinc-900 rounded-xl p-4">
+                        <p className="text-zinc-400 text-sm">Task Type</p>
+                        <p className="text-white">{taskType === "online" ? "Online Task" : "Offline Task"}</p>
+                      </div>
+
+                      <div className="bg-zinc-900 rounded-xl p-4">
+                        <p className="text-zinc-400 text-sm">Task Name</p>
+                        <p className="text-white">{form.taskName}</p>
+                      </div>
+
+                      <div className="bg-zinc-900 rounded-xl p-4">
+                        <p className="text-zinc-400 text-sm">Your Name</p>
+                        <p className="text-white">{form.customerName}</p>
+                      </div>
+
+                      <div className="bg-zinc-900 rounded-xl p-4">
+                        <p className="text-zinc-400 text-sm">Email</p>
+                        <p className="text-white">{email}</p>
+                      </div>
+
+                      <div className="bg-zinc-900 rounded-xl p-4">
+                        <p className="text-zinc-400 text-sm">Phone Number</p>
+                        <p className="text-white">{form.phone}</p>
+                      </div>
+
+                      {taskType === "offline" && (
+                        <div className="bg-zinc-900 rounded-xl p-4">
+                          <p className="text-zinc-400 text-sm">Location</p>
+                          <p className="text-white">{form.location}</p>
+                        </div>
+                      )}
+
+                      <div className="bg-zinc-900 rounded-xl p-4">
+                        <p className="text-zinc-400 text-sm">Description</p>
+                        <p className="text-white whitespace-pre-wrap">{form.description}</p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-zinc-900 rounded-xl p-4">
+                          <p className="text-zinc-400 text-sm">Budget Type</p>
+                          <p className="text-white">{form.budgetType === "fixed" ? "Fixed Price" : "Negotiable"}</p>
+                        </div>
+                        <div className="bg-zinc-900 rounded-xl p-4">
+                          <p className="text-zinc-400 text-sm">Amount</p>
+                          <p className="text-white">{form.amount}</p>
+                        </div>
+                      </div>
+
+                      <div className="bg-zinc-900 rounded-xl p-4">
+                        <p className="text-zinc-400 text-sm">Duration</p>
+                        <p className="text-white">{form.duration}</p>
+                      </div>
+
+                      <div className="bg-zinc-900 rounded-xl p-4">
+                        <p className="text-zinc-400 text-sm">Skills Required</p>
+                        <p className="text-white">{form.skills}</p>
+                      </div>
+
+                      <div className="bg-zinc-900 rounded-xl p-4">
+                        <p className="text-zinc-400 text-sm">Experience Level</p>
+                        <p className="text-white capitalize">{form.experience}</p>
+                      </div>
+                    </div>
+
+                    {/* Preview Phase Buttons */}
+                    <div className="flex gap-3 mt-6">
+                      <button
+                        onClick={() => setFormPhase("edit")}
+                        className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white py-4 rounded-full font-semibold transition"
+                      >
+                        Make Changes
+                      </button>
+                      <button
+                        onClick={() => setFormPhase("confirm")}
+                        className="flex-1 bg-white text-black py-4 rounded-full font-semibold"
+                      >
+                        Are you sure?
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Confirm Phase */}
+                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                      <h3 className="text-white text-xl font-semibold">Ready to post your task?</h3>
+                      <p className="text-zinc-400 mt-2">Click below to submit your task for approval</p>
+
+                      {error && (
+                        <p className="text-red-400 text-sm mt-4">{error}</p>
+                      )}
+
+                      <button
+                        onClick={submitTask}
+                        disabled={loading}
+                        className="mt-6 w-full bg-white text-black py-4 rounded-full font-semibold disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Posting...
+                          </>
+                        ) : (
+                          "Post Task"
+                        )}
+                      </button>
+
+                      <button
+                        onClick={() => setFormPhase("preview")}
+                        disabled={loading}
+                        className="text-zinc-400 hover:text-white text-sm mt-4 underline disabled:opacity-50"
+                      >
+                        Go back
+                      </button>
+                    </div>
                   </>
                 )}
               </div>

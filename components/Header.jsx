@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { ArrowUpRight, Menu, X, User, LogOut, Mail, Phone } from "lucide-react";
+import { ArrowUpRight, Menu, X, User, LogOut, Mail, Phone, Briefcase, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/app/Context/AuthContext";
+import { subscribeToJobApplicationsByApplicant } from "@/lib/firebase";
 
 import Maskgroup from "../public/assets/Maskgroup.svg";
 import Maskgroup2 from "../public/assets/Maskgroup2.svg";
@@ -40,9 +41,74 @@ const Header = () => {
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const [isTaskOpen, setIsTaskOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [myJobApplications, setMyJobApplications] = useState([]);
+  const [loadingApps, setLoadingApps] = useState(false);
 
   // Use centralized auth context instead of local listener
   const { user, userProfile, isAdmin, logout } = useAuth();
+
+  // Auto-open TaskModal when user returns from magic link with pending task
+  useEffect(() => {
+    if (user) {
+      const pendingTask = localStorage.getItem("sayzo_pending_task");
+      if (pendingTask) {
+        setIsTaskOpen(true);
+        localStorage.removeItem("sayzo_pending_task");
+      }
+    }
+  }, [user]);
+
+  // Subscribe to user's job applications when profile modal opens
+  useEffect(() => {
+    if (!isProfileOpen || !user) {
+      return;
+    }
+
+    setLoadingApps(true);
+    const unsubscribe = subscribeToJobApplicationsByApplicant(
+      user.uid,
+      (apps) => {
+        setMyJobApplications(apps);
+        setLoadingApps(false);
+      },
+      (err) => {
+        console.error('Job applications subscription error:', err);
+        setLoadingApps(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [isProfileOpen, user]);
+
+  // Format date helper
+  const formatAppDate = (timestamp) => {
+    if (!timestamp) return '';
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  // Status badge component
+  const StatusBadge = ({ status }) => {
+    const styles = {
+      pending: 'bg-yellow-500/20 text-yellow-400',
+      accepted: 'bg-green-500/20 text-green-400',
+      rejected: 'bg-red-500/20 text-red-400',
+    };
+    const labels = {
+      pending: 'Pending',
+      accepted: 'Accepted',
+      rejected: 'Rejected',
+    };
+    return (
+      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${styles[status] || styles.pending}`}>
+        {labels[status] || 'Pending'}
+      </span>
+    );
+  };
 
   // Logout handler
   const handleLogout = async () => {
@@ -241,6 +307,37 @@ const Header = () => {
                     </div>
                   </div>
                 )}
+
+                {/* My Job Applications */}
+                <div className="bg-zinc-900 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Briefcase className="w-5 h-5 text-zinc-500" />
+                      <p className="text-white font-medium">My Job Applications</p>
+                    </div>
+                    <span className="text-zinc-500 text-sm">{myJobApplications.length}</span>
+                  </div>
+
+                  {loadingApps ? (
+                    <div className="flex justify-center py-2">
+                      <Loader2 className="w-5 h-5 animate-spin text-zinc-500" />
+                    </div>
+                  ) : myJobApplications.length === 0 ? (
+                    <p className="text-zinc-500 text-sm">No applications yet</p>
+                  ) : (
+                    <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-hide">
+                      {myJobApplications.map((app) => (
+                        <div key={app.id} className="flex justify-between items-center py-2 border-b border-zinc-800 last:border-0">
+                          <div>
+                            <p className="text-white text-sm">{app.jobTitle || app.roleApplyingFor}</p>
+                            <p className="text-zinc-500 text-xs">{formatAppDate(app.createdAt)}</p>
+                          </div>
+                          <StatusBadge status={app.status} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Logout Button */}
                 <button

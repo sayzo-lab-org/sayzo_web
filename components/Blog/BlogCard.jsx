@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { FileText } from 'lucide-react';
 
 const BlogCard = ({ blog }) => {
   const router = useRouter();
@@ -14,13 +15,19 @@ const BlogCard = ({ blog }) => {
     >
       {/* IMAGE */}
       <div className="relative overflow-hidden rounded-2xl  aspect-[4/3] ">
-        <Image
-          src={blog.img}
-          alt={blog.title}
-          fill
-          className="object-cover  "
-          sizes="(max-width: 768px) 100vw, 33vw"
-        />
+        {blog.img ? (
+          <Image
+            src={blog.img}
+            alt={blog.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+            <FileText className="w-16 h-16 text-gray-300" />
+          </div>
+        )}
 
         {/* ARROW CORNER */}
         <div className="absolute bottom-0 right-0 flex items-end">
