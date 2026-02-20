@@ -21,6 +21,14 @@ const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
 });
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "SAYZO",
+  "alternateName": ["Sayzo", "sayzo.in"],
+  "url": "https://sayzo.in/"
+};
+
 export const metadata = {
   title: "Sayzo — Get Tasks Done Fast | Find Local Help Anytime",
   description:
@@ -69,7 +77,12 @@ export default function RootLayout({ children }) {
   
   return (
     <html lang="en"  className={`${inter.variable} ${instrumentSerif.variable}`}>
-      
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <PolicyProvider>
       <AuthProvider>
       <body>
