@@ -236,9 +236,11 @@ const UserPage = ({ mode = "live" }) => {
                 <div
                   key={job.id}
                   onClick={() => setSelectedJob(job)}
-                  className="cursor-pointer border-2 border-gray-200 rounded-xl p-4 hover:border-primary-btn transition"
+                  className={`cursor-pointer border-2 border-gray-200 rounded-xl p-4 transition ${
+                    job.status === 'completed' ? 'hover:border-red-500' : 'hover:border-primary-btn'
+                  }`}
                 >
-                  <JobCard job={job} />
+                  <JobCard job={job} status={job.status} />
                 </div>
               ))}
             </section>
@@ -255,10 +257,10 @@ const UserPage = ({ mode = "live" }) => {
                       ${
                         selectedJob.id === job.id
                           ? "border-primary-btn bg-primary-btn/5"
-                          : "border-gray-200 hover:border-primary-btn"
+                          : `border-gray-200 ${job.status === 'completed' ? 'hover:border-red-500' : 'hover:border-primary-btn'}`
                       }`}
                   >
-                    <JobCard job={job} />
+                    <JobCard job={job} status={job.status} />
                   </div>
                 ))}
               </div>
@@ -298,7 +300,7 @@ const UserPage = ({ mode = "live" }) => {
               onClick={() => setSelectedJob(job)}
               className="border-2 border-gray-200 rounded-xl p-4"
             >
-              <JobCard job={job} />
+              <JobCard job={job} status={job.status} />
             </div>
           ))}
 

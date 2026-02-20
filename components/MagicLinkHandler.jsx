@@ -19,7 +19,6 @@ export default function MagicLinkHandler({ children }) {
   const pathname = usePathname();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [userEmail, setUserEmail] = useState("");
-  const [defaultRole, setDefaultRole] = useState(null);
   const [error, setError] = useState("");
 
   // Use ref to prevent race conditions with processing state
@@ -34,11 +33,6 @@ export default function MagicLinkHandler({ children }) {
       const user = await completeMagicLinkSignIn();
       if (user) {
         setUserEmail(user.email);
-
-        // Check if user is admin
-        if (isAdminEmail(user.email)) {
-          setDefaultRole("admin");
-        }
 
         try {
           // Check if profile needs completion
@@ -110,7 +104,6 @@ export default function MagicLinkHandler({ children }) {
         onClose={handleProfileClose}
         onSuccess={handleProfileComplete}
         userEmail={userEmail}
-        defaultRole={defaultRole}
       />
     </>
   );

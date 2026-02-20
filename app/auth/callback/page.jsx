@@ -81,7 +81,6 @@ export default function AuthCallbackPage() {
   const [userEmail, setUserEmail] = useState("");
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [emailInput, setEmailInput] = useState("");
-  const [defaultRole, setDefaultRole] = useState(null);
 
   useEffect(() => {
     handleEmailLinkSignIn();
@@ -99,11 +98,6 @@ export default function AuthCallbackPage() {
       const signedInUser = await completeMagicLinkSignIn();
       setUser(signedInUser);
       setUserEmail(signedInUser.email);
-
-      // Check if user is admin
-      if (isAdminEmail(signedInUser.email)) {
-        setDefaultRole("admin");
-      }
 
       // Check if profile is complete
       const profile = await getUserProfile(signedInUser.uid);
@@ -230,7 +224,6 @@ export default function AuthCallbackPage() {
         onClose={handleProfileClose}
         onSuccess={handleProfileComplete}
         userEmail={userEmail}
-        defaultRole={defaultRole}
       />
     </div>
   );

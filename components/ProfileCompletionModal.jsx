@@ -45,7 +45,6 @@ const ProfileCompletionModal = ({
   onClose,
   onSuccess,
   userEmail,
-  defaultRole = null,
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -55,7 +54,6 @@ const ProfileCompletionModal = ({
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
-    role: defaultRole || "",
   });
 
   // Safe localStorage helper
@@ -71,12 +69,6 @@ const ProfileCompletionModal = ({
     setMounted(true);
   }, []);
 
-  // Reset form when modal opens with new defaultRole
-  useEffect(() => {
-    if (isOpen && defaultRole) {
-      setForm((prev) => ({ ...prev, role: defaultRole }));
-    }
-  }, [isOpen, defaultRole]);
 
   const input =
     "w-full bg-[#18181B] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border border-zinc-800 focus:outline-none focus:border-zinc-600";
@@ -94,7 +86,6 @@ const ProfileCompletionModal = ({
   const validate = () => {
     if (!form.fullName.trim()) return "Full name is required";
     if (form.phone.length !== 10) return "Enter valid 10-digit phone number";
-    if (!form.role) return "Please select your role";
     return "";
   };
 
@@ -118,7 +109,6 @@ const ProfileCompletionModal = ({
         fullName: form.fullName.trim(),
         phone: form.phone,
         email: userEmail || currentUser.email,
-        role: form.role,
         profileCompleted: true,
         emailVerified: true,
       });
@@ -134,7 +124,6 @@ const ProfileCompletionModal = ({
           fullName: form.fullName.trim(),
           phone: form.phone,
           email: userEmail || currentUser.email,
-          role: form.role,
         });
       }, 1500);
     } catch (err) {
@@ -219,41 +208,6 @@ const ProfileCompletionModal = ({
                     value={form.phone}
                     onChange={handleChange}
                   />
-
-                  {/* Role Selection - only show if no default role */}
-                  {!defaultRole && (
-                    <div className="my-4">
-                      <p className="text-zinc-400 text-sm mb-3">I want to:</p>
-                      <div className="flex gap-3">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setForm((prev) => ({ ...prev, role: "task_giver" }))
-                          }
-                          className={`flex-1 py-4 rounded-xl font-semibold transition-colors ${
-                            form.role === "task_giver"
-                              ? "bg-white text-black"
-                              : "bg-zinc-900 text-white border border-zinc-700"
-                          }`}
-                        >
-                          Post Tasks
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setForm((prev) => ({ ...prev, role: "task_doer" }))
-                          }
-                          className={`flex-1 py-4 rounded-xl font-semibold transition-colors ${
-                            form.role === "task_doer"
-                              ? "bg-white text-black"
-                              : "bg-zinc-900 text-white border border-zinc-700"
-                          }`}
-                        >
-                          Do Tasks
-                        </button>
-                      </div>
-                    </div>
-                  )}
 
                   {error && (
                     <p className="text-red-400 text-sm mt-2">{error}</p>

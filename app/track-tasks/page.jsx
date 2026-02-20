@@ -634,27 +634,27 @@ export default function TrackTasksPage() {
                   <h2 className="font-bold text-xl md:text-2xl">
                     Applicants
                     {selectedTask && (
-                      <span className="text-sm font-normal text-gray-500 ml-2">
+                      <span className="hidden md:inline text-sm font-normal text-gray-500 ml-2">
                         for: {selectedTask.taskName?.substring(0, 30)}...
                       </span>
                     )}
                   </h2>
                   {selectedTask && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <button
                         onClick={() => setShowTaskDetailsModal(true)}
                         className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
                       >
                         <Eye className="w-4 h-4" />
-                        View Task
+                        <span className="hidden sm:inline">View Task</span>
                       </button>
                       {(selectedTask.status === TASK_STATUS.APPROVED || selectedTask.status === TASK_STATUS.ACTIVE) && (
                         <button
                           onClick={() => setShowCompleteConfirmModal(true)}
-                          className="flex items-center gap-2 px-3 py-2 text-sm bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium"
                         >
                           <CheckCircle className="w-4 h-4" />
-                          Mark Complete
+                          <span className="hidden sm:inline">Mark Complete</span>
                         </button>
                       )}
                     </div>

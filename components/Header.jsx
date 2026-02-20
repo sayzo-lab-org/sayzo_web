@@ -308,37 +308,6 @@ const Header = () => {
                   </div>
                 )}
 
-                {/* My Job Applications */}
-                <div className="bg-zinc-900 rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="w-5 h-5 text-zinc-500" />
-                      <p className="text-white font-medium">My Job Applications</p>
-                    </div>
-                    <span className="text-zinc-500 text-sm">{myJobApplications.length}</span>
-                  </div>
-
-                  {loadingApps ? (
-                    <div className="flex justify-center py-2">
-                      <Loader2 className="w-5 h-5 animate-spin text-zinc-500" />
-                    </div>
-                  ) : myJobApplications.length === 0 ? (
-                    <p className="text-zinc-500 text-sm">No applications yet</p>
-                  ) : (
-                    <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-hide">
-                      {myJobApplications.map((app) => (
-                        <div key={app.id} className="flex justify-between items-center py-2 border-b border-zinc-800 last:border-0">
-                          <div>
-                            <p className="text-white text-sm">{app.jobTitle || app.roleApplyingFor}</p>
-                            <p className="text-zinc-500 text-xs">{formatAppDate(app.createdAt)}</p>
-                          </div>
-                          <StatusBadge status={app.status} />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
                 {/* Logout Button */}
                 <button
                   onClick={handleLogout}

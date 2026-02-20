@@ -285,7 +285,6 @@ const TaskDoerAuthModal = ({ isOpen, onClose, onSuccess }) => {
         onClose={handleProfileClose}
         onSuccess={handleProfileComplete}
         userEmail={userEmail || email}
-        defaultRole="task_doer"
       />
     </ModalErrorBoundary>,
     document.body

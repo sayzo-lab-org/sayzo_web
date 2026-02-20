@@ -660,7 +660,6 @@ const TaskModal = ({ isOpen, onClose }) => {
         onClose={() => {}}
         onSuccess={handleProfileComplete}
         userEmail={email}
-        defaultRole="task_giver"
       />
     </>
   );

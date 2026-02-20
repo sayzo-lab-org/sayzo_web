@@ -185,13 +185,12 @@ const JobDetailPanel = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
           </Link>
         </div>
       ) : job.status === 'completed' ? (
-        <div className="mt-8 bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-          <CheckCircle className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-600 font-medium">This task has been completed</p>
-          <p className="text-sm text-gray-500 mt-1">
-            No longer accepting applications
-          </p>
-        </div>
+        <button
+          disabled
+          className="mt-8 w-full bg-gray-200 text-gray-500 py-3 rounded-lg font-medium cursor-not-allowed"
+        >
+          Task Completed
+        </button>
       ) : (
         <button
           onClick={handleApplyClick}

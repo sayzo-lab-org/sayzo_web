@@ -283,7 +283,6 @@ const TaskGiverAuthModal = ({ isOpen, onClose, onSuccess }) => {
         onClose={handleProfileClose}
         onSuccess={handleProfileComplete}
         userEmail={userEmail || email}
-        defaultRole="task_giver"
       />
     </ModalErrorBoundary>,
     document.body
