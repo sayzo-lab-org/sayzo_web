@@ -683,7 +683,7 @@ export default function TrackTasksPage() {
                 {selectedTask?.status === TASK_STATUS.APPROVED && applicants.length === 0 && (
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
                     <p className="text-green-700 text-sm">
-                      <strong>Approved:</strong> The task you posted has been verified and is now live on sayzo.in. Keep checking — you'll get interested applicants soon!
+                      <strong>Approved:</strong> The task you posted has been verified and is now live on sayzo.in. Keep checking - you'll get interested applicants soon!
                     </p>
                   </div>
                 )}

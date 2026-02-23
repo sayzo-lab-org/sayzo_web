@@ -5604,7 +5604,7 @@ export const MOCK_DATA = {
           body: [
             'Needs:',
             '• WhatsApp sales script for trial conversions',
-            '• Not generic — specific to his gym',
+            '• Not generic - specific to his gym',
             '',
             'Task: "Write a closing script for my"'
           ],

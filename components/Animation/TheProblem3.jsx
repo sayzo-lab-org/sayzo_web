@@ -45,7 +45,7 @@ const TheProblem3 = () => {
             The Problem
           </h2>
           <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto">
-            People need help and others have skills — but the system connecting
+            People need help and others have skills - but the system connecting
             them is broken. Finding the right person is slow, payments get
             delayed, and trust keeps breaking.
           </p>
