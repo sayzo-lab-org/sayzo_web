@@ -9,17 +9,25 @@ export async function generateMetadata({ params }) {
   const category = getCategoryBySlug(categorySlug);
 
   if (!category) {
-    return { title: "Category Not Found" };
+    return { title: "Category Not Found | SAYZO" };
   }
 
+  const title = `Need ${category.name} Help? | Find Trusted Local Experts on SAYZO`;
+  const description = `Looking for ${category.name.toLowerCase()} services? Browse verified local experts, compare prices, and hire trusted helpers near you. Post a task in 60 seconds.`;
+
   return {
-    title: `${category.name} Services | Explore Neighborhood Skills`,
-    description: category.description,
+    title,
+    description,
     openGraph: {
-      title: `${category.name} | SAYZO Neighborhood Economy`,
-      description: category.description,
+      title: `${category.name} Services Near You | Trusted Local Experts`,
+      description,
       url: `https://sayzo.in/category/${categorySlug}`,
       type: 'website',
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${category.name} Help Near You`,
+      description: `Find trusted ${category.name.toLowerCase()} experts in your neighborhood on SAYZO.`,
     },
   };
 }

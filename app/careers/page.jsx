@@ -1,12 +1,18 @@
 import CareersClient from "./CareersClient";
 
 export const metadata = {
-  title: "Careers | Join the SAYZO Team",
-  description: "Explore open positions at SAYZO. Join us in building the future of neighborhood services.",
+  title: "Jobs at SAYZO | Build the Future of Local Services With Us",
+  description: "Want to shape how neighborhoods connect? Explore open roles at SAYZO and join a team building India's leading local task marketplace.",
   openGraph: {
-    title: "Work at SAYZO",
-    description: "Check out our latest job openings and be part of a community-first team.",
+    title: "Jobs at SAYZO | Build the Future of Local Services",
+    description: "Explore open roles and join a team building India's leading local task marketplace.",
     url: "https://sayzo.in/careers",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jobs at SAYZO",
+    description: "Join a team building India's leading local task marketplace.",
   },
 };
 

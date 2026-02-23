@@ -31,29 +31,37 @@ const jsonLd = {
 };
 
 export const metadata = {
-  title: "Sayzo - Get Tasks Done Fast | Find Local Help Anytime",
+  title: "SAYZO - Hire Local Help in Minutes | Post Tasks, Get It Done Today",
   description:
-    "Sayzo helps you get everyday tasks done quickly by connecting you with trusted local helpers. Post a task, set your budget, and get it completed fast - anytime, anywhere.",
+    "Need help with errands, repairs, or deliveries? Post your task on SAYZO and connect with trusted local helpers near you. Fast, affordable, reliable.",
 
   keywords: [
-    "task marketplace",
-    "local services",
-    "hire helpers",
+    "hire local help",
+    "task marketplace India",
+    "find helpers near me",
     "post tasks online",
-    "get work done fast",
-    "Sayzo India",
-    "freelance tasks",
+    "local services app",
+    "neighborhood helpers",
+    "gig work India",
+    "errand services",
+    "home services",
   ],
 
   metadataBase: new URL("https://sayzo.in"),
 
   openGraph: {
-    title: "Sayzo - Get Tasks Done Fast",
+    title: "SAYZO - Hire Local Help in Minutes | Get Tasks Done Today",
     description:
-      "Post tasks, set your budget, and get help from trusted local people instantly.",
+      "Need help with errands, repairs, or deliveries? Post your task and connect with trusted local helpers near you. Fast, affordable, reliable.",
     url: "https://sayzo.in",
-    siteName: "Sayzo",
+    siteName: "SAYZO",
     type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "SAYZO - Hire Local Help in Minutes",
+    description: "Post tasks and connect with trusted local helpers near you. Fast, affordable, reliable.",
   },
   verification: {
     google: "863C8rGepBCeS7A97VIQdnrSCu3LpQiUZtSv7_1uj5g",

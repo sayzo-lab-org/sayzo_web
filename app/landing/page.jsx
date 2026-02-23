@@ -5,6 +5,22 @@ import HeroSection1 from '@/components/LadingPage/HeroSection1'
 import HowItWorks from '@/components/LadingPage/HowItWorks'
 import React from 'react'
 
+export const metadata = {
+  title: "Get Any Task Done Locally | SAYZO - Your Neighborhood Task Marketplace",
+  description: "Need help with chores, errands, or projects? SAYZO connects you with trusted local helpers. Post tasks in seconds, get help today.",
+  openGraph: {
+    title: "Get Any Task Done Locally | SAYZO",
+    description: "Connect with trusted local helpers for any task. Post in seconds, get help today.",
+    url: "https://sayzo.in/landing",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Get Any Task Done Locally",
+    description: "SAYZO connects you with trusted local helpers for any task.",
+  },
+};
+
 const page = () => {
   return (
     <div>

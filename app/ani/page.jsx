@@ -6,6 +6,22 @@ import ScrollSection from "@/components/ScrollSection"
 import FAQSection from "@/components/FAQSection"
 import TheProblem from "@/components/TheProblem"
 
+export const metadata = {
+  title: "How SAYZO Solves Your Local Help Problems | See It in Action",
+  description: "Struggling to find reliable help nearby? Watch how SAYZO solves common problems and connects you with trusted helpers in your neighborhood.",
+  openGraph: {
+    title: "How SAYZO Solves Local Help Problems",
+    description: "See how SAYZO connects you with trusted helpers in your neighborhood.",
+    url: "https://sayzo.in/ani",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "How SAYZO Works",
+    description: "See how SAYZO solves your local help problems.",
+  },
+};
+
 const page = () => {
   return (
     <div>
