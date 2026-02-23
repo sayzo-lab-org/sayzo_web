@@ -55,7 +55,7 @@ export const rawJobs = [
       "Business Writing",
       "Career Coaching"
     ],
-    "description": "I already have a resume but I'm not getting interview calls. I don't want a cosmetic rewrite — I want an honest audit. I need feedback on structure, role alignment, missing keywords, and how recruiters might be reading my resume. The goal is to understand what's holding my profile back and how to position my experience better for the roles I'm targeting. Clear explanations are more important than fancy formatting.",
+    "description": "I already have a resume but I'm not getting interview calls. I don't want a cosmetic rewrite - I want an honest audit. I need feedback on structure, role alignment, missing keywords, and how recruiters might be reading my resume. The goal is to understand what's holding my profile back and how to position my experience better for the roles I'm targeting. Clear explanations are more important than fancy formatting.",
     "company": {
       "name": "Rajesh Kumar",
       "about": "Verified task giver on the platform"
@@ -143,7 +143,7 @@ export const rawJobs = [
       "CRO",
       "Data Analytics"
     ],
-    "description": "I'm running ads and getting traffic, but conversions are poor. I want someone to review my sales funnel end-to-end — landing pages, messaging, CTAs, and user flow. The goal is to identify exactly where users drop off and why. I'm looking for practical fixes and prioritised improvements, not theoretical explanations.",
+    "description": "I'm running ads and getting traffic, but conversions are poor. I want someone to review my sales funnel end-to-end - landing pages, messaging, CTAs, and user flow. The goal is to identify exactly where users drop off and why. I'm looking for practical fixes and prioritised improvements, not theoretical explanations.",
     "company": {
       "name": "Amit Desai",
       "about": "Verified task giver on the platform"
@@ -187,7 +187,7 @@ export const rawJobs = [
       "Content Strategy",
       "Video Marketing"
     ],
-    "description": "I post on Instagram inconsistently and don't see any growth. I want a clear content strategy for the next 30 days — what to post, why it works, and how it fits my niche. This is not about posting daily blindly. I want direction, themes, and clarity so my effort actually compounds over time.",
+    "description": "I post on Instagram inconsistently and don't see any growth. I want a clear content strategy for the next 30 days - what to post, why it works, and how it fits my niche. This is not about posting daily blindly. I want direction, themes, and clarity so my effort actually compounds over time.",
     "company": {
       "name": "Rahul Malhotra",
       "about": "Verified task giver on the platform"
@@ -539,7 +539,7 @@ export const rawJobs = [
       "Bookkeeping",
       "Financial Planning"
     ],
-    "description": "My business financial records exist but aren't organized properly. I need someone to review transactions, categorize expenses, and highlight inconsistencies. This is not tax filing — it's about clarity so I understand where money is going and can plan better.",
+    "description": "My business financial records exist but aren't organized properly. I need someone to review transactions, categorize expenses, and highlight inconsistencies. This is not tax filing - it's about clarity so I understand where money is going and can plan better.",
     "company": {
       "name": "Varun Menon",
       "about": "Verified task giver on the platform"
@@ -935,7 +935,7 @@ export const rawJobs = [
       "Business Consulting",
       "Mentorship"
     ],
-    "description": "I'm building a small team and need simple HR policies in place. This includes leave policy, working hours, basic conduct guidelines, and hiring norms. I don't want corporate-level documents — just practical policies that work for a small, growing startup.",
+    "description": "I'm building a small team and need simple HR policies in place. This includes leave policy, working hours, basic conduct guidelines, and hiring norms. I don't want corporate-level documents - just practical policies that work for a small, growing startup.",
     "company": {
       "name": "Sunil Bhardwaj",
       "about": "Verified task giver on the platform"
@@ -1155,7 +1155,7 @@ export const rawJobs = [
       "SEO Writing",
       "Research"
     ],
-    "description": "I need well-written blog content for my website that educates readers and supports SEO. The focus is clarity, relevance, and usefulness — not keyword stuffing or generic articles.",
+    "description": "I need well-written blog content for my website that educates readers and supports SEO. The focus is clarity, relevance, and usefulness - not keyword stuffing or generic articles.",
     "company": {
       "name": "Arvind Subramanian",
       "about": "Verified task giver on the platform"
@@ -1265,7 +1265,7 @@ export const rawJobs = [
       "Vendor Coordination",
       "On-ground Execution"
     ],
-    "description": "I need someone to handle logistics during an event — vendor coordination, timing checks, and small issue resolution. This role supports smooth execution while I focus on attendees.",
+    "description": "I need someone to handle logistics during an event - vendor coordination, timing checks, and small issue resolution. This role supports smooth execution while I focus on attendees.",
     "company": {
       "name": "Savita Menon",
       "about": "Verified task giver on the platform"
@@ -1771,7 +1771,7 @@ export const rawJobs = [
       "Business Consulting",
       "Personal Mentorship"
     ],
-    "description": "I'm facing multiple decisions in my business and feel stuck due to overthinking. I need a focused one-on-one session with someone experienced who can help me break down options, risks, and priorities. This is not consulting deliverables — it's about clarity, perspective, and leaving the session with confident next steps.",
+    "description": "I'm facing multiple decisions in my business and feel stuck due to overthinking. I need a focused one-on-one session with someone experienced who can help me break down options, risks, and priorities. This is not consulting deliverables - it's about clarity, perspective, and leaving the session with confident next steps.",
     "company": {
       "name": "Suresh Oberoi",
       "about": "Verified task giver on the platform"
@@ -2431,7 +2431,7 @@ export const rawJobs = [
       "Data Analytics",
       "CRO"
     ],
-    "description": "I get leads but conversions are low. I need help identifying where the sales process breaks down — messaging, follow-ups, or objections. The outcome should be clear fixes to improve conversion quality, not generic sales advice.",
+    "description": "I get leads but conversions are low. I need help identifying where the sales process breaks down - messaging, follow-ups, or objections. The outcome should be clear fixes to improve conversion quality, not generic sales advice.",
     "company": {
       "name": "Vishy Anand",
       "about": "Verified task giver on the platform"
@@ -2651,7 +2651,7 @@ export const rawJobs = [
       "Personal Mentorship",
       "Wellness Coaching"
     ],
-    "description": "I'm running a business but feel mentally exhausted and unfocused. I need a structured session to identify burnout signals, mental overload, and poor work patterns. This is not therapy — it's about regaining clarity, energy, and sustainable routines so I can function better as a founder without pushing myself to collapse.",
+    "description": "I'm running a business but feel mentally exhausted and unfocused. I need a structured session to identify burnout signals, mental overload, and poor work patterns. This is not therapy - it's about regaining clarity, energy, and sustainable routines so I can function better as a founder without pushing myself to collapse.",
     "company": {
       "name": "Kiran Mazumdar-Shaw",
       "about": "Verified task giver on the platform"
@@ -2695,7 +2695,7 @@ export const rawJobs = [
       "Business Consulting",
       "Process Mapping"
     ],
-    "description": "I lose potential customers due to inconsistent follow-ups. I need help designing a simple follow-up process — timing, messaging, and responsibility — so leads don't fall through cracks. The focus is on process clarity, not CRM tools.",
+    "description": "I lose potential customers due to inconsistent follow-ups. I need help designing a simple follow-up process - timing, messaging, and responsibility - so leads don't fall through cracks. The focus is on process clarity, not CRM tools.",
     "company": {
       "name": "Chanda Kochhar",
       "about": "Verified task giver on the platform"
@@ -2761,7 +2761,7 @@ export const rawJobs = [
       "Basic Troubleshooting",
       "Device Setup"
     ],
-    "description": "I face Wi-Fi dead zones at home. I need someone to assess router placement and make simple adjustments to improve coverage. This is basic, hands-on help — not professional networking work — but careful setup matters.",
+    "description": "I face Wi-Fi dead zones at home. I need someone to assess router placement and make simple adjustments to improve coverage. This is basic, hands-on help - not professional networking work - but careful setup matters.",
     "company": {
       "name": "Falguni Nayar",
       "about": "Verified task giver on the platform"
@@ -2981,7 +2981,7 @@ export const rawJobs = [
       "Local Coordination",
       "Task Execution"
     ],
-    "description": "I need someone to handle a local product return — pickup, basic verification, and drop-off. The task is short but time-sensitive and requires careful handling and confirmation.",
+    "description": "I need someone to handle a local product return - pickup, basic verification, and drop-off. The task is short but time-sensitive and requires careful handling and confirmation.",
     "company": {
       "name": "Richa Kar",
       "about": "Verified task giver on the platform"
@@ -3091,7 +3091,7 @@ export const rawJobs = [
       "Mentorship",
       "Personal Mentorship"
     ],
-    "description": "I'm stuck between multiple strategic choices and need an experienced perspective to think clearly. This task is a focused discussion to break down options, trade-offs, and next steps. I'm not looking for documents or frameworks—just sharp thinking, honest feedback, and clarity so I can make a confident decision without second-guessing myself later.",
+    "description": "I'm stuck between multiple strategic choices and need an experienced perspective to think clearly. This task is a focused discussion to break down options, trade-offs, and next steps. I'm not looking for documents or frameworks-just sharp thinking, honest feedback, and clarity so I can make a confident decision without second-guessing myself later.",
     "company": {
       "name": "Sanjay Mehta",
       "about": "Verified task giver on the platform"

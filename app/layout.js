@@ -31,9 +31,9 @@ const jsonLd = {
 };
 
 export const metadata = {
-  title: "Sayzo — Get Tasks Done Fast | Find Local Help Anytime",
+  title: "Sayzo - Get Tasks Done Fast | Find Local Help Anytime",
   description:
-    "Sayzo helps you get everyday tasks done quickly by connecting you with trusted local helpers. Post a task, set your budget, and get it completed fast — anytime, anywhere.",
+    "Sayzo helps you get everyday tasks done quickly by connecting you with trusted local helpers. Post a task, set your budget, and get it completed fast - anytime, anywhere.",
 
   keywords: [
     "task marketplace",
@@ -48,7 +48,7 @@ export const metadata = {
   metadataBase: new URL("https://sayzo.in"),
 
   openGraph: {
-    title: "Sayzo — Get Tasks Done Fast",
+    title: "Sayzo - Get Tasks Done Fast",
     description:
       "Post tasks, set your budget, and get help from trusted local people instantly.",
     url: "https://sayzo.in",
@@ -84,7 +84,7 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-E4NSDNC896"
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -92,7 +92,7 @@ export default function RootLayout({ children }) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-E4NSDNC896');
+            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
           `}
         </Script>
       </head>

@@ -5,7 +5,7 @@ export const blogs = [
     slug: "the-neighborhood-economy",
 
     desc1:
-      "For decades, the true potential of local neighborhoods has remained hidden in plain sight. In almost every street, there are skilled individuals—a designer, electrician, tutor, or technician—yet their abilities often go unnoticed. Despite living just a few houses away, people still search across the city or online platforms for help, wasting time and missing nearby opportunities.",
+      "For decades, the true potential of local neighborhoods has remained hidden in plain sight. In almost every street, there are skilled individuals-a designer, electrician, tutor, or technician-yet their abilities often go unnoticed. Despite living just a few houses away, people still search across the city or online platforms for help, wasting time and missing nearby opportunities.",
 
     desc2:
       "The core issue isn’t a lack of talent, but a lack of structure. Local help is currently discovered through scattered WhatsApp groups, outdated contacts, or unreliable word-of-mouth. Messages get lost, availability is unclear, and trust is difficult to establish. This chaotic system keeps skilled people invisible while leaving customers uncertain and frustrated.",
@@ -31,7 +31,7 @@ export const blogs = [
     slug: "monetizing-your-micro-skills",
 
     desc1:
-      "The traditional 9-to-5 career is no longer the only path to financial stability. Many people possess micro-skills—small, specific abilities that may not define their main profession but hold real value in daily life. These skills often remain unused simply because they are difficult to discover.",
+      "The traditional 9-to-5 career is no longer the only path to financial stability. Many people possess micro-skills-small, specific abilities that may not define their main profession but hold real value in daily life. These skills often remain unused simply because they are difficult to discover.",
 
     desc2:
       "From assembling furniture to troubleshooting Wi-Fi or organizing spaces, micro-skills solve real problems. However, the high cost of discovery keeps these skills hidden. People don’t know who to ask, and skilled individuals don’t know how to offer their services locally.",
@@ -70,7 +70,7 @@ export const blogs = [
       "This structured approach saves time for customers and ensures visibility for workers. No more chasing contacts or repeating the same request across multiple groups.",
 
     desc5:
-      "Through task-based reviews and verified profiles, SAYZO builds real trust and accountability—bringing clarity and reliability where chaos once existed.",
+      "Through task-based reviews and verified profiles, SAYZO builds real trust and accountability-bringing clarity and reliability where chaos once existed.",
 
     img: 'https://picsum.photos/seed/tech3/800/600',
     author: 'Ayan',
