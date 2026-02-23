@@ -2,11 +2,18 @@
 import UserPage from "@/components/UserPage";
 
 export const metadata = {
-  title: "Use Cases | How to use SAYZO",
-  description: "Discover real-world examples of how people are using SAYZO to solve problems and find local help.",
+  title: "What Can You Post on SAYZO? | Real Task Examples & Use Cases",
+  description: "Wondering what tasks you can post? See real examples—from grocery runs to furniture assembly—and learn how SAYZO users save time every day.",
   openGraph: {
-    title: "SAYZO Use Cases",
+    title: "What Can You Post on SAYZO? | Real Task Examples",
+    description: "From grocery runs to furniture assembly—see how real users get tasks done daily on SAYZO.",
     url: "https://sayzo.in/use-cases",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "What Can You Post on SAYZO?",
+    description: "See real task examples and learn how SAYZO users save time every day.",
   },
 };
 

@@ -15,17 +15,25 @@ export async function generateMetadata({ params }) {
   const subCategory = category?.subCategories.find((s) => s.slug === subCategorySlug);
 
   if (!category || !subCategory) {
-    return { title: "Page Not Found" };
+    return { title: "Page Not Found | SAYZO" };
   }
 
+  const title = `Need ${subCategory.name} Help? | ${category.name} Experts Near You`;
+  const description = `Looking for ${subCategory.name.toLowerCase()} help? Connect with skilled locals, get quotes fast, and hire trusted experts in your neighborhood today.`;
+
   return {
-    title: `${subCategory.name} | ${category.name} Services on SAYZO`,
-    description: subCategory.description || `Find expert ${subCategory.name} help in your neighborhood. Discover skills, tasks, and local experts on SAYZO.`,
+    title,
+    description,
     openGraph: {
-      title: `${subCategory.name} - ${category.name}`,
-      description: subCategory.description,
+      title: `${subCategory.name} Services | Find Local ${category.name} Experts`,
+      description,
       url: `https://sayzo.in/category/${categorySlug}/${subCategorySlug}`,
       type: 'website',
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${subCategory.name} Help Near You`,
+      description: `Find trusted ${subCategory.name.toLowerCase()} experts in your area on SAYZO.`,
     },
   };
 }
