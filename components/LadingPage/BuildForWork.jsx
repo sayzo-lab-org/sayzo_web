@@ -7,7 +7,7 @@ const BuildForWork = () => {
     <section className="pb-20 md:pb-30">
       <div className="max-w-5xl mx-auto px-4 text-center">
         <p className="font-medium text-[40px] md:text-5xl lg:text-6xl">
-          Build for <span className="font-serif italic">real work</span>
+          Built for <span className="font-serif italic">real work</span>
         </p>
 
         <p className="mt-4 sm:mt-5 text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
@@ -22,9 +22,9 @@ const BuildForWork = () => {
       </div>
 
       <div className="mt-12 md:mt-16 flex flex-col gap-6">
-        <MarqueeRow items={MARQUEE_DATA[0]} direction="left" speed={28} />
-        <MarqueeRow items={MARQUEE_DATA[1]} direction="right" speed={32} />
-        <MarqueeRow items={MARQUEE_DATA[2]} direction="left" speed={30} />
+        <MarqueeRow items={MARQUEE_DATA[0]} direction="left" speed={550} />
+        <MarqueeRow items={MARQUEE_DATA[1]} direction="right" speed={600} />
+        <MarqueeRow items={MARQUEE_DATA[2]} direction="left" speed={570} />
       </div>
     </section>
   );

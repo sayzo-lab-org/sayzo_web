@@ -1,33 +1,70 @@
+import { categories } from "./categories.js";
 
+// Generate marquee items from all subcategories
+const generateMarqueeItems = () => {
+  const allItems = [];
 
-export const MARQUEE_DATA = [
-  // Row 1
-  [
-    { id: '1-1', text: 'Optimize my creative workflow', category: 'AI' },
-    { id: '1-2', text: 'Fix my website bug now', category: 'Tech' },
-    { id: '1-3', text: 'Need a local photographer for a product shoot', category: 'Photography' },
-  ],
-  // Row 2
-  [
-    { id: '2-1', text: 'Optimize my creative workflow', category: 'AI' },
-    { id: '2-2', text: 'Need a local photographer for a product shoot', category: 'Photography' },
-    { id: '2-3', text: 'Fix my website bug now', category: 'Tech' },
-  ],
-  // Row 3
-  [
-    { id: '3-1', text: 'Need a professional motion artist', category: 'Animation' },
-    { id: '3-2', text: 'Help with a powerpoint presentation', category: 'Business' },
-    { id: '3-3', text: 'Set up AI automation', category: 'AI' },
-  ]
-];
+  categories.forEach((category) => {
+    category.subCategories?.forEach((subCategory) => {
+      if (subCategory.realTaskStatements && subCategory.realTaskStatements.length > 0) {
+        allItems.push({
+          text: subCategory.realTaskStatements[0],
+          category: category.name,
+        });
+      }
+    });
+  });
+
+  return allItems;
+};
+
+// Seeded random for deterministic shuffle (avoids hydration mismatch)
+const seededRandom = (seed) => {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+};
+
+// Distribute items across 3 rows with deterministic shuffle
+const distributeIntoRows = (items) => {
+  const shuffled = [...items].map((item, i) => ({ item, sort: seededRandom(i + 1) }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ item }) => item);
+
+  const rowCount = 3;
+  const rows = [[], [], []];
+
+  shuffled.forEach((item, index) => {
+    const rowIndex = index % rowCount;
+    rows[rowIndex].push({
+      id: `${rowIndex + 1}-${rows[rowIndex].length + 1}`,
+      ...item,
+    });
+  });
+
+  return rows;
+};
+
+const allItems = generateMarqueeItems();
+export const MARQUEE_DATA = distributeIntoRows(allItems);
 
 export const CATEGORY_STYLES = {
-  AI: 'bg-[#dcfce7] text-[#4ebba0]', // Mint
-  Tech: 'bg-[#fee2e2] text-[#ef9a9a]', // Soft Red
-  Photography: 'bg-[#fef3c7] text-[#d4ac0d]', // Gold
-  Animation: 'bg-[#f3e8ff] text-[#c084fc]', // Lavender
-  Business: 'bg-[#dbeafe] text-[#60a5fa]', // Sky Blue
-  Design: 'bg-[#ffedd5] text-[#fb923c]', // Peach
-  Web: 'bg-[#ccfbf1] text-[#2dd4bf]', // Teal
-  Social: 'bg-[#fce7f3] text-[#f472b6]', // Pink
+  "Personal Growth": "bg-[#10a37f] text-white",
+  "Consulting": "bg-[#10a37f] text-white",
+  "Data": "bg-[#10a37f] text-white",
+  "Photography": "bg-[#10a37f] text-white",
+  "Graphics & Design": "bg-[#10a37f] text-white",
+  "Programming & Tech": "bg-[#10a37f] text-white",
+  "Digital Marketing": "bg-[#10a37f] text-white",
+  "Video & Animation": "bg-[#10a37f] text-white",
+  "Writing & Translation": "bg-[#10a37f] text-white",
+  "Music & Audio": "bg-[#10a37f] text-white",
+  "Business": "bg-[#10a37f] text-white",
+  "Finance": "bg-[#10a37f] text-white",
+  "AI Services": "bg-[#10a37f] text-white",
+  "Ask Doubts": "bg-[#10a37f] text-white",
+  "Local Services": "bg-[#10a37f] text-white",
+  "Events & Experiences": "bg-[#10a37f] text-white",
+  "Execution & Management": "bg-[#10a37f] text-white",
+  "Assembly & Setup (Basic)": "bg-[#10a37f] text-white",
+  "Tech Help (Non-Professional)": "bg-[#10a37f] text-white",
 };

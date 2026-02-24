@@ -31,6 +31,7 @@ const jsonLd = {
 };
 
 export const metadata = {
+  applicationName: "SAYZO",
   title: "SAYZO - Hire Local Help in Minutes | Post Tasks, Get It Done Today",
   description:
     "Need help with errands, repairs, or deliveries? Post your task on SAYZO and connect with trusted local helpers near you. Fast, affordable, reliable.",
