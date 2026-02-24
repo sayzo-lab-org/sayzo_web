@@ -146,7 +146,7 @@ const Header = () => {
               <span className="text-sm font-medium flex items-center">
                 Live Tasks
                 <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5"
+                  className="w-3 h-3 text-primary-btn -mt-2 -ml-0.5"
                   strokeWidth={3.2}
                 />
               </span>
@@ -376,7 +376,7 @@ const Header = () => {
               >
                 Live Tasks
                 <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2"
+                  className="w-3 h-3 text-primary-btn -mt-2"
                   strokeWidth={3.2}
                 />
               </Link>

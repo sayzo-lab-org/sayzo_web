@@ -78,7 +78,7 @@ const HeroSection1 = () => {
             <button className=" sm:w-auto bg-black text-white px-10 py-3 rounded-full text-sm sm:text-base md:text-lg font-medium hover:bg-gray-800 transition active:scale-95">
               Find Help
             </button>
-            <Link href="/use-cases">
+            <Link href="/live-tasks">
             <button className=" sm:w-auto cursor-pointer text-black text-sm sm:text-base md:text-lg font-medium hover:text-primary-btn transition">
               Browse Tasks
             </button>
