@@ -20,15 +20,6 @@ const Sidebar = ({ categories, activeCategory, onCategoryChange }) => {
           );
         })}
       </nav>
-
-      <div className="mt-4 px-6">
-        <p className="text-[#6b7280] text-[13px] leading-relaxed mb-6">
-          We are always seeking talented people. In case you cannot find your desired position here, please send us your LinkedIn profile and give us your contact information. We will be in touch.
-        </p>
-        <button className="w-full py-2.5 px-4 rounded-full border border-[#374151] text-[#111827] font-medium hover:bg-gray-100 transition-colors text-[13px] whitespace-nowrap">
-          Share your LinkedIn profile
-        </button>
-      </div>
     </aside>
   );
 };
