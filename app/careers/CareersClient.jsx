@@ -82,9 +82,9 @@ const CareersClient = () => {
     fetchJobs();
   }, []);
 
-  // Combine mock jobs with Firebase jobs
+  // Combine mock jobs with Firebase jobs (MOCK_JOBS hidden for now)
   const allJobs = useMemo(() => {
-    return [...MOCK_JOBS, ...firebaseJobs];
+    return [...firebaseJobs];
   }, [firebaseJobs]);
 
   // Calculate category stats dynamically (array format for Sidebar)
