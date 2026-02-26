@@ -15,7 +15,7 @@ export default function Home () {
     <HeroSection1/>
     <BuildForWork/>
     <AnyTask/>
-    <div className='max-w-350 mx-auto pb-20 md:pb-30 px-4 '>
+    <div className='max-w-350 mx-auto px-4 '>
     <CommunityFirst/>
    
     </div>
