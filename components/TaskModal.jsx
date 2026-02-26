@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, CheckCircle, Loader2, Mail } from "lucide-react";
+import { X, CheckCircle, Loader2, Mail, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   sendMagicLink,
@@ -27,6 +27,7 @@ const TaskModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+  const [skillInput, setSkillInput] = useState("");
 
   const [form, setForm] = useState({
     customerName: "",
@@ -37,7 +38,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     budgetType: "fixed",
     amount: "",
     duration: "",
-    skills: "",
+    skills: [],
     experience: "",
   });
 
@@ -59,8 +60,15 @@ const TaskModal = ({ isOpen, onClose }) => {
         return false;
       }
 
-      // Restore form data
-      setForm(draft.form);
+      // Restore form data with backward compatibility for skills
+      const restoredForm = { ...draft.form };
+      // Handle old format where skills was a comma-separated string
+      if (typeof restoredForm.skills === 'string') {
+        restoredForm.skills = restoredForm.skills
+          ? restoredForm.skills.split(',').map(s => s.trim()).filter(Boolean)
+          : [];
+      }
+      setForm(restoredForm);
       setTaskType(draft.taskType);
       setEmail(draft.email);
       return true;
@@ -133,6 +141,31 @@ const TaskModal = ({ isOpen, onClose }) => {
     return emailRegex.test(email);
   };
 
+  // Skill handlers
+  const suggestedSkills = ['Web Development', 'Graphic Design', 'Writing', 'Data Entry', 'Video Editing', 'Photography'];
+
+  const handleAddSkill = () => {
+    const skill = skillInput.trim();
+    if (skill && !form.skills.includes(skill)) {
+      setForm((prev) => ({ ...prev, skills: [...prev.skills, skill] }));
+      setSkillInput("");
+    }
+  };
+
+  const handleRemoveSkill = (skillToRemove) => {
+    setForm((prev) => ({
+      ...prev,
+      skills: prev.skills.filter((s) => s !== skillToRemove),
+    }));
+  };
+
+  const handleSkillKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddSkill();
+    }
+  };
+
   const handleSendMagicLink = async () => {
     if (!validateEmail(email)) {
       setError("Please enter a valid email address");
@@ -193,7 +226,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     if (!form.description.trim()) return "Description is required";
     if (!form.amount.trim()) return "Amount is required";
     if (!form.duration.trim()) return "Duration is required";
-    if (!form.skills.trim()) return "Skills are required";
+    if (form.skills.length === 0) return "At least one skill is required";
     if (!form.experience) return "Select experience level";
     return "";
   };
@@ -238,7 +271,7 @@ const TaskModal = ({ isOpen, onClose }) => {
         budgetType: form.budgetType,
         amount: form.amount,
         duration: form.duration,
-        skills: form.skills,
+        skills: form.skills.join(", "),
         experience: form.experience,
       };
 
@@ -280,7 +313,7 @@ const TaskModal = ({ isOpen, onClose }) => {
         budgetType: "fixed",
         amount: "",
         duration: "",
-        skills: "",
+        skills: [],
         experience: "",
       });
     } else {
@@ -296,10 +329,11 @@ const TaskModal = ({ isOpen, onClose }) => {
         budgetType: "fixed",
         amount: "",
         duration: "",
-        skills: "",
+        skills: [],
         experience: "",
       });
     }
+    setSkillInput("");
 
     onClose();
   };
@@ -496,13 +530,59 @@ const TaskModal = ({ isOpen, onClose }) => {
                       value={form.duration}
                       onChange={handleChange}
                     />
-                    <input
-                      className={input}
-                      placeholder="Skills (comma separated) *"
-                      name="skills"
-                      value={form.skills}
-                      onChange={handleChange}
-                    />
+                    {/* Skills Input */}
+                    <div className="my-2">
+                      <div className="flex gap-2 mb-2">
+                        <input
+                          type="text"
+                          value={skillInput}
+                          onChange={(e) => setSkillInput(e.target.value)}
+                          onKeyDown={handleSkillKeyDown}
+                          placeholder="Add a skill *"
+                          className="flex-1 bg-[#18181B] text-white placeholder:text-zinc-500 px-4 py-3 rounded-xl border border-zinc-800 focus:outline-none focus:border-zinc-600"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddSkill}
+                          className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl transition"
+                        >
+                          <Plus className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      {/* Suggested Skills */}
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {suggestedSkills
+                          .filter((skill) => !form.skills.includes(skill))
+                          .map((skill) => (
+                            <button
+                              key={skill}
+                              type="button"
+                              onClick={() => setForm((prev) => ({ ...prev, skills: [...prev.skills, skill] }))}
+                              className="text-xs px-2 py-1 rounded-md bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white transition"
+                            >
+                              + {skill}
+                            </button>
+                          ))}
+                      </div>
+
+                      {/* Selected Skills */}
+                      {form.skills.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {form.skills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/20 text-green-500 text-sm"
+                            >
+                              {skill}
+                              <button type="button" onClick={() => handleRemoveSkill(skill)}>
+                                <X className="w-3.5 h-3.5 hover:text-white" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
 
                     <select
                       name="experience"
@@ -587,7 +667,7 @@ const TaskModal = ({ isOpen, onClose }) => {
 
                       <div className="bg-zinc-900 rounded-xl p-4">
                         <p className="text-zinc-400 text-sm">Skills Required</p>
-                        <p className="text-white">{form.skills}</p>
+                        <p className="text-white">{form.skills.join(", ")}</p>
                       </div>
 
                       <div className="bg-zinc-900 rounded-xl p-4">
