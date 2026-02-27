@@ -11,17 +11,13 @@ export default function Home () {
   
 
   return (
-    <div>
+    <>
     <HeroSection1/>
     <BuildForWork/>
     <AnyTask/>
-    <div className='max-w-350 mx-auto px-4 '>
     <CommunityFirst/>
-   
-    </div>
-     <HowItWorks/>
-    
-  </div>
+    <HowItWorks/>
+  </>
   );
 };
 
