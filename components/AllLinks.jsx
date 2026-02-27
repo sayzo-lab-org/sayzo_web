@@ -2,13 +2,23 @@
 
 import { Facebook, Linkedin, Twitter, Instagram } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter  , usePathname} from "next/navigation";
 import WaitlistModal from "./JoinWaitList/WaitlistModal";
 import { useState } from "react";
+import Footer from "@/components/Footer";
 
 const AllLinks = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  if (
+     pathname?.startsWith("/onboarding")
+     || pathname?.startsWith("/login") 
+    || pathname?.startsWith("/signup")
+    || pathname?.startsWith("/forgot-password")
+  ) return null;
+
   return (
     <div className="px-4 sm:px-6">
       <footer className="max-w-350 mx-auto my-10 rounded-3xl bg-black px-6 md:px-10 py-10 md:py-12 text-white">
@@ -123,7 +133,7 @@ const AllLinks = () => {
                 />
               </svg>
 
-              {/* Android */}
+              {/* Android */} 
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -165,6 +175,7 @@ const AllLinks = () => {
         </div>
       </footer>
       <WaitlistModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <Footer/>
     </div>
   );
 };
