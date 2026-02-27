@@ -133,7 +133,7 @@ const Header = () => {
           {/* DESKTOP NAV */}
           <nav className="hidden lg:flex items-center gap-6">
 
-            <Link href="/track-tasks" className="group">
+            <Link href={user ? "/track-tasks" : "/login"} className="group">
               <span className="text-sm font-medium flex items-center">
                 Track Tasks
                 <ArrowUpRight
