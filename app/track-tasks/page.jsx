@@ -43,9 +43,9 @@ export default function TrackTasksPage() {
   // Show auth modal when not authenticated (and not loading)
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      setShowAuthModal(true)
+      router.push('/login')
     } else if (isAuthenticated) {
-      setShowAuthModal(false)
+      router.push('/track-tasks')
     }
   }, [authLoading, isAuthenticated])
 
