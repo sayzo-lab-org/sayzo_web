@@ -132,59 +132,95 @@ const Header = () => {
 
           {/* DESKTOP NAV */}
           <nav className="hidden lg:flex items-center gap-6">
-            <Link href="/track-tasks">
+
+            <Link href="/track-tasks" className="group">
               <span className="text-sm font-medium flex items-center">
                 Track Tasks
                 <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5"
+                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
+                 group-hover:scale-110 
+                 group-hover:text-[#0ca37f] 
+                 group-hover:-translate-y-0.5 
+                 group-hover:translate-x-0.5"
                   strokeWidth={3.2}
                 />
               </span>
             </Link>
 
-            <Link href="/live-tasks">
-              <span className="text-sm font-medium flex items-center">
+            <Link href="/live-tasks" className="group">
+              <span className="text-sm font-medium flex items-center ">
                 Live Tasks
                 <ArrowUpRight
-                  className="w-3 h-3 text-primary-btn -mt-2 -ml-0.5"
+                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
+                 group-hover:scale-110 
+                 group-hover:text-[#0ca37f] 
+                 group-hover:-translate-y-0.5 
+                 group-hover:translate-x-0.5"
                   strokeWidth={3.2}
                 />
               </span>
             </Link>
 
-            <Link href="/use-cases">
-              <span className="text-sm font-medium flex items-center">
+            <Link href="/use-cases" className="group">
+              <span className="text-sm font-medium flex items-center ">
                 Use Cases
                 <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5"
+                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
+                 group-hover:scale-110 
+                 group-hover:text-[#0ca37f] 
+                 group-hover:-translate-y-0.5 
+                 group-hover:translate-x-0.5"
                   strokeWidth={3.2}
                 />
               </span>
             </Link>
 
-            {/* POST TASK */}
-            <Button
+
+            {/* conditional button rendering */}
+
+            {/* LOGIN BUTTON */}
+            {!user ?(
+    <>
+      <button 
+        onClick={() => router.push('/login')}
+        className="text-sm font-semibold text-zinc-500 hover:text-[#0ca37f] transition-all"
+      >
+        Login
+      </button>
+      <Button
+        onClick={() => router.push('/signup')}
+        className="rounded-full px-7 py-2 text-sm bg-black text-white hover:bg-[#0ca37f] transition-all"
+      >
+        Get Started
+      </Button>
+    </>
+  ):(
+    <>
+    
+      <Button
               onClick={() => setIsTaskOpen(true)}
               className="rounded-full border bg-[#F8FAFC] text-black hover:bg-primary-btn hover:text-white hover:border-primary-btn border-black px-5 py-2 text-sm"
             >
               + Post Task
             </Button>
 
-            {/* WAITLIST */}
-            <Button
-              onClick={() => setIsWaitlistOpen(true)}
-              className="rounded-full px-7 py-2 text-sm bg-black text-white"
-            >
-              Join Waitlist
-            </Button>
+             <Button
+                onClick={() => setIsWaitlistOpen(true)}
+                className="rounded-full px-7 py-2 text-sm bg-black text-white hover:bg-zinc-800 transition-all"
+              >
+                Join Waitlist
+              </Button>
+    </>
+   
+  )}
+           
 
             {/* PROFILE ICON - Show when logged in or admin */}
             {(user || isAdmin) && (
               <button
                 onClick={() => setIsProfileOpen(true)}
-                className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
-                  isAdmin ? "bg-green-100 hover:bg-green-200" : "bg-zinc-100 hover:bg-zinc-200"
-                }`}
+                className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${isAdmin ? "bg-green-100 hover:bg-green-200" : "bg-zinc-100 hover:bg-zinc-200"
+                  }`}
                 aria-label="Open profile menu"
               >
                 <User className={`w-5 h-5 ${isAdmin ? "text-green-700" : "text-zinc-700"}`} />
@@ -204,9 +240,8 @@ const Header = () => {
             {(user || isAdmin) && (
               <button
                 onClick={() => setIsProfileOpen(true)}
-                className={`flex items-center justify-center w-9 h-9 rounded-full transition-colors ${
-                  isAdmin ? "bg-green-100 hover:bg-green-200" : "bg-zinc-100 hover:bg-zinc-200"
-                }`}
+                className={`flex items-center justify-center w-9 h-9 rounded-full transition-colors ${isAdmin ? "bg-green-100 hover:bg-green-200" : "bg-zinc-100 hover:bg-zinc-200"
+                  }`}
                 aria-label="Open profile menu"
               >
                 <User className={`w-4 h-4 ${isAdmin ? "text-green-700" : "text-zinc-700"}`} />
@@ -357,14 +392,28 @@ const Header = () => {
                 Join Waitlist
               </button>
 
+              {!user && (
+                <Link
+                  onClick={() => setOpen(false)}
+                  href="/login"
+                  className="text-zinc-500 py-2.5"
+                >
+                  Login
+                </Link>
+              )}
+
               <Link
                 onClick={() => setOpen(false)}
                 href="/track-tasks"
-                className="flex text-left w-full items-center justify-start gap-2 w-full rounded-xl py-2.5"
+                className="flex text-left w-full items-center justify-start gap-2 w-full rounded-xl py-2.5 group"
               >
                 Track Tasks
                 <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2"
+                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
+                 group-hover:scale-110 
+                 group-hover:text-[#0ca37f] 
+                 group-hover:-translate-y-0.5 
+                 group-hover:translate-x-0.5"
                   strokeWidth={3.2}
                 />
               </Link>
@@ -372,11 +421,15 @@ const Header = () => {
               <Link
                 onClick={() => setOpen(false)}
                 href="/live-tasks"
-                className="flex text-left w-full items-center justify-start gap-2 w-full rounded-xl py-2.5"
+                className="flex text-left w-full items-center justify-start gap-2 w-full rounded-xl py-2.5 group"
               >
                 Live Tasks
                 <ArrowUpRight
-                  className="w-3 h-3 text-primary-btn -mt-2"
+                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
+                 group-hover:scale-110 
+                 group-hover:text-[#0ca37f] 
+                 group-hover:-translate-y-0.5 
+                 group-hover:translate-x-0.5"
                   strokeWidth={3.2}
                 />
               </Link>
@@ -384,11 +437,15 @@ const Header = () => {
               <Link
                 onClick={() => setOpen(false)}
                 href="/use-cases"
-                className="flex text-left w-full items-center justify-start gap-2 w-full rounded-xl py-2.5"
+                className="flex text-left w-full items-center justify-start gap-2 w-full rounded-xl py-2.5 group"
               >
                 Use Cases
                 <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2"
+                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
+                 group-hover:scale-110 
+                 group-hover:text-[#0ca37f] 
+                 group-hover:-translate-y-0.5 
+                 group-hover:translate-x-0.5"
                   strokeWidth={3.2}
                 />
               </Link>
