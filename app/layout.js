@@ -111,10 +111,7 @@ export default function RootLayout({ children }) {
         <Toaster position="top-right" />
         {/* FULL WIDTH */}
         <HeaderWrapper />
-
-        {/* CENTERED APP CONTENT */}
         <div >
-
           <main>
             <ErrorBoundary>
               <MagicLinkHandler>
@@ -122,10 +119,8 @@ export default function RootLayout({ children }) {
               </MagicLinkHandler>
             </ErrorBoundary>
           </main>
-
         </div>
         <AllLinks/>
-        <Footer/>
       </body>
       </AuthProvider>
       </PolicyProvider>
