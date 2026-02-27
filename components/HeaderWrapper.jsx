@@ -9,7 +9,14 @@ import HeaderSearch from "./AllHeader/Header3";
 const HeaderWrapper = () => {
   const pathname = usePathname();
 
-  if (pathname === "/why-sayzo") return null;
+  if (
+       pathname === "/why-sayzo"
+    || pathname?.startsWith("/onboarding")
+    || pathname?.startsWith("/login") 
+    || pathname?.startsWith("/signup")
+    || pathname?.startsWith("/forgot-password")
+  
+  ) return null;
 
   return (
     <div className="fixed top-0 left-0 w-full z-[999]">
