@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { ArrowUpRight, Menu, X, User, LogOut, Mail, Phone, Briefcase, Loader2 } from "lucide-react";
+import { ArrowUpRight, Menu, X, User, LogOut, Mail, Phone, Briefcase, Loader2 , pluse,Sparkles, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/app/Context/AuthContext";
 import { subscribeToJobApplicationsByApplicant } from "@/lib/firebase";
@@ -19,17 +19,30 @@ import MegaMenu from "./MegaMenu";
 
 /* ---------------- DROPDOWN MOBILE MENU ---------------- */
 const menuVariants = {
-  hidden: { y: "-20px", opacity: 0 },
+  hidden: { opacity: 0, scale: 0.95, y: -10 },
   visible: {
-    y: 0,
     opacity: 1,
-    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
   },
   exit: {
-    y: "-20px",
     opacity: 0,
-    transition: { duration: 0.25, ease: [0.4, 0, 1, 1] },
+    scale: 0.95,
+    y: -10,
+    transition: { duration: 0.2, ease: "easeIn" },
   },
+};
+
+const modalStagger = {
+  animate: {
+    transition: { staggerChildren: 0.07, delayChildren: 0.1 }
+  }
+};
+
+const modalItem = {
+  initial: { opacity: 0, x: -10 },
+  animate: { opacity: 1, x: 0 },
 };
 
 const Header = () => {
@@ -131,121 +144,107 @@ const Header = () => {
           </Link>
 
           {/* DESKTOP NAV */}
-          <nav className="hidden lg:flex items-center gap-6">
-
-            <Link href={user ? "/track-tasks" : "/login"} className="group">
-              <span className="text-sm font-medium flex items-center">
-                Track Tasks
-                <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
-                 group-hover:scale-110 
-                 group-hover:text-[#0ca37f] 
-                 group-hover:-translate-y-0.5 
-                 group-hover:translate-x-0.5"
-                  strokeWidth={3.2}
-                />
-              </span>
-            </Link>
-
-            <Link href="/live-tasks" className="group">
-              <span className="text-sm font-medium flex items-center ">
-                Live Tasks
-                <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
-                 group-hover:scale-110 
-                 group-hover:text-[#0ca37f] 
-                 group-hover:-translate-y-0.5 
-                 group-hover:translate-x-0.5"
-                  strokeWidth={3.2}
-                />
-              </span>
-            </Link>
-
-            <Link href="/use-cases" className="group">
-              <span className="text-sm font-medium flex items-center ">
-                Use Cases
-                <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
-                 group-hover:scale-110 
-                 group-hover:text-[#0ca37f] 
-                 group-hover:-translate-y-0.5 
-                 group-hover:translate-x-0.5"
-                  strokeWidth={3.2}
-                />
-              </span>
-            </Link>
-
-
-            {/* conditional button rendering */}
-
-            {/* LOGIN BUTTON */}
-            {!user ?(
-    <>
-      <button 
-        onClick={() => router.push('/login')}
-        className="text-sm font-semibold text-zinc-500 hover:text-[#0ca37f] transition-all"
-      >
-        Login
-      </button>
-      <Button
-        onClick={() => router.push('/signup')}
-        className="rounded-full px-7 py-2 text-sm bg-black text-white hover:bg-[#0ca37f] transition-all"
-      >
-        Get Started
-      </Button>
-    </>
-  ):(
-    <>
-    
-      <Button
-              onClick={() => setIsTaskOpen(true)}
-              className="rounded-full border bg-[#F8FAFC] text-black hover:bg-primary-btn hover:text-white hover:border-primary-btn border-black px-5 py-2 text-sm"
-            >
-              + Post Task
-            </Button>
-
-             <Button
-                onClick={() => setIsWaitlistOpen(true)}
-                className="rounded-full px-7 py-2 text-sm bg-black text-white hover:bg-zinc-800 transition-all"
+         <nav className="hidden lg:flex items-center gap-8">
+            {['Track Tasks', 'Live Tasks', 'Use Cases'].map((item) => (
+              <Link 
+                key={item}
+                href={item === 'Track Tasks' ? (user ? "/track-tasks" : "/login") : `/${item.toLowerCase().replace(' ', '-')}`} 
+                className="group relative"
               >
-                Join Waitlist
-              </Button>
-    </>
-   
-  )}
-           
+                <motion.span 
+                  className="text-sm font-semibold text-zinc-600 group-hover:text-black flex items-center transition-colors"
+                >
+                  {item}
+                  <ArrowUpRight
+                    className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
+                    group-hover:scale-110 group-hover:text-[#0ca37f] group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    strokeWidth={3}
+                  />
+                </motion.span>
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-emerald-500 transition-all duration-300 group-hover:w-full" />
+              </Link>
+            ))}
 
-            {/* PROFILE ICON - Show when logged in or admin */}
+            <div className="h-6 w-[1px] bg-gray-200 mx-2" />
+
+            {!user ? (
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => router.push('/login')}
+                  className="text-sm font-bold text-zinc-600 hover:text-black transition-all"
+                >
+                  Login
+                </button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => router.push('/signup')}
+                  className="rounded-full px-7 py-2.5 text-sm bg-black text-white hover:bg-zinc-800 transition-all shadow-lg shadow-black/5"
+                >
+                  Get Started
+                </motion.button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsTaskOpen(true)}
+                  className="rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-5 py-2 text-sm font-bold flex items-center gap-2 border border-emerald-100"
+                >
+                  <Plus className="w-4 h-4" />
+                  Post Task
+                </motion.button>
+
+                <Button
+                  onClick={() => setIsWaitlistOpen(true)}
+                  className="rounded-full px-6 py-2 text-sm bg-black text-white hover:bg-zinc-800 transition-all"
+                >
+                  Join Waitlist
+                </Button>
+              </div>
+            )}
+
             {(user || isAdmin) && (
-              <button
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => setIsProfileOpen(true)}
-                className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${isAdmin ? "bg-green-100 hover:bg-green-200" : "bg-zinc-100 hover:bg-zinc-200"
-                  }`}
-                aria-label="Open profile menu"
+                className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                  isAdmin ? "border-green-200 bg-green-50" : "border-gray-100 bg-gray-50"
+                } transition-all`}
               >
-                <User className={`w-5 h-5 ${isAdmin ? "text-green-700" : "text-zinc-700"}`} />
-              </button>
+                <User className={`w-5 h-5 ${isAdmin ? "text-green-600" : "text-zinc-600"}`} />
+                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse" />
+              </motion.button>
             )}
           </nav>
 
           {/* MOBILE NAV */}
           <div className="lg:hidden flex items-center gap-2">
-            <Button
-              onClick={() => setIsTaskOpen(true)}
-              className="rounded-full px-4 py-2 text-sm"
-            >
-              + Post Task
-            </Button>
+            <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsTaskOpen(true)}
+                  className="rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-5 py-2 text-sm font-bold flex items-center gap-2 border border-emerald-100"
+                >
+                  <Plus className="w-4 h-4" />
+                  Post Task
+                </motion.button>
+
             {/* PROFILE ICON - Show when logged in or admin */}
             {(user || isAdmin) && (
-              <button
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => setIsProfileOpen(true)}
-                className={`flex items-center justify-center w-9 h-9 rounded-full transition-colors ${isAdmin ? "bg-green-100 hover:bg-green-200" : "bg-zinc-100 hover:bg-zinc-200"
-                  }`}
-                aria-label="Open profile menu"
+                className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                  isAdmin ? "border-green-200 bg-green-50" : "border-gray-100 bg-gray-50"
+                } transition-all`}
               >
-                <User className={`w-4 h-4 ${isAdmin ? "text-green-700" : "text-zinc-700"}`} />
-              </button>
+                <User className={`w-5 h-5 ${isAdmin ? "text-green-600" : "text-zinc-600"}`} />
+                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse" />
+              </motion.button>
             )}
             <button onClick={() => setOpen(true)}>
               <Menu />
@@ -267,97 +266,74 @@ const Header = () => {
       />
 
       {/* PROFILE MODAL */}
+      {/* PROFILE MODAL */}
       <AnimatePresence>
         {isProfileOpen && (
           <motion.div
-            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsProfileOpen(false)}
           >
             <motion.div
-              className="w-full max-w-sm bg-black border border-zinc-800 rounded-2xl p-6"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/20"
+              initial={{ y: 20, opacity: 0, scale: 0.95 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 20, opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header */}
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-semibold text-white">Profile</h2>
-                  {isAdmin && (
-                    <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs font-medium rounded-full">
-                      Admin
-                    </span>
-                  )}
-                </div>
-                <button
-                  onClick={() => setIsProfileOpen(false)}
-                  className="text-zinc-500 hover:text-white transition-colors"
-                >
-                  <X size={24} />
+              <div className="p-6 bg-zinc-950 text-white relative">
+                <button onClick={() => setIsProfileOpen(false)} className="absolute right-4 top-4 opacity-70 hover:opacity-100">
+                  <X size={20} />
                 </button>
+                <div className="flex flex-col items-center gap-3 mt-4">
+                   <User className="w-10 h-10 text-white" />
+                  <div className="text-center">
+                    <h2 className="text-xl font-bold">{userProfile?.fullName || 'User'}</h2>
+                    {isAdmin && <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-400">Administrator</span>}
+                  </div>
+                </div>
               </div>
 
-              {/* User Info */}
-              <div className="space-y-4">
-                {/* Profile Avatar & Name */}
-                <div className="flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-full bg-zinc-800 flex items-center justify-center mb-3">
-                    <User className="w-10 h-10 text-zinc-400" />
+              <motion.div variants={modalStagger} initial="initial" animate="animate" className="p-6 space-y-3">
+                <motion.div variants={modalItem} className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                  <Mail className="w-5 h-5 text-gray-400" />
+                  <div className="overflow-hidden">
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-tight">Email Address</p>
+                    <p className="text-sm font-semibold truncate text-gray-700">{user?.email || "Not available"}</p>
                   </div>
-                  {userProfile?.fullName && (
-                    <p className="text-white text-lg font-semibold">
-                      {userProfile.fullName}
-                    </p>
-                  )}
-                </div>
+                </motion.div>
 
-                {/* Email */}
-                <div className="bg-zinc-900 rounded-xl p-4">
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-zinc-500" />
-                    <div>
-                      <p className="text-zinc-500 text-xs">Email</p>
-                      <p className="text-white font-medium">
-                        {user?.email || userProfile?.email || "Not available"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Phone Number */}
                 {userProfile?.phone && (
-                  <div className="bg-zinc-900 rounded-xl p-4">
-                    <div className="flex items-center gap-3">
-                      <Phone className="w-5 h-5 text-zinc-500" />
-                      <div>
-                        <p className="text-zinc-500 text-xs">Phone</p>
-                        <p className="text-white font-medium">
-                          {userProfile.phone}
-                        </p>
-                      </div>
+                  <motion.div variants={modalItem} className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                    <Phone className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-gray-400 tracking-tight">Phone</p>
+                      <p className="text-sm font-semibold text-gray-700">{userProfile.phone}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
 
-                {/* Logout Button */}
-                <button
+                <motion.button
+                  variants={modalItem}
                   onClick={handleLogout}
-                  className="w-full flex items-center justify-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 py-4 rounded-xl font-semibold transition-colors"
+                  whileHover={{ x: 5 }}
+                  className="w-full flex items-center justify-between p-4 rounded-2xl bg-red-50 text-red-600 font-bold text-sm transition-colors hover:bg-red-100 mt-4"
                 >
-                  <LogOut className="w-5 h-5" />
-                  Logout
-                </button>
-              </div>
+                  <div className="flex items-center gap-3">
+                    <LogOut className="w-5 h-5" />
+                    Sign Out
+                  </div>
+                  <ArrowUpRight className="w-4 h-4 opacity-50" />
+                </motion.button>
+              </motion.div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* MOBILE DROPDOWN */}
+     {/* MOBILE DROPDOWN */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -365,91 +341,79 @@ const Header = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed top-0 left-0 right-0 z-[100] bg-white px-6 pb-6 shadow-lg"
+            className="fixed top-0 left-0 right-0 z-[101] bg-white p-6 shadow-2xl rounded-b-[2.5rem] border-b border-gray-100"
           >
-            {/* TOP */}
-            <div className="flex items-center justify-between">
-              <Image src={Maskgroup2} alt="Sayzo Logo" width={120} />
-              <button onClick={() => setOpen(false)}>
-                <X className="w-7 h-7 text-black" />
-              </button>
+            {/* TOP BAR */}
+            <div className="flex items-center justify-between mb-8">
+              <Image src={Maskgroup2} alt="Sayzo Logo" width={110} />
+              <motion.button 
+                whileTap={{ scale: 0.9, rotate: 90 }}
+                onClick={() => setOpen(false)}
+                className="p-2 bg-gray-50 rounded-full"
+              >
+                <X className="w-6 h-6 text-black" />
+              </motion.button>
             </div>
 
-            {/* LINKS */}
-            <nav className="mt-6 flex flex-col gap-4 text-black text-base font-medium text-center">
-              <Link onClick={() => setOpen(false)} href="/">
-                Home
-              </Link>
-
-              {/* JOIN WAITLIST (MOBILE) */}
-              <button
-                onClick={() => {
-                  setOpen(false);
-                  setIsWaitlistOpen(true);
-                }}
-                className="bg-primary-btn w-full rounded-xl py-2.5 text-white"
-              >
-                Join Waitlist
-              </button>
-
-              {!user && (
-                <Link
-                  onClick={() => setOpen(false)}
-                  href="/login"
-                  className="text-zinc-500 py-2.5"
+            {/* NAV LINKS */}
+            <motion.nav 
+              variants={{
+                visible: { transition: { staggerChildren: 0.05 } }
+              }}
+              className="flex flex-col gap-2"
+            >
+              {['Track Tasks', 'Live Tasks', 'Use Cases'].map((item) => (
+                <motion.div
+                  key={item}
+                  variants={{
+                    hidden: { opacity: 0, x: -10 },
+                    visible: { opacity: 1, x: 0 }
+                  }}
                 >
-                  Login
-                </Link>
-              )}
+                  <Link 
+                    onClick={() => setOpen(false)}
+                    href={item === 'Track Tasks' ? (user ? "/track-tasks" : "/login") : `/${item.toLowerCase().replace(' ', '-')}`} 
+                    className="flex items-center justify-between py-4 px-2 group"
+                  >
+                    <span className="text-xl font-bold text-zinc-800 group-hover:text-emerald-600 transition-colors">
+                      {item}
+                    </span>
+                    <ArrowUpRight className="w-5 h-5 text-gray-300 group-hover:text-emerald-500 transition-all group-hover:-translate-y-1 group-hover:translate-x-1" />
+                  </Link>
+                </motion.div>
+              ))}
 
-              <Link
-                onClick={() => setOpen(false)}
-                href="/track-tasks"
-                className="flex text-left w-full items-center justify-start gap-2 w-full rounded-xl py-2.5 group"
-              >
-                Track Tasks
-                <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
-                 group-hover:scale-110 
-                 group-hover:text-[#0ca37f] 
-                 group-hover:-translate-y-0.5 
-                 group-hover:translate-x-0.5"
-                  strokeWidth={3.2}
-                />
-              </Link>
+              <div className="h-[1px] bg-gray-100 my-4" />
 
-              <Link
-                onClick={() => setOpen(false)}
-                href="/live-tasks"
-                className="flex text-left w-full items-center justify-start gap-2 w-full rounded-xl py-2.5 group"
+              {/* ACTION BUTTONS */}
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 }
+                }}
+                className="space-y-4"
               >
-                Live Tasks
-                <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
-                 group-hover:scale-110 
-                 group-hover:text-[#0ca37f] 
-                 group-hover:-translate-y-0.5 
-                 group-hover:translate-x-0.5"
-                  strokeWidth={3.2}
-                />
-              </Link>
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    setIsWaitlistOpen(true);
+                  }}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl py-4 font-bold shadow-lg shadow-emerald-200 transition-all active:scale-[0.98]"
+                >
+                  Join Waitlist
+                </button>
 
-              <Link
-                onClick={() => setOpen(false)}
-                href="/use-cases"
-                className="flex text-left w-full items-center justify-start gap-2 w-full rounded-xl py-2.5 group"
-              >
-                Use Cases
-                <ArrowUpRight
-                  className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
-                 group-hover:scale-110 
-                 group-hover:text-[#0ca37f] 
-                 group-hover:-translate-y-0.5 
-                 group-hover:translate-x-0.5"
-                  strokeWidth={3.2}
-                />
-              </Link>
-            </nav>
+                {!user && (
+                  <Link
+                    onClick={() => setOpen(false)}
+                    href="/login"
+                    className="block text-center text-zinc-500 font-semibold py-2 hover:text-black transition-colors"
+                  >
+                    Already have an account? <span className="text-black underline underline-offset-4">Login</span>
+                  </Link>
+                )}
+              </motion.div>
+            </motion.nav>
           </motion.div>
         )}
       </AnimatePresence>

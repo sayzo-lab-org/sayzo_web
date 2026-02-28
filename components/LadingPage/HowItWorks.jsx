@@ -11,7 +11,7 @@ const HowItWorks = () => {
           How it <span className="font-serif italic">works</span>
         </h2>
       </div>
-      <div className='flex justify-center mt-4'> {/* Reduced mt-8 to mt-6 */}
+      <div className='flex justify-center mt-2'> {/* Reduced mt-8 to mt-6 */}
         <RoleToggle/>
       </div>
     </section>

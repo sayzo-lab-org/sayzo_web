@@ -1,6 +1,9 @@
-import { Inter,Instrument_Serif } from "next/font/google";
+"use client";
+
+import { Inter, Instrument_Serif } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import Script from "next/script";
+import { motion, AnimatePresence } from "framer-motion";
 
 import "./globals.css";
 import Footer from "@/components/Footer";
@@ -18,80 +21,17 @@ const inter = Inter({
 
 const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  weight:"400",
+  weight: "400",
   variable: "--font-instrument-serif",
 });
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "SAYZO",
-  "alternateName": ["Sayzo", "sayzo.in"],
-  "url": "https://sayzo.in/"
-};
-
-export const metadata = {
-  applicationName: "SAYZO",
-  title: "SAYZO - Hire Local Help in Minutes | Post Tasks, Get It Done Today",
-  description:
-    "Need help with errands, repairs, or deliveries? Post your task on SAYZO and connect with trusted local helpers near you. Fast, affordable, reliable.",
-
-  keywords: [
-    "hire local help",
-    "task marketplace India",
-    "find helpers near me",
-    "post tasks online",
-    "local services app",
-    "neighborhood helpers",
-    "gig work India",
-    "errand services",
-    "home services",
-  ],
-
-  metadataBase: new URL("https://sayzo.in"),
-
-  openGraph: {
-    title: "SAYZO - Hire Local Help in Minutes | Get Tasks Done Today",
-    description:
-      "Need help with errands, repairs, or deliveries? Post your task and connect with trusted local helpers near you. Fast, affordable, reliable.",
-    url: "https://sayzo.in",
-    siteName: "SAYZO",
-    type: "website",
-  },
-
-  twitter: {
-    card: "summary_large_image",
-    title: "SAYZO - Hire Local Help in Minutes",
-    description: "Post tasks and connect with trusted local helpers near you. Fast, affordable, reliable.",
-  },
-  verification: {
-    google: "863C8rGepBCeS7A97VIQdnrSCu3LpQiUZtSv7_1uj5g",
-  },
-  icons: {
-   
-    icon: [
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
-    ],
-    
-    shortcut: '/favicon.ico',
-   
-    apple: '/apple-touch-icon.png',
-  },
-  
-  manifest: '/site.webmanifest',
-};
-
-
 export default function RootLayout({ children }) {
-  
   return (
-    <html lang="en"  className={`${inter.variable} ${instrumentSerif.variable}`}>
+    <html 
+      lang="en" 
+      className={`${inter.variable} ${instrumentSerif.variable} scroll-smooth selection:bg-emerald-100 selection:text-emerald-900`}
+    >
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
           strategy="afterInteractive"
@@ -105,24 +45,67 @@ export default function RootLayout({ children }) {
           `}
         </Script>
       </head>
+      
       <PolicyProvider>
-      <AuthProvider>
-      <body>
-        <Toaster position="top-right" />
-        {/* FULL WIDTH */}
-        <HeaderWrapper />
-        <div >
-          <main>
-            <ErrorBoundary>
-              <MagicLinkHandler>
-                {children}
-              </MagicLinkHandler>
-            </ErrorBoundary>
-          </main>
-        </div>
-        <AllLinks/>
-      </body>
-      </AuthProvider>
+        <AuthProvider>
+          <body className="antialiased bg-white min-h-screen">
+            {/* Subtle Grain Overlay for texture */}
+            <div className="fixed inset-0 pointer-events-none z-[9999] opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+            
+            <Toaster 
+              position="top-right" 
+              toastOptions={{
+                className: 'rounded-2xl font-medium text-sm',
+                duration: 4000,
+                style: {
+                  background: '#fff',
+                  color: '#1a1a1a',
+                  border: '1px solid #f0f0f0',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)'
+                }
+              }} 
+            />
+
+            <HeaderWrapper />
+            
+            <main>
+              <ErrorBoundary>
+                <MagicLinkHandler>
+                  {/* Smooth Page Entry Animation */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      {children}
+                    </motion.div>
+                  </AnimatePresence>
+                </MagicLinkHandler>
+              </ErrorBoundary>
+            </main>
+
+            <AllLinks />
+
+            {/* Global Hover Glow Effect (Optional - add to global.css for best perf) */}
+            <style jsx global>{`
+              ::-webkit-scrollbar {
+                width: 8px;
+              }
+              ::-webkit-scrollbar-track {
+                background: transparent;
+              }
+              ::-webkit-scrollbar-thumb {
+                background: #e2e8f0;
+                border-radius: 10px;
+              }
+              ::-webkit-scrollbar-thumb:hover {
+                background: #cbd5e1;
+              }
+            `}</style>
+          </body>
+        </AuthProvider>
       </PolicyProvider>
     </html>
   );
