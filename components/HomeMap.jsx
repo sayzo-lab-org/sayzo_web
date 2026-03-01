@@ -1,194 +1,272 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { MapPin, Expand, ChevronUp } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import Link from 'next/link';
 
-// 1. Icon Definitions (Outside Component)
-const sayzoSvg = `
-  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="16" cy="16" r="14" fill="#10B981" fill-opacity="0.2"/>
-    <circle cx="16" cy="16" r="8" fill="#10B981" stroke="white" stroke-width="2"/>
-  </svg>
-`;
-
-const taskSvg = `
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="10" fill="#10B981" fill-opacity="0.15" />
-    <circle cx="12" cy="12" r="6" stroke="#10B981" stroke-width="1.5" />
-    <circle cx="12" cy="12" r="3" fill="#111827" />
-  </svg>
-`;
-
-const sayzoIcon = L.divIcon({
-  html: sayzoSvg,
-  className: 'user-marker',
-  iconSize: [32, 32],
-  iconAnchor: [16, 16],
-});
-
-const generalTaskIcon = L.divIcon({
-  html: taskSvg,
-  className: 'general-task-marker',
-  iconSize: [24, 24],
-  iconAnchor: [12, 12],
-});
-
-// Helper component to handle auto-panning
 function RecenterMap({ coords }) {
-  const map = useMap();
-  useEffect(() => {
-    if (coords) {
-      map.flyTo([coords.lat, coords.lng], 14, { animate: true });
-    }
-  }, [coords, map]);
-  return null;
+    const map = useMap();
+    useEffect(() => {
+        if (coords) map.flyTo([coords.lat, coords.lng], 14, { animate: true });
+    }, [coords, map]);
+    return null;
 }
 
 const HomeMap = () => {
-  const [userLoc, setUserLoc] = useState(null);
-  const [locationName, setLocationName] = useState("Bangalore");
-  const autoOpenMarkerRef = useRef(null);
-  const defaultCenter = [12.9716, 77.5946]; // Bangalore CBD
+    const [userLoc, setUserLoc] = useState(null);
+    const [locationName, setLocationName] = useState("Bengaluru");
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const autoOpenMarkerRef = useRef(null);
+    const mapWrapperRef = useRef(null);
+    const defaultCenter = [12.9716, 77.5946];
 
-useEffect(() => {
-  const fetchLocationName = async () => {
-    if (userLoc) {
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLoc.lat}&lon=${userLoc.lng}&zoom=10`
-        );
-        const data = await response.json();
-        // Fallback hierarchy: suburb, city, then state
-        const name = data.address.suburb || data.address.city || data.address.state || "your area";
-        setLocationName(name);
-      } catch (error) {
-        console.error("Error fetching location name:", error);
-      }
-    }
-  };
+    // --- CONSOLIDATED ICON LOGIC ---
+    const icons = useMemo(() => {
+        if (typeof window === 'undefined') return { sayzoIcon: null, generalTaskIcon: null };
 
-  fetchLocationName();
-}, [userLoc]);
+        // Realistic Green Map Pin
+        const realMarkerPinSvg = `
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <filter id="pinShadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" />
+                        <feOffset dx="0" dy="1.5" result="offsetblur" />
+                        <feComponentTransfer><feFuncA type="linear" slope="0.4"/></feComponentTransfer>
+                        <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
+                </defs>
+                {/* Main Body - Using a deeper, "Hard" Emerald */}
+                <path 
+                    d="M12 21.7C16 17.5 20 14 20 9.5C20 5.1 16.4 1.5 12 1.5C7.6 1.5 4 5.1 4 9.5C4 14 8 17.5 12 21.7Z" 
+                    fill="#059669" 
+                    filter="url(#pinShadow)"
+                />
+                {/* Inner White Core for Professional Detail */}
+                <circle cx="12" cy="9.5" r="3" fill="white" fill-opacity="0.9"/>
+            </svg>`;
 
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        },
-        (err) => console.error("Location access denied", err)
-      );
-    }
-  }, []);
+        // Animated Live Dot HTML
+        const liveDotHtml = `
+            <div class="live-dot-container">
+                <div class="live-dot-pulse"></div>
+                <div class="live-dot-core"></div>
+            </div>`;
 
-  // Open the first task's popup by default
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (autoOpenMarkerRef.current) {
-        autoOpenMarkerRef.current.openPopup();
-      }
-    }, 1000); 
-    return () => clearTimeout(timer);
-  }, [userLoc]);
+        return {
+            sayzoIcon: L.divIcon({
+                html: realMarkerPinSvg,
+                className: 'user-marker',
+                iconSize: [20, 10],
+                iconAnchor: [10, 11] // Tip-point accuracy
+            }),
+            generalTaskIcon: L.divIcon({
+                html: liveDotHtml,
+                className: 'live-marker',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            })
+        };
+    }, []);
 
-  const baseLat = userLoc?.lat || defaultCenter[0];
-  const baseLng = userLoc?.lng || defaultCenter[1];
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            mapWrapperRef.current.requestFullscreen().catch(err => console.error(err));
+        } else {
+            document.exitFullscreen();
+        }
+    };
 
-  const mockTasks = [
-    { id: 1, pos: [baseLat + 0.004, baseLng + 0.006], title: "Event Photographer Needed" },
-    { id: 2, pos: [baseLat - 0.005, baseLng - 0.004], title: "Website Bug Fix (React)" },
-    { id: 3, pos: [baseLat + 0.007, baseLng + 0.003], title: "Resume Designing Help" },
-    { id: 4, pos: [baseLat + 0.003, baseLng - 0.007], title: "Furniture Assembly (IKEA)" },
-  ];
+    useEffect(() => {
+        const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', handleFsChange);
+        return () => document.removeEventListener('fullscreenchange', handleFsChange);
+    }, []);
 
-  return (
-    <div className="w-full max-w-5xl mx-auto my-12 px-4 font-sans">
-      {/* Main Card Wrapper 
-          - flex-col ensures header and map stack vertically.
-          - overflow-hidden keeps the map tiles from breaking the rounded corners.
-      */}
-      <div className="flex flex-col bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl overflow-hidden h-[600px]">
-        
-        {/* Card Header - shrink-0 prevents it from being squashed by the map */}
-        <div className="px-8 py-6 flex justify-between items-center bg-white border-b border-gray-50/50 shrink-0 z-10">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100/50">
-                <span className="text-sm font-mono font-bold text-emerald-600 leading-none">73</span>
-              </span>
-              <h2 className="text-xl font-medium text-gray-900 tracking-tight">
-                Tasks <span className="text-gray-400 font-light">near you</span>
-              </h2>
-            </div>
+    useEffect(() => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                setUserLoc(coords);
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}&zoom=10`);
+                    const data = await res.json();
+                    setLocationName(data.address.suburb || data.address.city || "your area");
+                } catch (e) { console.error(e); }
+            });
+        }
+    }, []);
 
-            <p className="text-[11px] text-gray-400 flex items-center gap-2 mt-0.5">
-  <span className="relative flex h-1.5 w-1.5">
-    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-  </span>
-  {/* Now dynamically renders "Real-time hyperlocal activity in Indiranagar" etc. */}
-  Real-time hyperlocal activity in {locationName}
-</p>
-          </div>
-        </div>
+    const baseLat = userLoc?.lat || defaultCenter[0];
+    const baseLng = userLoc?.lng || defaultCenter[1];
 
-        {/* Map Area - flex-grow ensures it fills all remaining space in the 600px card */}
-        <div className="flex-grow relative w-full">
-          
-          {/* Status Overlay for location detection */}
-          {!userLoc && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] bg-white/90 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-bold text-gray-500 shadow-sm border border-gray-100 uppercase tracking-widest">
-              📍 Locating neighborhood...
-            </div>
-          )}
+    const mockTasks = [
+        { id: 1, pos: [baseLat + 0.002, baseLng + 0.002], title: "SAYZO is looking for Best Video Editor" },
+        { id: 2, pos: [baseLat - 0.003, baseLng + 0.007], title: "Video Editing" },
+        { id: 3, pos: [baseLat + 0.006, baseLng - 0.020], title: "Looking For 10 Content Creators" },
+        { id: 4, pos: [baseLat - 0.005, baseLng - 0.010], title: "Digital Marketing and Lead generation" },
+        { id: 5, pos: [baseLat + 0.012, baseLng - 0.006], title: "I need a Shopify Developer" },
+        { id: 6, pos: [baseLat + 0.007, baseLng + 0.013], title: "Distribute flyers" },
+    ];
 
-          <MapContainer 
-            center={defaultCenter} 
-            zoom={13} 
-            className="h-full w-full z-0"
-            scrollWheelZoom={false}
-          >
-            <TileLayer
-              attribution='&copy; CARTO'
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-            />
-            
-            <RecenterMap coords={userLoc} />
+    if (!icons.sayzoIcon) return null;
 
-            {userLoc && (
-              <Marker position={[userLoc.lat, userLoc.lng]} icon={sayzoIcon}>
-                <Popup>You are here!</Popup>
-              </Marker>
-            )}
 
-            {mockTasks.map((task, index) => (
-              <Marker 
-                key={task.id} 
-                position={task.pos} 
-                icon={generalTaskIcon}
-                ref={index === 0 ? autoOpenMarkerRef : null}
-              >
-                <Popup className="custom-popup">
-                  <div className="p-2 min-w-[120px]">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Available</span>
-                    </div>
-                    <h3 className="font-semibold text-gray-900 leading-tight mb-2">{task.title}</h3>
-                    <button className="w-full bg-[#111827] text-white text-[11px] font-medium py-1.5 rounded-md hover:bg-gray-800 transition-colors">
-                      View Task
+    return (
+
+        <div
+
+            ref={mapWrapperRef}
+
+            className={`flex flex-col bg-white border border-gray-300 shadow-sm overflow-hidden font-sans transition-all duration-300 ${isFullscreen
+
+                ? 'fixed inset-0 z-[9999] h-screen w-screen rounded-none'
+
+                /* CHANGE: Height reduced to 380px for a sleeker rectangle look */
+
+                : 'rounded-lg h-[380px] w-full'
+
+                }`}
+
+        >
+
+            {/* Card Header */}
+
+            <div className="px-6 py-4 flex justify-between items-center bg-white border-b border-gray-100 shrink-0 z-10">
+
+                {/* LEFT SIDE: Everything aligned in one flex row */}
+
+                <div className="flex items-center gap-3">
+
+                    <MapPin className="h-5 w-5 " aria-hidden="true" />
+
+
+
+                    <span className=" tracking-tight text-base ">
+
+                        Tasks Near You
+
+                    </span>
+
+
+
+                    {/* The Badge */}
+
+                    <span className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600">
+
+                        73 tasks
+
+                    </span>
+
+                </div>
+
+
+
+                {/* RIGHT SIDE: Fullscreen Action */}
+
+                <div className="flex items-center gap-4">
+
+                    <button
+
+                        onClick={toggleFullscreen}
+
+                        className="text-gray-400 hover:text-black/70 transition-colors p-1"
+
+                        aria-label="Toggle Fullscreen"
+
+                    >
+
+                        {isFullscreen ? (
+
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 14h6v6m10-6h-6v6M4 10h6V4m10 6h-6V4" /></svg>
+
+                        ) : (
+
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>
+
+                        )}
+
                     </button>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
+
+                </div>
+
+            </div>
+
+
+
+            {/* Map Area */}
+
+            <div className="flex-grow relative w-full bg-gray-50">
+
+                <MapContainer center={defaultCenter} zoom={25} className="h-full w-full z-0" scrollWheelZoom={false}>
+
+                    <TileLayer
+
+                        attribution='&copy; Esri'
+
+                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+
+                    />
+
+
+
+
+
+                    <RecenterMap coords={userLoc} />
+
+
+
+                    {userLoc && <Marker position={[userLoc.lat, userLoc.lng]} icon={icons.sayzoIcon}></Marker>}
+
+
+
+                    {mockTasks.map((task, index) => (
+
+                        <Marker key={task.id} position={task.pos} icon={icons.generalTaskIcon} ref={index === 0 ? autoOpenMarkerRef : null}>
+
+                            <Popup className="custom-popup">
+
+                                <div className=" min-w-[120px]">
+
+                                    <div className="flex items-center gap-2 mb-1">
+
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                                        <span className="text-[10px]  uppercase tracking-wider text-gray-400">Available</span>
+
+                                    </div>
+
+                                    <h3 className=" text-gray-900 leading-tight mb-3 text-sm">{task.title}</h3>
+
+
+
+                                    <Link href={`/live-tasks`}>
+
+                                        <button className="w-full bg-[#111827] text-white text-[11px] py-2 rounded-full px-7 py-2.5 hover:bg-black transition-all">
+
+                                            View Details
+
+                                        </button>
+
+                                    </Link>
+
+                                </div>
+
+                            </Popup>
+
+                        </Marker>
+
+                    ))}
+
+                </MapContainer>
+
+            </div>
+
         </div>
-      </div>
-    </div>
-  );
+
+    );
 };
 
 export default HomeMap;

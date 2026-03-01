@@ -40,8 +40,8 @@ const itemUp = {
 
 const HeroSection1 = () => {
   return (
-    <section className="relative lg:mt-30 md:mt-20 mt-70 md:pt-32 md:pb-32 pb-30 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 relative z-10">
+    <section className="relative mt-50 lg:mt-20 md:mt-20 md:pt-32 md:pb-32 bg-white overflow-hidden">
+      <div className=" max-w-7xl mx-auto px-3 lg:px-1 relative z-10">
         <motion.div
           variants={container}
           initial="hidden"
@@ -60,81 +60,59 @@ const HeroSection1 = () => {
           </motion.div>
 
           {/* Headline */}
-          <div className="font-semibold tracking-tight leading-tight mb-6">
+          <div className="font-semibold tracking-tight leading-tight mb-12">
             <motion.span
               variants={itemDown}
-              className="block text-black text-5xl  md:text-6xl lg:text-8xl"
+              className="block text-black text-6xl md:text-6xl lg:text-8xl"
             >
               Post a task.
             </motion.span>
             <motion.span
               variants={itemDown}
-              className="block text-primary-btn text-5xl  md:text-6xl lg:text-8xl"
+              className=" text-primary-btn text-5xl md:text-6xl lg:text-8xl"
             >
               Get it done.
             </motion.span>
           </div>
-
-<HomeMap />
-          {/* CTAs with Magnetic Hover */}
+        <motion.div 
+  variants={itemUp} 
+  /* max-w-5xl: keeps the rectangle from getting too wide on large screens.
+     mx-auto: centers it.
+     shadow-sm: provides a subtle, professional depth.
+     border: adds the industrial framing.
+  */
+  className="w-full max-w-5xl mx-auto border border-gray-200 rounded-xl shadow-sm overflow-hidden"
+>
+  <HomeMap />
+</motion.div>
+          
+          {/* CTAs - Reduced margin-top from mt-12 to mt-8 to keep it compact */}
           <motion.div
             variants={itemUp}
-            className="flex justify-center items-center gap-4 sm:gap-6 mt-6 mb-8 w-80 sm:w-auto"
+            className="flex flex-row sm:flex-row justify-center items-center gap-6 mt-8 mb-4 w-full"
           >
             <motion.button 
-              whileHover={{ scale: 1.05, boxShadow: "0 10px 30px -10px rgba(0,0,0,0.3)" }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              className="sm:w-auto bg-black text-white px-10 py-3 rounded-full text-sm sm:text-base md:text-lg font-medium transition-all"
+              className="bg-black text-white rounded-full px-7 py-2.5 md:text-lg shadow-lg"
             >
               Find Help
             </motion.button>
             <Link href="/live-tasks">
               <motion.button 
                 whileHover={{ x: 5 }}
-                className="group flex items-center gap-1 sm:w-auto cursor-pointer text-black text-sm sm:text-base md:text-lg font-medium hover:text-emerald-600 transition-all"
+                className="group flex items-center gap-1 cursor-pointer text-black text-base md:text-lg font-medium hover:text-emerald-600 transition-all"
               >
                 Browse Tasks
                 <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
               </motion.button>
             </Link>
           </motion.div>
-
-          {/* Enhanced Search Bar */}
-          {/* <motion.div
-            variants={itemUp}
-            className="w-full max-w-xl md:max-w-3xl group"
-          >
-            <div className="flex items-center bg-[#f4f7f9] rounded-full border border-gray-200 px-2 sm:py-2 py-1.5 focus-within:bg-white focus-within:ring-4 focus-within:ring-emerald-50 focus-within:border-emerald-200 transition-all duration-300 shadow-sm group-hover:shadow-md">
-              <input
-                type="text"
-                placeholder="Search by roles, skills, keywords..."
-                className="flex-1 bg-transparent pl-1 md:px-6 text-sm md:text-lg font-medium text-gray-700 placeholder-gray-400 outline-none"
-              />
-              <motion.button 
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.95 }}
-                className="h-10 md:h-12 px-4 md:px-6 bg-black text-white rounded-full flex items-center gap-2 font-semibold text-sm md:text-base hover:bg-neutral-800 transition-all shadow-lg shadow-black/10"
-              >
-                <Search className="w-4 h-4 md:w-5 md:h-5 text-emerald-700" />
-                <span>Search</span>
-              </motion.button>
-            </div>
-          </motion.div> */}
-
         </motion.div>
       </div>
 
-      {/* Animated Decorative blobs */}
-      <motion.div 
-        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }}
-        transition={{ duration: 8, repeat: Infinity }}
-        className="absolute top-1/4 -left-24 w-72 md:w-96 h-72 md:h-96 bg-[#2eb67d]/10 rounded-full blur-3xl -z-10" 
-      />
-      <motion.div 
-        animate={{ scale: [1.1, 1, 1.1], opacity: [0.1, 0.05, 0.1] }}
-        transition={{ duration: 10, repeat: Infinity }}
-        className="absolute bottom-0 -right-24 w-72 md:w-96 h-72 md:h-96 bg-emerald-500/10 rounded-full blur-3xl -z-10" 
-      />
+      {/* Decorative blobs */}
+      <motion.div className="absolute top-1/4 -left-24 w-72 h-72 bg-[#2eb67d]/10 rounded-full blur-3xl -z-10" />
     </section>
   );
 };
