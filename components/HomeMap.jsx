@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from 'react';
+import { MapPin, Expand, ChevronUp, LocateFixed } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -82,38 +83,42 @@ const HomeMap = () => {
         <div
             ref={mapWrapperRef}
             className={`flex flex-col bg-white border border-gray-300 shadow-sm overflow-hidden font-sans transition-all duration-300 ${isFullscreen
-                    ? 'fixed inset-0 z-[9999] h-screen w-screen rounded-none'
-                    /* CHANGE: Height reduced to 380px for a sleeker rectangle look */
-                    : 'rounded-lg h-[380px] w-full'
+                ? 'fixed inset-0 z-[9999] h-screen w-screen rounded-none'
+                /* CHANGE: Height reduced to 380px for a sleeker rectangle look */
+                : 'rounded-lg h-[380px] w-full'
                 }`}
         >
             {/* Card Header */}
             <div className="px-6 py-4 flex justify-between items-center bg-white border-b border-gray-100 shrink-0 z-10">
-                <div className="flex items-center gap-3">
-                    <div className="text-gray-900">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                    </div>
-                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-tight">Tasks Near You</h2>
-                    <span className="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded border border-gray-200">73 tasks</span>
-                </div>
+    {/* LEFT SIDE: Everything aligned in one flex row */}
+    <div className="flex items-center gap-3">
+        <MapPin className="h-5 w-5 " aria-hidden="true" />
+        
+        <span className=" tracking-tight text-base ">
+            Tasks Near You
+        </span>
 
-                <div className="flex items-center gap-4">
-                    <span className="text-[10px] font-bold uppercase tracking-widest hidden sm:block text-gray-400">Live in {locationName}</span>
+        {/* The Badge */}
+        <span className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600">
+            73 tasks
+        </span>
+    </div>
 
-                    <button
-                        onClick={toggleFullscreen}
-                        className="text-gray-400 hover:text-black transition-colors"
-                        aria-label="Toggle Fullscreen"
-                    >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
+    {/* RIGHT SIDE: Fullscreen Action */}
+    <div className="flex items-center gap-4">
+        <button
+            onClick={toggleFullscreen}
+            className="text-gray-400 hover:text-black/70 transition-colors p-1"
+            aria-label="Toggle Fullscreen"
+        >
+            {isFullscreen ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 14h6v6m10-6h-6v6M4 10h6V4m10 6h-6V4"/></svg>
+            ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>
+            )}
+        </button>
+    </div>
+</div>
 
             {/* Map Area */}
             <div className="flex-grow relative w-full bg-gray-50">
@@ -129,15 +134,15 @@ const HomeMap = () => {
                     {mockTasks.map((task, index) => (
                         <Marker key={task.id} position={task.pos} icon={generalTaskIcon} ref={index === 0 ? autoOpenMarkerRef : null}>
                             <Popup className="custom-popup">
-                                <div className="p-2 min-w-[120px]">
+                                <div className=" min-w-[120px]">
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Available</span>
+                                        <span className="text-[10px]  uppercase tracking-wider text-gray-400">Available</span>
                                     </div>
-                                    <h3 className="font-bold text-gray-900 leading-tight mb-3 text-sm">{task.title}</h3>
+                                    <h3 className=" text-gray-900 leading-tight mb-3 text-sm">{task.title}</h3>
 
                                     <Link href={`/live-tasks`}>
-                                        <button className="w-full bg-[#111827] text-white text-[11px] font-bold py-2 rounded hover:bg-black transition-all">
+                                        <button className="w-full bg-[#111827] text-white text-[11px] py-2 rounded-full px-7 py-2.5 hover:bg-black transition-all">
                                             View Details
                                         </button>
                                     </Link>

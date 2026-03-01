@@ -69,14 +69,23 @@ const HeroSection1 = () => {
             </motion.span>
             <motion.span
               variants={itemDown}
-              className="block text-primary-btn text-5xl  md:text-6xl lg:text-8xl"
+              className=" text-primary-btn text-5xl md:text-6xl lg:text-8xl"
             >
               Get it done.
             </motion.span>
           </div>
-          <motion.div variants={itemUp} className="w-full border-y border-gray-100">
-             <HomeMap />
-          </motion.div>
+        <motion.div 
+  variants={itemUp} 
+  /* max-w-5xl: keeps the rectangle from getting too wide on large screens.
+     mx-auto: centers it.
+     shadow-sm: provides a subtle, professional depth.
+     border: adds the industrial framing.
+  */
+  className="w-full max-w-5xl mx-auto border border-gray-200 rounded-xl shadow-sm overflow-hidden"
+>
+  <HomeMap />
+</motion.div>
+          
           {/* CTAs - Reduced margin-top from mt-12 to mt-8 to keep it compact */}
           <motion.div
             variants={itemUp}
@@ -85,7 +94,7 @@ const HeroSection1 = () => {
             <motion.button 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-black text-white px-6 py-4 rounded-full text-base md:text-lg font-medium shadow-lg"
+              className="bg-black text-white rounded-full px-7 py-2.5 md:text-lg shadow-lg"
             >
               Find Help
             </motion.button>
