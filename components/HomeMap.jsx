@@ -124,9 +124,9 @@ const HomeMap = () => {
             <div className="flex-grow relative w-full bg-gray-50">
                 <MapContainer center={defaultCenter} zoom={25} className="h-full w-full z-0" scrollWheelZoom={false}>
                     <TileLayer
-                        attribution='&copy; CARTO'
-                        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                    />
+  attribution='&copy; <a href="https://www.esri.com/">Esri</a> &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+/>
                     <RecenterMap coords={userLoc} />
 
                     {userLoc && <Marker position={[userLoc.lat, userLoc.lng]} icon={sayzoIcon}></Marker>}
