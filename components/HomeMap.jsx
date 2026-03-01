@@ -13,7 +13,6 @@ const taskSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xml
 const sayzoIcon = L.divIcon({ html: sayzoSvg, className: 'user-marker', iconSize: [32, 32], iconAnchor: [16, 16] });
 const generalTaskIcon = L.divIcon({ html: taskSvg, className: 'general-task-marker', iconSize: [24, 24], iconAnchor: [12, 12] });
 
-// Helper to handle map movement
 function RecenterMap({ coords }) {
     const map = useMap();
     useEffect(() => {
@@ -30,7 +29,6 @@ const HomeMap = () => {
     const mapWrapperRef = useRef(null);
     const defaultCenter = [12.9716, 77.5946]; // Bangalore CBD
 
-    // Toggle Fullscreen using the Web API
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
             mapWrapperRef.current.requestFullscreen().catch(err => {
@@ -41,14 +39,12 @@ const HomeMap = () => {
         }
     };
 
-    // Listen for fullscreen changes (e.g., if user presses 'Esc')
     useEffect(() => {
         const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
         document.addEventListener('fullscreenchange', handleFsChange);
         return () => document.removeEventListener('fullscreenchange', handleFsChange);
     }, []);
 
-    // Geolocation & Neighborhood Naming
     useEffect(() => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -63,7 +59,6 @@ const HomeMap = () => {
         }
     }, []);
 
-    // Auto-open first task popup
     useEffect(() => {
         const timer = setTimeout(() => {
             if (autoOpenMarkerRef.current) autoOpenMarkerRef.current.openPopup();
@@ -75,7 +70,7 @@ const HomeMap = () => {
     const baseLng = userLoc?.lng || defaultCenter[1];
 
     const mockTasks = [
-        { id: 1, pos: [baseLat + 0.014, baseLng + 0.006], title: "SAYZO is looking for Best Video Editor" },
+        { id: 1, pos: [baseLat + 0.002, baseLng + 0.002], title: "SAYZO is looking for Best Video Editor" },
         { id: 2, pos: [baseLat - 0.003, baseLng + 0.007], title: "Video Editing" },
         { id: 3, pos: [baseLat + 0.006, baseLng - 0.020], title: "Looking For 10 Content Creators" },
         { id: 4, pos: [baseLat - 0.005, baseLng - 0.010], title: "Digital Marketing and Lead generation" },
@@ -84,16 +79,16 @@ const HomeMap = () => {
     ];
 
     return (
-        <div 
-            ref={mapWrapperRef} 
-            className={`flex flex-col bg-white border border-gray-300 shadow-sm overflow-hidden font-sans transition-all duration-300 ${
-                isFullscreen 
-                ? 'fixed inset-0 z-[9999] h-screen w-screen rounded-none' 
-                : 'rounded-lg h-[500px] w-full'
-            }`}
+        <div
+            ref={mapWrapperRef}
+            className={`flex flex-col bg-white border border-gray-300 shadow-sm overflow-hidden font-sans transition-all duration-300 ${isFullscreen
+                    ? 'fixed inset-0 z-[9999] h-screen w-screen rounded-none'
+                    /* CHANGE: Height reduced to 380px for a sleeker rectangle look */
+                    : 'rounded-lg h-[380px] w-full'
+                }`}
         >
             {/* Card Header */}
-            <div className="px-5 py-3 flex justify-between items-center bg-white border-b border-gray-200 shrink-0 z-10">
+            <div className="px-6 py-4 flex justify-between items-center bg-white border-b border-gray-100 shrink-0 z-10">
                 <div className="flex items-center gap-3">
                     <div className="text-gray-900">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -107,9 +102,8 @@ const HomeMap = () => {
 
                 <div className="flex items-center gap-4">
                     <span className="text-[10px] font-bold uppercase tracking-widest hidden sm:block text-gray-400">Live in {locationName}</span>
-                    
-                    {/* Functional Fullscreen Button */}
-                    <button 
+
+                    <button
                         onClick={toggleFullscreen}
                         className="text-gray-400 hover:text-black transition-colors"
                         aria-label="Toggle Fullscreen"
@@ -123,26 +117,25 @@ const HomeMap = () => {
 
             {/* Map Area */}
             <div className="flex-grow relative w-full bg-gray-50">
-                <MapContainer center={defaultCenter} zoom={13} className="h-full w-full z-0" scrollWheelZoom={false}>
+                <MapContainer center={defaultCenter} zoom={25} className="h-full w-full z-0" scrollWheelZoom={false}>
                     <TileLayer
                         attribution='&copy; CARTO'
                         url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                     />
                     <RecenterMap coords={userLoc} />
 
-                    {userLoc && <Marker position={[userLoc.lat, userLoc.lng]} icon={sayzoIcon}><Popup>Your Hub</Popup></Marker>}
+                    {userLoc && <Marker position={[userLoc.lat, userLoc.lng]} icon={sayzoIcon}></Marker>}
 
                     {mockTasks.map((task, index) => (
                         <Marker key={task.id} position={task.pos} icon={generalTaskIcon} ref={index === 0 ? autoOpenMarkerRef : null}>
                             <Popup className="custom-popup">
-                                <div className="p-2 min-w-[140px]">
-                                    <div className="flex items-center gap-2 mb-2">
+                                <div className="p-2 min-w-[120px]">
+                                    <div className="flex items-center gap-2 mb-1">
                                         <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Available</span>
                                     </div>
                                     <h3 className="font-bold text-gray-900 leading-tight mb-3 text-sm">{task.title}</h3>
-                                    
-                                    {/* Linked View Details Button */}
+
                                     <Link href={`/live-tasks`}>
                                         <button className="w-full bg-[#111827] text-white text-[11px] font-bold py-2 rounded hover:bg-black transition-all">
                                             View Details

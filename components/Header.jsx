@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { ArrowUpRight, Menu, X, User, LogOut, Mail, Phone, Briefcase, Loader2 , pluse,Sparkles, Plus } from "lucide-react";
+import { ArrowUpRight, Menu, X, User, LogOut, Mail, Phone, Briefcase, Loader2, pluse, Sparkles, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/app/Context/AuthContext";
 import { subscribeToJobApplicationsByApplicant } from "@/lib/firebase";
@@ -138,20 +138,20 @@ const Header = () => {
     <div>
       {/* HEADER */}
       <header className="relative z-40 bg-background/95 backdrop-blur">
-        <div className="mx-auto flex items-center justify-between px-4 py-5 sm:px-16">
+        <div className="mx-auto flex items-center justify-between px-3 py-4 sm:px-16">
           <Link href="/">
             <Image src={Maskgroup} alt="Sayzo" width={150} />
           </Link>
 
           {/* DESKTOP NAV */}
-         <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8">
             {['Track Tasks', 'Live Tasks', 'Use Cases'].map((item) => (
-              <Link 
+              <Link
                 key={item}
-                href={item === 'Track Tasks' ? (user ? "/track-tasks" : "/login") : `/${item.toLowerCase().replace(' ', '-')}`} 
+                href={item === 'Track Tasks' ? (user ? "/track-tasks" : "/login") : `/${item.toLowerCase().replace(' ', '-')}`}
                 className="group relative"
               >
-                <motion.span 
+                <motion.span
                   className="text-sm font-semibold text-zinc-600 group-hover:text-black flex items-center transition-colors"
                 >
                   {item}
@@ -169,7 +169,7 @@ const Header = () => {
 
             {!user ? (
               <div className="flex items-center gap-4">
-                <button 
+                <button
                   onClick={() => router.push('/login')}
                   className="text-sm font-bold text-zinc-600 hover:text-black transition-all"
                 >
@@ -186,17 +186,17 @@ const Header = () => {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                 <motion.button
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
-  onClick={() => setIsTaskOpen(true)}
-  className="rounded-full border bg-[#F8FAFC] text-black hover:bg-primary-btn hover:text-white hover:border-primary-btn border-black px-5 py-2 text-sm"
->
-  <span className="flex items-center gap-2">
-    <Plus className="w-4 h-4" />
-    Post Task
-  </span>
-</motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsTaskOpen(true)}
+                  className="rounded-full border bg-[#F8FAFC] text-black hover:bg-primary-btn hover:text-white hover:border-primary-btn border-black px-5 py-2 text-sm"
+                >
+                  <span className="flex items-center gap-2">
+                    <Plus className="w-4 h-4" />
+                    Post Task
+                  </span>
+                </motion.button>
 
                 <Button
                   onClick={() => setIsWaitlistOpen(true)}
@@ -212,9 +212,8 @@ const Header = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsProfileOpen(true)}
-                className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                  isAdmin ? "border-green-200 bg-green-50" : "border-gray-100 bg-gray-50"
-                } transition-all`}
+                className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${isAdmin ? "border-green-200 bg-green-50" : "border-gray-100 bg-gray-50"
+                  } transition-all`}
               >
                 <User className={`w-5 h-5 ${isAdmin ? "text-green-600" : "text-zinc-600"}`} />
                 <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse" />
@@ -225,26 +224,26 @@ const Header = () => {
           {/* MOBILE NAV */}
           <div className="lg:hidden flex items-center gap-2">
             <motion.button
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
-  onClick={() => setIsTaskOpen(true)}
-  className="rounded-full border bg-[#F8FAFC] text-black hover:bg-primary-btn hover:text-white hover:border-primary-btn border-black px-5 py-2 text-sm"
->
-  <span className="flex items-center gap-2">
-    <Plus className="w-4 h-4" />
-    Post Task
-  </span>
-</motion.button>
-
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={() => setIsTaskOpen(true)}
+    /* Added whitespace-nowrap and adjusted padding for tighter screens */
+    className="rounded-full border bg-[#F8FAFC] text-black hover:bg-primary-btn px-3 py-1.5 whitespace-nowrap transition-all"
+  >
+    <span className="flex items-center gap-2">
+      <Plus className="w-4 h-4" />
+      {/* Ensure the text is also wrapped or defined clearly */}
+      <span className="text-sm font-medium">Post Task</span>
+    </span>
+  </motion.button>
             {/* PROFILE ICON - Show when logged in or admin */}
             {(user || isAdmin) && (
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsProfileOpen(true)}
-                className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                  isAdmin ? "border-green-200 bg-green-50" : "border-gray-100 bg-gray-50"
-                } transition-all`}
+                className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${isAdmin ? "border-green-200 bg-green-50" : "border-gray-100 bg-gray-50"
+                  } transition-all`}
               >
                 <User className={`w-5 h-5 ${isAdmin ? "text-green-600" : "text-zinc-600"}`} />
                 <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse" />
@@ -269,7 +268,7 @@ const Header = () => {
         onClose={() => setIsWaitlistOpen(false)}
       />
 
-      {/* PROFILE MODAL */}
+
       {/* PROFILE MODAL */}
       <AnimatePresence>
         {isProfileOpen && (
@@ -292,7 +291,7 @@ const Header = () => {
                   <X size={20} />
                 </button>
                 <div className="flex flex-col items-center gap-3 mt-4">
-                   <User className="w-10 h-10 text-white" />
+                  <User className="w-10 h-10 text-white" />
                   <div className="text-center">
                     <h2 className="text-xl font-bold">{userProfile?.fullName || 'User'}</h2>
                     {isAdmin && <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-400">Administrator</span>}
@@ -337,7 +336,7 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-     {/* MOBILE DROPDOWN */}
+      {/* MOBILE DROPDOWN */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -350,7 +349,7 @@ const Header = () => {
             {/* TOP BAR */}
             <div className="flex items-center justify-between mb-8">
               <Image src={Maskgroup2} alt="Sayzo Logo" width={110} />
-              <motion.button 
+              <motion.button
                 whileTap={{ scale: 0.9, rotate: 90 }}
                 onClick={() => setOpen(false)}
                 className="p-2 bg-gray-50 rounded-full"
@@ -360,7 +359,7 @@ const Header = () => {
             </div>
 
             {/* NAV LINKS */}
-            <motion.nav 
+            <motion.nav
               variants={{
                 visible: { transition: { staggerChildren: 0.05 } }
               }}
@@ -374,9 +373,9 @@ const Header = () => {
                     visible: { opacity: 1, x: 0 }
                   }}
                 >
-                  <Link 
+                  <Link
                     onClick={() => setOpen(false)}
-                    href={item === 'Track Tasks' ? (user ? "/track-tasks" : "/login") : `/${item.toLowerCase().replace(' ', '-')}`} 
+                    href={item === 'Track Tasks' ? (user ? "/track-tasks" : "/login") : `/${item.toLowerCase().replace(' ', '-')}`}
                     className="flex items-center justify-between py-4 px-2 group"
                   >
                     <span className="text-xl font-bold text-zinc-800 group-hover:text-emerald-600 transition-colors">
@@ -390,7 +389,7 @@ const Header = () => {
               <div className="h-[1px] bg-gray-100 my-4" />
 
               {/* ACTION BUTTONS */}
-              <motion.div 
+              <motion.div
                 variants={{
                   hidden: { opacity: 0, y: 10 },
                   visible: { opacity: 1, y: 0 }
