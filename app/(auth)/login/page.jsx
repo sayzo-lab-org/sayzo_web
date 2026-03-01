@@ -6,6 +6,7 @@ import {
   loginWithEmail,
   loginWithGoogle,
   getUserProfile,
+  saveUserProfile,
 } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

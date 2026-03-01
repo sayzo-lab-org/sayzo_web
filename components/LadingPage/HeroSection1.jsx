@@ -40,7 +40,7 @@ const itemUp = {
 
 const HeroSection1 = () => {
   return (
-    <section className="relative lg:mt-30 md:mt-20 mt-70 md:pt-32 md:pb-32 pb-30 bg-white overflow-hidden">
+    <section className="relative lg:mt-30 md:mt-20 mt-70 md:pt-32 md:pb-32 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <motion.div
           variants={container}
@@ -63,7 +63,7 @@ const HeroSection1 = () => {
           <div className="font-semibold tracking-tight leading-tight mb-6">
             <motion.span
               variants={itemDown}
-              className="block text-black text-5xl  md:text-6xl lg:text-8xl"
+              className="block text-black text-7xl  md:text-6xl lg:text-8xl"
             >
               Post a task.
             </motion.span>
@@ -74,12 +74,13 @@ const HeroSection1 = () => {
               Get it done.
             </motion.span>
           </div>
-
-<HomeMap />
+          <motion.div variants={itemUp} className="w-full border-y border-gray-100 my-4">
+             <HomeMap />
+          </motion.div>
           {/* CTAs with Magnetic Hover */}
           <motion.div
             variants={itemUp}
-            className="flex justify-center items-center gap-4 sm:gap-6 mt-6 mb-8 w-80 sm:w-auto"
+            className="flex justify-center items-center gap-4 sm:gap-6  w-80 sm:w-auto"
           >
             <motion.button 
               whileHover={{ scale: 1.05, boxShadow: "0 10px 30px -10px rgba(0,0,0,0.3)" }}

@@ -4,191 +4,158 @@ import { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import Link from 'next/link';
 
-// 1. Icon Definitions (Outside Component)
-const sayzoSvg = `
-  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="16" cy="16" r="14" fill="#10B981" fill-opacity="0.2"/>
-    <circle cx="16" cy="16" r="8" fill="#10B981" stroke="white" stroke-width="2"/>
-  </svg>
-`;
+// 1. Branded Icon Definitions for Sayzo
+const sayzoSvg = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="14" fill="#10B981" fill-opacity="0.2"/><circle cx="16" cy="16" r="8" fill="#10B981" stroke="white" stroke-width="2"/></svg>`;
+const taskSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#10B981" fill-opacity="0.15" /><circle cx="12" cy="12" r="6" stroke="#10B981" stroke-width="1.5" /><circle cx="12" cy="12" r="3" fill="#111827" /></svg>`;
 
-const taskSvg = `
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="10" fill="#10B981" fill-opacity="0.15" />
-    <circle cx="12" cy="12" r="6" stroke="#10B981" stroke-width="1.5" />
-    <circle cx="12" cy="12" r="3" fill="#111827" />
-  </svg>
-`;
+const sayzoIcon = L.divIcon({ html: sayzoSvg, className: 'user-marker', iconSize: [32, 32], iconAnchor: [16, 16] });
+const generalTaskIcon = L.divIcon({ html: taskSvg, className: 'general-task-marker', iconSize: [24, 24], iconAnchor: [12, 12] });
 
-const sayzoIcon = L.divIcon({
-  html: sayzoSvg,
-  className: 'user-marker',
-  iconSize: [32, 32],
-  iconAnchor: [16, 16],
-});
-
-const generalTaskIcon = L.divIcon({
-  html: taskSvg,
-  className: 'general-task-marker',
-  iconSize: [24, 24],
-  iconAnchor: [12, 12],
-});
-
-// Helper component to handle auto-panning
+// Helper to handle map movement
 function RecenterMap({ coords }) {
-  const map = useMap();
-  useEffect(() => {
-    if (coords) {
-      map.flyTo([coords.lat, coords.lng], 14, { animate: true });
-    }
-  }, [coords, map]);
-  return null;
+    const map = useMap();
+    useEffect(() => {
+        if (coords) map.flyTo([coords.lat, coords.lng], 14, { animate: true });
+    }, [coords, map]);
+    return null;
 }
 
 const HomeMap = () => {
-  const [userLoc, setUserLoc] = useState(null);
-  const [locationName, setLocationName] = useState("Bangalore");
-  const autoOpenMarkerRef = useRef(null);
-  const defaultCenter = [12.9716, 77.5946]; // Bangalore CBD
+    const [userLoc, setUserLoc] = useState(null);
+    const [locationName, setLocationName] = useState("Bengaluru");
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const autoOpenMarkerRef = useRef(null);
+    const mapWrapperRef = useRef(null);
+    const defaultCenter = [12.9716, 77.5946]; // Bangalore CBD
 
-useEffect(() => {
-  const fetchLocationName = async () => {
-    if (userLoc) {
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLoc.lat}&lon=${userLoc.lng}&zoom=10`
-        );
-        const data = await response.json();
-        // Fallback hierarchy: suburb, city, then state
-        const name = data.address.suburb || data.address.city || data.address.state || "your area";
-        setLocationName(name);
-      } catch (error) {
-        console.error("Error fetching location name:", error);
-      }
-    }
-  };
+    // Toggle Fullscreen using the Web API
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            mapWrapperRef.current.requestFullscreen().catch(err => {
+                console.error(`Error enabling fullscreen: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    };
 
-  fetchLocationName();
-}, [userLoc]);
+    // Listen for fullscreen changes (e.g., if user presses 'Esc')
+    useEffect(() => {
+        const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', handleFsChange);
+        return () => document.removeEventListener('fullscreenchange', handleFsChange);
+    }, []);
 
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        },
-        (err) => console.error("Location access denied", err)
-      );
-    }
-  }, []);
+    // Geolocation & Neighborhood Naming
+    useEffect(() => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                setUserLoc(coords);
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}&zoom=10`);
+                    const data = await res.json();
+                    setLocationName(data.address.suburb || data.address.city || "your area");
+                } catch (e) { console.error(e); }
+            });
+        }
+    }, []);
 
-  // Open the first task's popup by default
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (autoOpenMarkerRef.current) {
-        autoOpenMarkerRef.current.openPopup();
-      }
-    }, 1000); 
-    return () => clearTimeout(timer);
-  }, [userLoc]);
+    // Auto-open first task popup
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (autoOpenMarkerRef.current) autoOpenMarkerRef.current.openPopup();
+        }, 1200);
+        return () => clearTimeout(timer);
+    }, [userLoc]);
 
-  const baseLat = userLoc?.lat || defaultCenter[0];
-  const baseLng = userLoc?.lng || defaultCenter[1];
+    const baseLat = userLoc?.lat || defaultCenter[0];
+    const baseLng = userLoc?.lng || defaultCenter[1];
 
-  const mockTasks = [
-    { id: 1, pos: [baseLat + 0.004, baseLng + 0.006], title: "Event Photographer Needed" },
-    { id: 2, pos: [baseLat - 0.005, baseLng - 0.004], title: "Website Bug Fix (React)" },
-    { id: 3, pos: [baseLat + 0.007, baseLng + 0.003], title: "Resume Designing Help" },
-    { id: 4, pos: [baseLat + 0.003, baseLng - 0.007], title: "Furniture Assembly (IKEA)" },
-  ];
+    const mockTasks = [
+        { id: 1, pos: [baseLat + 0.014, baseLng + 0.006], title: "SAYZO is looking for Best Video Editor" },
+        { id: 2, pos: [baseLat - 0.003, baseLng + 0.007], title: "Video Editing" },
+        { id: 3, pos: [baseLat + 0.006, baseLng - 0.020], title: "Looking For 10 Content Creators" },
+        { id: 4, pos: [baseLat - 0.005, baseLng - 0.010], title: "Digital Marketing and Lead generation" },
+        { id: 5, pos: [baseLat + 0.012, baseLng - 0.006], title: "I need a Shopify Developer" },
+        { id: 6, pos: [baseLat + 0.007, baseLng + 0.013], title: "Distribute flyers" },
+    ];
 
-  return (
-    <div className="w-full max-w-5xl mx-auto my-12 px-4 font-sans">
-      {/* Main Card Wrapper 
-          - flex-col ensures header and map stack vertically.
-          - overflow-hidden keeps the map tiles from breaking the rounded corners.
-      */}
-      <div className="flex flex-col bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl overflow-hidden h-[600px]">
-        
-        {/* Card Header - shrink-0 prevents it from being squashed by the map */}
-        <div className="px-8 py-6 flex justify-between items-center bg-white border-b border-gray-50/50 shrink-0 z-10">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100/50">
-                <span className="text-sm font-mono font-bold text-emerald-600 leading-none">73</span>
-              </span>
-              <h2 className="text-xl font-medium text-gray-900 tracking-tight">
-                Tasks <span className="text-gray-400 font-light">near you</span>
-              </h2>
-            </div>
-
-            <p className="text-[11px] text-gray-400 flex items-center gap-2 mt-0.5">
-  <span className="relative flex h-1.5 w-1.5">
-    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-  </span>
-  {/* Now dynamically renders "Real-time hyperlocal activity in Indiranagar" etc. */}
-  Real-time hyperlocal activity in {locationName}
-</p>
-          </div>
-        </div>
-
-        {/* Map Area - flex-grow ensures it fills all remaining space in the 600px card */}
-        <div className="flex-grow relative w-full">
-          
-          {/* Status Overlay for location detection */}
-          {!userLoc && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] bg-white/90 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-bold text-gray-500 shadow-sm border border-gray-100 uppercase tracking-widest">
-              📍 Locating neighborhood...
-            </div>
-          )}
-
-          <MapContainer 
-            center={defaultCenter} 
-            zoom={13} 
-            className="h-full w-full z-0"
-            scrollWheelZoom={false}
-          >
-            <TileLayer
-              attribution='&copy; CARTO'
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-            />
-            
-            <RecenterMap coords={userLoc} />
-
-            {userLoc && (
-              <Marker position={[userLoc.lat, userLoc.lng]} icon={sayzoIcon}>
-                <Popup>You are here!</Popup>
-              </Marker>
-            )}
-
-            {mockTasks.map((task, index) => (
-              <Marker 
-                key={task.id} 
-                position={task.pos} 
-                icon={generalTaskIcon}
-                ref={index === 0 ? autoOpenMarkerRef : null}
-              >
-                <Popup className="custom-popup">
-                  <div className="p-2 min-w-[120px]">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Available</span>
+    return (
+        <div 
+            ref={mapWrapperRef} 
+            className={`flex flex-col bg-white border border-gray-300 shadow-sm overflow-hidden font-sans transition-all duration-300 ${
+                isFullscreen 
+                ? 'fixed inset-0 z-[9999] h-screen w-screen rounded-none' 
+                : 'rounded-lg h-[500px] w-full'
+            }`}
+        >
+            {/* Card Header */}
+            <div className="px-5 py-3 flex justify-between items-center bg-white border-b border-gray-200 shrink-0 z-10">
+                <div className="flex items-center gap-3">
+                    <div className="text-gray-900">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
                     </div>
-                    <h3 className="font-semibold text-gray-900 leading-tight mb-2">{task.title}</h3>
-                    <button className="w-full bg-[#111827] text-white text-[11px] font-medium py-1.5 rounded-md hover:bg-gray-800 transition-colors">
-                      View Task
+                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-tight">Tasks Near You</h2>
+                    <span className="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded border border-gray-200">73 tasks</span>
+                </div>
+
+                <div className="flex items-center gap-4">
+                    <span className="text-[10px] font-bold uppercase tracking-widest hidden sm:block text-gray-400">Live in {locationName}</span>
+                    
+                    {/* Functional Fullscreen Button */}
+                    <button 
+                        onClick={toggleFullscreen}
+                        className="text-gray-400 hover:text-black transition-colors"
+                        aria-label="Toggle Fullscreen"
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                        </svg>
                     </button>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
+                </div>
+            </div>
+
+            {/* Map Area */}
+            <div className="flex-grow relative w-full bg-gray-50">
+                <MapContainer center={defaultCenter} zoom={13} className="h-full w-full z-0" scrollWheelZoom={false}>
+                    <TileLayer
+                        attribution='&copy; CARTO'
+                        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                    />
+                    <RecenterMap coords={userLoc} />
+
+                    {userLoc && <Marker position={[userLoc.lat, userLoc.lng]} icon={sayzoIcon}><Popup>Your Hub</Popup></Marker>}
+
+                    {mockTasks.map((task, index) => (
+                        <Marker key={task.id} position={task.pos} icon={generalTaskIcon} ref={index === 0 ? autoOpenMarkerRef : null}>
+                            <Popup className="custom-popup">
+                                <div className="p-2 min-w-[140px]">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Available</span>
+                                    </div>
+                                    <h3 className="font-bold text-gray-900 leading-tight mb-3 text-sm">{task.title}</h3>
+                                    
+                                    {/* Linked View Details Button */}
+                                    <Link href={`/live-tasks`}>
+                                        <button className="w-full bg-[#111827] text-white text-[11px] font-bold py-2 rounded hover:bg-black transition-all">
+                                            View Details
+                                        </button>
+                                    </Link>
+                                </div>
+                            </Popup>
+                        </Marker>
+                    ))}
+                </MapContainer>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default HomeMap;
