@@ -3,6 +3,11 @@
 import { Clock, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const HomeMap = dynamic(() => import("../HomeMap"), {
+  ssr: false,
+});
 
 const container = {
   hidden: { opacity: 0 },
@@ -58,18 +63,19 @@ const HeroSection1 = () => {
           <div className="font-semibold tracking-tight leading-tight mb-6">
             <motion.span
               variants={itemDown}
-              className="block text-black text-5xl md:text-6xl lg:text-8xl selection:bg-emerald-100"
+              className="block text-black text-5xl  md:text-6xl lg:text-8xl"
             >
               Post a task.
             </motion.span>
             <motion.span
               variants={itemDown}
-              className="block text-primary-btn text-5xl md:text-6xl lg:text-8xl selection:bg-black selection:text-white"
+              className="block text-primary-btn text-5xl  md:text-6xl lg:text-8xl"
             >
               Get it done.
             </motion.span>
           </div>
 
+<HomeMap />
           {/* CTAs with Magnetic Hover */}
           <motion.div
             variants={itemUp}
@@ -94,7 +100,7 @@ const HeroSection1 = () => {
           </motion.div>
 
           {/* Enhanced Search Bar */}
-          <motion.div
+          {/* <motion.div
             variants={itemUp}
             className="w-full max-w-xl md:max-w-3xl group"
           >
@@ -113,7 +119,8 @@ const HeroSection1 = () => {
                 <span>Search</span>
               </motion.button>
             </div>
-          </motion.div>
+          </motion.div> */}
+
         </motion.div>
       </div>
 

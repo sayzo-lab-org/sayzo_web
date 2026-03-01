@@ -186,15 +186,17 @@ const Header = () => {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsTaskOpen(true)}
-                  className="rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-5 py-2 text-sm font-bold flex items-center gap-2 border border-emerald-100"
-                >
-                  <Plus className="w-4 h-4" />
-                  Post Task
-                </motion.button>
+                 <motion.button
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={() => setIsTaskOpen(true)}
+  className="rounded-full border bg-[#F8FAFC] text-black hover:bg-primary-btn hover:text-white hover:border-primary-btn border-black px-5 py-2 text-sm"
+>
+  <span className="flex items-center gap-2">
+    <Plus className="w-4 h-4" />
+    Post Task
+  </span>
+</motion.button>
 
                 <Button
                   onClick={() => setIsWaitlistOpen(true)}
@@ -223,14 +225,16 @@ const Header = () => {
           {/* MOBILE NAV */}
           <div className="lg:hidden flex items-center gap-2">
             <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsTaskOpen(true)}
-                  className="rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-5 py-2 text-sm font-bold flex items-center gap-2 border border-emerald-100"
-                >
-                  <Plus className="w-4 h-4" />
-                  Post Task
-                </motion.button>
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={() => setIsTaskOpen(true)}
+  className="rounded-full border bg-[#F8FAFC] text-black hover:bg-primary-btn hover:text-white hover:border-primary-btn border-black px-5 py-2 text-sm"
+>
+  <span className="flex items-center gap-2">
+    <Plus className="w-4 h-4" />
+    Post Task
+  </span>
+</motion.button>
 
             {/* PROFILE ICON - Show when logged in or admin */}
             {(user || isAdmin) && (
