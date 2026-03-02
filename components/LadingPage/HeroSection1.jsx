@@ -1,9 +1,12 @@
 "use client";
 
-import { Clock, Search } from "lucide-react";
-import { motion } from "framer-motion";
+
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+
 
 const HomeMap = dynamic(() => import("../HomeMap"), {
   ssr: false,
@@ -39,8 +42,18 @@ const itemUp = {
 };
 
 const HeroSection1 = () => {
+  const words = ["matched", "talent", "skill"];
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % words.length);
+    }, 1500); // 1 second
+
+    return () => clearInterval(interval);
+  }, []);
   return (
-    <section className="relative mt-50 lg:mt-20 md:mt-20 md:pt-32 md:pb-32 bg-white overflow-hidden">
+    <section className="relative mt-50 lg:mt-16 md:mt-16 md:pt-30 md:pb-25 bg-white overflow-hidden">
       <div className=" max-w-7xl mx-auto px-3 lg:px-1 relative z-10">
         <motion.div
           variants={container}
@@ -48,19 +61,46 @@ const HeroSection1 = () => {
           animate="show"
           className="flex flex-col items-center text-center"
         >
+
           {/* Badge with pulse effect */}
           <motion.div
             variants={itemDown}
-            className="inline-flex items-center gap-2 bg-[#f0f9f4] text-primary-btn px-4 py-2 rounded-full border border-[#e2f3ea] mb-6 hover:bg-[#e2f3ea] transition-colors cursor-default"
+            className="inline-flex items-center gap-2 bg-white rounded-full border border-gray-100 p-1 pr-4 mb-6 shadow-sm hover:shadow-md transition-all cursor-default"
           >
-            <Clock className="w-4 h-4 animate-pulse" />
-            <span className="text-sm font-semibold text-emerald-700">
-              Get matched in 10mins
-            </span>
+            <div className="relative flex h-2 w-2 mx-2">
+
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+
+            </div>
+            {/* Refined Typography for the dynamic text */}
+            <div className="flex items-center gap-0.5 text-sm font-medium text-gray-600 ">
+              {/* The Live Blinking Dot */}
+
+
+              <span>Get</span>
+              <div className="relative h-5 overflow-hidden flex items-center min-w-[55px] justify-center">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={words[index]}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+
+                    className="absolute font-serif italic text-emerald-600"
+                  >
+                    {words[index]}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+              <span className="font-semibold text-gray-800">in 10 mins</span>
+            </div>
           </motion.div>
 
           {/* Headline */}
-          <div className="font-semibold tracking-tight leading-tight mb-12">
+          <div className="font-semibold tracking-tight leading-tight mb-8">
             <motion.span
               variants={itemDown}
               className="block text-black text-6xl md:text-6xl lg:text-8xl"
@@ -74,32 +114,35 @@ const HeroSection1 = () => {
               Get it done.
             </motion.span>
           </div>
-        <motion.div 
-  variants={itemUp} 
-  /* max-w-5xl: keeps the rectangle from getting too wide on large screens.
-     mx-auto: centers it.
-     shadow-sm: provides a subtle, professional depth.
-     border: adds the industrial framing.
-  */
-  className="w-full max-w-5xl mx-auto border border-gray-200 rounded-xl shadow-sm overflow-hidden"
->
-  <HomeMap />
-</motion.div>
-          
+
+          {/* map */}
+          <motion.div
+            variants={itemUp}
+            /* max-w-5xl: keeps the rectangle from getting too wide on large screens.
+               mx-auto: centers it.
+               shadow-sm: provides a subtle, professional depth.
+               border: adds the industrial framing.
+            */
+            className="w-full max-w-5xl mx-auto border border-gray-200 rounded-xl shadow-sm overflow-hidden"
+          >
+            <HomeMap />
+          </motion.div>
+
           {/* CTAs - Reduced margin-top from mt-12 to mt-8 to keep it compact */}
           <motion.div
             variants={itemUp}
-            className="flex flex-row sm:flex-row justify-center items-center gap-6 mt-8 mb-4 w-full"
+            className="flex flex-row sm:flex-row justify-center items-center gap-6 mt-6 mb-4 w-full"
           >
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-black text-white rounded-full px-7 py-2.5 md:text-lg shadow-lg"
+            <Button
+
+              size="sayzobtn"
+
+              className="md:text-lg hover:scale-105 shadow-lg"
             >
               Find Help
-            </motion.button>
+            </Button>
             <Link href="/live-tasks">
-              <motion.button 
+              <motion.button
                 whileHover={{ x: 5 }}
                 className="group flex items-center gap-1 cursor-pointer text-black text-base md:text-lg font-medium hover:text-emerald-600 transition-all"
               >
@@ -108,6 +151,7 @@ const HeroSection1 = () => {
               </motion.button>
             </Link>
           </motion.div>
+
         </motion.div>
       </div>
 

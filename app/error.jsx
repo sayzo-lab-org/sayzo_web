@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Error({ error, reset }) {
   useEffect(() => {
@@ -20,20 +21,27 @@ export default function Error({ error, reset }) {
           We're sorry, but something unexpected happened. Please try again.
         </p>
         <div className="flex gap-4 justify-center">
-          <button
+          <Button
+           size="sayzobtn"
             onClick={reset}
-            className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition font-medium"
+            className="flex items-center gap-2  bg-black text-white  hover:bg-gray-800 transition font-medium"
           >
             <RefreshCw className="w-4 h-4" />
             Try Again
-          </button>
-          <Link
+          </Button>
+
+          <Button
+           size="sayzobtn"
+           variant="outline"
+           >
+            <Link
             href="/"
-            className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium"
+            className="flex items-center gap-2  text-gray-700  transition font-medium"
           >
             <Home className="w-4 h-4" />
             Go Home
           </Link>
+          </Button>
         </div>
       </div>
     </div>
