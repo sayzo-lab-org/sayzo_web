@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import Frame1 from "@/public/assets/Frame1.png"
@@ -54,8 +55,8 @@ const MobileSliderView = ({ currentIndex, nextSlide, prevSlide, setCurrentIndex 
       {/* Mobile Navigation Dots */}
       <div className="flex items-center justify-center gap-3 mt-8">
         {slides.map((_, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             onClick={() => setCurrentIndex(index)}
             className={`h-1.5 transition-all rounded-full cursor-pointer ${index === currentIndex ? 'w-8 bg-black' : 'w-2 bg-gray-200'}`}
           />
@@ -70,7 +71,7 @@ const DesktopSliderView = ({ currentIndex, nextSlide, prevSlide }) => {
   return (
     <div className="hidden lg:block flex-1 relative w-full">
       <div className="flex gap-6 items-start">
-       <div className="w-[50%] relative h-150 rounded-3xl overflow-hidden shadow-1xl">
+        <div className="w-[50%] relative h-150 rounded-3xl overflow-hidden shadow-1xl">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
@@ -102,14 +103,15 @@ const DesktopSliderView = ({ currentIndex, nextSlide, prevSlide }) => {
       </div>
 
       {/* Desktop Controls */}
-      <div className="flex gap-4 justify-end mt-8 pr-12">
-        <button onClick={prevSlide} className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
+      <div className="flex gap-4 justify-end mt-8 pr-12 ">
+        <button onClick={prevSlide} className="w-14 h-14 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
           <ChevronLeft className="w-6 h-6" />
         </button>
         <button onClick={nextSlide} className="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors">
           <ChevronRight className="w-6 h-6" />
         </button>
       </div>
+
     </div>
   );
 };
@@ -123,14 +125,16 @@ const CommunityFirst = () => {
   const prevSlide = () => setCurrentIndex((prev) => prev === 0 ? slides.length - 1 : prev - 1);
 
   return (
-    <section className="min-h-screen bg-white px-4 py-12 lg:p-8 border-y border-gray-100">
+    <section className="min-h-screen bg-white px-4 py-8 lg:p-8 border-y border-gray-100 ">
       <div className="max-w-7xl mx-auto w-full">
         <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-20">
 
           {/* LEFT CONTENT SECTION */}
-          <div className="w-full lg:w-[35%] flex flex-col justify-between lg:min-h-[600px]">
-            <div>
-              <div className="hidden lg:flex items-center gap-4 text-sm text-gray-400 mb-8">
+          <div className="w-full lg:w-[35%] flex flex-col-reverse lg:flex-col justify-between lg:min-h-[600px] ">
+            
+
+              {/* steps 01 -> 02 -> 03... */}
+              <div className="hidden lg:flex items-center gap-4 text-sm text-gray-400 mb-8 ">
                 {slides.map((_, index) => (
                   <div key={index} className="flex items-center gap-2 shrink-0">
                     <span className={index === currentIndex ? 'text-black bg-gray-200 py-2 px-3 rounded-full font-bold text-lg' : 'text-gray-400 italic font-medium'}>
@@ -142,56 +146,58 @@ const CommunityFirst = () => {
                   </div>
                 ))}
               </div>
-              
+              {/* light paragraph */}
               <p className="text-gray-600 text-sm md:text-base leading-relaxed max-w-sm mb-6 lg:mb-0">
                 The hyperlocal workforce infrastructure built for real-life work,
                 real urgency, and real money. SAYZO solves the five biggest
                 failures of local work at once.
               </p>
-            </div>
-
+            
+            {/* bold paragraph */}
             <div className="mt-4 lg:mt-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05] mb-8">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05] mb-2">
                 Community-First,<br />
                 Hyperlocal Task<br />
                 Marketplace.
               </h1>
 
-              <button 
-                onClick={() => setIsModalOpen(true)} 
+              <button
+                onClick={() => setIsModalOpen(true)}
                 className="hidden md:inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full text-sm font-bold hover:bg-emerald-600 transition-all"
               >
                 Join waitlist
                 <ArrowUpRight className="w-5 h-5 rounded-full p-1 bg-white text-black" />
               </button>
             </div>
+
           </div>
 
           {/* RIGHT CONTENT SECTION (Divided) */}
-          <MobileSliderView 
-            currentIndex={currentIndex} 
-            nextSlide={nextSlide} 
-            prevSlide={prevSlide} 
-            setCurrentIndex={setCurrentIndex} 
+          <MobileSliderView
+            currentIndex={currentIndex}
+            nextSlide={nextSlide}
+            prevSlide={prevSlide}
+            setCurrentIndex={setCurrentIndex}
           />
-          <DesktopSliderView 
-            currentIndex={currentIndex} 
-            nextSlide={nextSlide} 
-            prevSlide={prevSlide} 
+          <DesktopSliderView
+            currentIndex={currentIndex}
+            nextSlide={nextSlide}
+            prevSlide={prevSlide}
           />
 
         </div>
       </div>
-      
+
       {/* Mobile-only CTA */}
       <div className="md:hidden mt-12 flex justify-center">
-        <button 
-          onClick={() => setIsModalOpen(true)} 
-          className="w-full bg-black text-white py-5 rounded-2xl font-bold flex items-center justify-center gap-3"
+        <Button
+        size="sayzobtn"
+          onClick={() => setIsModalOpen(true)}
+          className=" bg-black text-white font-sm flex items-center justify-center gap-3 text-sm  hover:bg-emerald-600 transition-all"
         >
           Join waitlist
-          <ArrowUpRight className="w-5 h-5 p-1 bg-white text-black rounded-full" />
-        </button>
+          <ArrowUpRight className="w-5 h-5 bg-white text-black rounded-full" />
+        </Button>
       </div>
 
       <WaitlistModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
