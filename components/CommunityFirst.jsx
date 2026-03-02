@@ -103,7 +103,7 @@ const DesktopSliderView = ({ currentIndex, nextSlide, prevSlide }) => {
       </div>
 
       {/* Desktop Controls */}
-      <div className="flex gap-4 justify-end mt-8 pr-12 border border-gray-200">
+      <div className="flex gap-4 justify-end mt-8 pr-12 ">
         <button onClick={prevSlide} className="w-14 h-14 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
           <ChevronLeft className="w-6 h-6" />
         </button>
