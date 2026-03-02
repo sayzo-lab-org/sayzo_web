@@ -1,239 +1,185 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import Frame1 from"@/public/assets/Frame1.png"
-import Frame2 from"@/public/assets/Frame2.png"
-import Frame3 from"@/public/assets/Frame3.png"
-import Frame4 from"@/public/assets/Frame4.png"
-import Frame5 from"@/public/assets/Frame5.png"
+import Frame1 from "@/public/assets/Frame1.png"
+import Frame2 from "@/public/assets/Frame2.png"
+import Frame3 from "@/public/assets/Frame3.png"
+import Frame4 from "@/public/assets/Frame4.png"
+import Frame5 from "@/public/assets/Frame5.png"
 import WaitlistModal from './JoinWaitList/WaitlistModal';
 
-
-
 const slides = [
-  {
-    title: 'Your skills should make you money',
-    image: Frame1,
-  },
-  {
-    title: 'Finding help should not take hours',
-    image: Frame2,
-  },
-  {
-    title: 'Connect with local experts instantly',
-    image: Frame3,
-  },
-  {
-    title: 'Get paid for your skills',
-    image: Frame4,
-  },
-  {
-    title: 'Build your local network',
-    image: Frame5,
-  },
+  { title: 'Your skills should make you money', image: Frame1 },
+  { title: 'Finding help should not take hours', image: Frame2 },
+  { title: 'Connect with local experts instantly', image: Frame3 },
+  { title: 'Get paid for your skills', image: Frame4 },
+  { title: 'Build your local network', image: Frame5 },
 ];
 
 const CommunityFirst = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const nextSlide = () =>
-    setCurrentIndex((prev) => (prev + 1) % slides.length);
-
-  const prevSlide = () =>
-    setCurrentIndex((prev) =>
-      prev === 0 ? slides.length - 1 : prev - 1
-    );
-
-  // Auto-scroll for mobile only
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     nextSlide();
-  //   }, 10000); // Change slide every 4 seconds
-
-  //   return () => clearInterval(interval);
-  // }, []);
+  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % slides.length);
+  const prevSlide = () => setCurrentIndex((prev) => prev === 0 ? slides.length - 1 : prev - 1);
 
   return (
-    <section className="min-h-screen bg-white px-4 lg:px-8 ">
-      <div className="max-w-350 mx-auto w-full">
+    <section className="min-h-screen bg-white px-4 py-12 lg:p-8 border-y border-gray-100">
+      <div className="max-w-7xl mx-auto w-full">
+        
+        {/* Responsive Grid: Column on Mobile, Row on Desktop */}
+        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-20">
 
-        {/* MOBILE/TABLET = COLUMN | DESKTOP = ROW */}
-        <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-20">
-
-          {/* LEFT CONTENT */}
-          <div
-            className="w-full lg:w-[35%] flex md:flex-col flex-col-reverse md:justify-between md:h-150"
-            
-          >
+          {/* LEFT CONTENT: Dynamic flex-direction for industrial balance */}
+          <div className="w-full lg:w-[35%] flex flex-col justify-between lg:min-h-[600px]">
             <div>
-              {/* NUMBERS */}
-              <div className="md:flex items-center hidden gap-4 text-sm text-gray-400 mb-6 overflow-x-auto lg:overflow-visible">
+              {/* Desktop-only Numbers */}
+              <div className="hidden lg:flex items-center gap-4 text-sm text-gray-400 mb-8">
                 {slides.map((_, index) => (
                   <div key={index} className="flex items-center gap-2 shrink-0">
-                    <span
-                      className={
-                        index === currentIndex
-                          ? 'text-black bg-gray-300 py-2 px-2.5 rounded-full font-medium text-lg'
-                          : 'text-black italic'
-                      }
-                    >
+                    <span className={index === currentIndex ? 'text-black bg-gray-200 py-2 px-3 rounded-full font-bold text-lg' : 'text-gray-400 italic font-medium'}>
                       {(index + 1).toString().padStart(2, '0')}
                     </span>
-
-                    {/* LINE ONLY ON DESKTOP */}
-                    {index === currentIndex &&
-                      index < slides.length - 1 && (
-                        <div className="hidden lg:block w-40 h-0.5 bg-black" />
-                      )}
+                    {index === currentIndex && index < slides.length - 1 && (
+                      <div className="w-24 h-[1px] bg-black" />
+                    )}
                   </div>
                 ))}
               </div>
               
-              <p className="text-gray-600 md:text-sm text-xs leading-relaxed max-w-sm">
+              <p className="text-gray-600 text-sm md:text-base leading-relaxed max-w-sm mb-6 lg:mb-0">
                 The hyperlocal workforce infrastructure built for real-life work,
                 real urgency, and real money. SAYZO solves the five biggest
                 failures of local work at once.
               </p>
             </div>
 
-            <div className="mt-8 lg:mt-auto md:mb-10">
-              <h1 className="md:text-4xl text-3xl lg:text-5xl font-semibold leading-[1.1] mb-6">
-                Community-First,
-                <br className='md:flex hidden' />
-                Hyperlocal Task
-                <br className='md:flex hidden' />
+            <div className="mt-4 lg:mt-auto">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05] mb-8">
+                Community-First,<br />
+                Hyperlocal Task<br />
                 Marketplace.
               </h1>
 
-              <button onClick={() => setIsModalOpen(true)} className="md:inline-flex items-center gap-2 bg-black text-white px-6 py-3 hidden  rounded-full text-sm font-medium">
+              {/* Responsive Button: Hidden on mobile, visible on tablet/desktop */}
+              <button 
+                onClick={() => setIsModalOpen(true)} 
+                className="hidden md:inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full text-sm font-bold hover:bg-emerald-600 transition-all"
+              >
                 Join waitlist
-                <ArrowUpRight className="w-8 h-8 rounded-full p-1 bg-white text-black" />
+                <ArrowUpRight className="w-5 h-5 rounded-full p-1 bg-white text-black" />
               </button>
             </div>
           </div>
 
-          {/* RIGHT SLIDER */}
-          <div className="flex-1 relative w-full">
+          {/* RIGHT SLIDER: Full-width on mobile with swipe */}
+          <div className="flex-1 relative w-full mt-8 lg:mt-0">
+            
+            {/* MOBILE/TABLET SLIDER (Swipeable) */}
+            <div className="lg:hidden relative">
+              <motion.div
+                className="relative aspect-[4/5] md:aspect-video rounded-[2rem] overflow-hidden"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -50) nextSlide();
+                  if (info.offset.x > 50) prevSlide();
+                }}
+              >
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentIndex}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="absolute inset-0"
+                  >
+                    <Image
+                      src={slides[currentIndex].image}
+                      alt={slides[currentIndex].title}
+                      fill
+                      className="object-cover"
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </motion.div>
 
-            {/* MOBILE + TABLET (SINGLE IMAGE, SWIPE + AUTO-SCROLL) */}
-            <motion.div
-              className="relative h-150 md:h-105 rounded-3xl overflow-hidden lg:hidden"
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              onDragEnd={(_, info) => {
-                if (info.offset.x < -80) nextSlide();
-                if (info.offset.x > 80) prevSlide();
-              }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 rounded-2xl z-20"
-                >
-                  <Image
-                    src={slides[currentIndex].image}
-                    alt={slides[currentIndex].title}
-                    width={2000}
-                    height={100}
-                    className="object-cover"
+              {/* Mobile Navigation Dots */}
+              <div className="flex items-center justify-center gap-3 mt-8">
+                {slides.map((_, index) => (
+                  <div 
+                    key={index} 
+                    onClick={() => setCurrentIndex(index)}
+                    className={`h-1.5 transition-all rounded-full ${index === currentIndex ? 'w-8 bg-black' : 'w-2 bg-gray-200'}`}
                   />
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
+                ))}
+              </div>
+            </div>
 
-            {/* DESKTOP (YOUR ORIGINAL DESIGN - UNCHANGED) */}
+            {/* DESKTOP SLIDER (Original Layout Maintained) */}
             <div className="hidden lg:block">
-              <div className="relative mb-6 ml-20">
-                <div className="flex ">
-
-                  {/* ACTIVE SLIDE */}
-                 <div className="w-[50%] relative h-150 rounded-3xl overflow-hidden">
+              <div className="flex gap-6 items-start">
+                 <div className="w-[60%] relative h-[600px] rounded-[3rem] overflow-hidden shadow-2xl">
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={currentIndex}
-                        initial={{ opacity: 0, scale: 0.97 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.97 }}
-                        transition={{
-                          duration: 0.6,
-                          ease: [0.22, 1, 0.36, 1],
-                        }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.6 }}
                         className="absolute inset-0"
                       >
                         <Image
                           src={slides[currentIndex].image}
                           alt={slides[currentIndex].title}
-                          width={2000}
-                          height={100}
-                          className="object-center"
+                          fill
+                          className="object-cover"
                         />
                       </motion.div>
                     </AnimatePresence>
                   </div>
 
-                  {/* NEXT PREVIEW */}
                   {currentIndex < slides.length - 1 && (
-                    <div className="w-[50%] relative h-125 mb-24.5 rounded-3xl mt-1 overflow-hidden">
+                    <div className="w-[35%] relative h-[500px] rounded-[2.5rem] mt-12 overflow-hidden opacity-40 grayscale hover:grayscale-0 transition-all">
                       <Image
                         src={slides[currentIndex + 1].image}
                         alt={slides[currentIndex + 1].title}
                         fill
-                        className="object-contain opacity-85"
+                        className="object-cover"
                       />
                     </div>
                   )}
-                </div>
               </div>
 
-              {/* DESKTOP NAV */}
-              <div className="flex gap-3 justify-end -mt-24 mr-27 relative z-30">
-                <button
-                  onClick={prevSlide}
-                  className="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:border-black"
-                >
-                  <ChevronLeft className="w-5 h-5" />
+              {/* Desktop Controls */}
+              <div className="flex gap-4 justify-end mt-8 pr-12">
+                <button onClick={prevSlide} className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
+                  <ChevronLeft className="w-6 h-6" />
                 </button>
-                <button
-                  onClick={nextSlide}
-                  className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800"
-                >
-                  <ChevronRight className="w-5 h-5" />
+                <button onClick={nextSlide} className="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors">
+                  <ChevronRight className="w-6 h-6" />
                 </button>
               </div>
             </div>
 
           </div>
         </div>
-        <div className="flex md:hidden items-center justify-center -mt-10  md:mt-0  gap-4 text-sm text-gray-400 md:mb-6 overflow-x-auto lg:overflow-visible">
-                {slides.map((_, index) => (
-                  <div key={index} className="flex items-center gap-2 shrink-0">
-                    <span
-                      className={
-                        index === currentIndex
-                          ? 'text-black bg-gray-300 py-2 px-2.5 rounded-full font-medium text-lg'
-                          : 'text-black italic'
-                      }
-                    >
-                      {(index + 1).toString().padStart(2, '0')}
-                    </span>
-
-                    {/* LINE ONLY ON DESKTOP */}
-                    {index === currentIndex &&
-                      index < slides.length - 1 && (
-                        <div className="flex  mg-auto w-10 h-0.5 bg-black" />
-                      )}
-                  </div>
-                ))}
-              </div>
       </div>
+      
+      {/* Mobile-only CTA */}
+      <div className="md:hidden mt-12 flex justify-center">
+        <button 
+          onClick={() => setIsModalOpen(true)} 
+          className="w-full bg-black text-white py-5 rounded-2xl font-bold flex items-center justify-center gap-3"
+        >
+          Join waitlist
+          <ArrowUpRight className="w-5 h-5 p-1 bg-white text-black rounded-full" />
+        </button>
+      </div>
+
       <WaitlistModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   );
