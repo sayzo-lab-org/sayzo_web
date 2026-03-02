@@ -31,7 +31,7 @@ const handleLogin = async (e) => {
   try {
     await loginWithEmail(email, password);
 
-    router.push("/"); // go home
+    router.push(searchParams.get("redirect") || "/");
   } catch (err) {
     setError("Invalid email or password. Please try again.");
   } finally {

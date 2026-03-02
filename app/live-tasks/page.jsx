@@ -1,4 +1,5 @@
 import UserPage from "@/components/UserPage";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export const metadata = {
   title: "Browse Live Tasks Near You | Earn Money Helping Neighbors Today",
@@ -18,8 +19,6 @@ export const metadata = {
 
 export default function LiveTasksPage() {
   return (
-    <main>
-      <UserPage mode="live" />
-    </main>
+              <UserPage mode="live" />
   );
 }
