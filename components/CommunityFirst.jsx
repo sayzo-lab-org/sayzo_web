@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,6 +19,102 @@ const slides = [
   { title: 'Build your local network', image: Frame5 },
 ];
 
+// --- MOBILE VIEW COMPONENT ---
+const MobileSliderView = ({ currentIndex, nextSlide, prevSlide, setCurrentIndex }) => {
+  return (
+    <div className="lg:hidden relative w-full mt-8">
+      <motion.div
+        className="relative aspect-[4/5] md:aspect-video rounded-[2rem] overflow-hidden"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.x < -50) nextSlide();
+          if (info.offset.x > 50) prevSlide();
+        }}
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.4 }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={slides[currentIndex].image}
+              alt={slides[currentIndex].title}
+              fill
+              className="object-contain"
+            />
+          </motion.div>
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Mobile Navigation Dots */}
+      <div className="flex items-center justify-center gap-3 mt-8">
+        {slides.map((_, index) => (
+          <div 
+            key={index} 
+            onClick={() => setCurrentIndex(index)}
+            className={`h-1.5 transition-all rounded-full cursor-pointer ${index === currentIndex ? 'w-8 bg-black' : 'w-2 bg-gray-200'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// --- DESKTOP VIEW COMPONENT ---
+const DesktopSliderView = ({ currentIndex, nextSlide, prevSlide }) => {
+  return (
+    <div className="hidden lg:block flex-1 relative w-full">
+      <div className="flex gap-6 items-start">
+       <div className="w-[50%] relative h-150 rounded-3xl overflow-hidden shadow-1xl">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={slides[currentIndex].image}
+                alt={slides[currentIndex].title}
+                fill
+                className="object-contain"
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {currentIndex < slides.length - 1 && (
+          <div className="w-[35%] relative h-[500px] rounded-[2.5rem] mt-12 overflow-hidden opacity-40 grayscale hover:grayscale-0 transition-all">
+            <Image
+              src={slides[currentIndex + 1].image}
+              alt={slides[currentIndex + 1].title}
+              fill
+              className="object-cover"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Controls */}
+      <div className="flex gap-4 justify-end mt-8 pr-12">
+        <button onClick={prevSlide} className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <button onClick={nextSlide} className="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors">
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// --- MAIN COMPONENT ---
 const CommunityFirst = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,14 +125,11 @@ const CommunityFirst = () => {
   return (
     <section className="min-h-screen bg-white px-4 py-12 lg:p-8 border-y border-gray-100">
       <div className="max-w-7xl mx-auto w-full">
-        
-        {/* Responsive Grid: Column on Mobile, Row on Desktop */}
         <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-20">
 
-          {/* LEFT CONTENT: Dynamic flex-direction for industrial balance */}
+          {/* LEFT CONTENT SECTION */}
           <div className="w-full lg:w-[35%] flex flex-col justify-between lg:min-h-[600px]">
             <div>
-              {/* Desktop-only Numbers */}
               <div className="hidden lg:flex items-center gap-4 text-sm text-gray-400 mb-8">
                 {slides.map((_, index) => (
                   <div key={index} className="flex items-center gap-2 shrink-0">
@@ -64,7 +157,6 @@ const CommunityFirst = () => {
                 Marketplace.
               </h1>
 
-              {/* Responsive Button: Hidden on mobile, visible on tablet/desktop */}
               <button 
                 onClick={() => setIsModalOpen(true)} 
                 className="hidden md:inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full text-sm font-bold hover:bg-emerald-600 transition-all"
@@ -75,97 +167,19 @@ const CommunityFirst = () => {
             </div>
           </div>
 
-          {/* RIGHT SLIDER: Full-width on mobile with swipe */}
-          <div className="flex-1 relative w-full mt-8 lg:mt-0">
-            
-            {/* MOBILE/TABLET SLIDER (Swipeable) */}
-            <div className="lg:hidden relative">
-              <motion.div
-                className="relative aspect-[4/5] md:aspect-video rounded-[2rem] overflow-hidden"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x < -50) nextSlide();
-                  if (info.offset.x > 50) prevSlide();
-                }}
-              >
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentIndex}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.4 }}
-                    className="absolute inset-0"
-                  >
-                    <Image
-                      src={slides[currentIndex].image}
-                      alt={slides[currentIndex].title}
-                      fill
-                      className="object-cover"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </motion.div>
+          {/* RIGHT CONTENT SECTION (Divided) */}
+          <MobileSliderView 
+            currentIndex={currentIndex} 
+            nextSlide={nextSlide} 
+            prevSlide={prevSlide} 
+            setCurrentIndex={setCurrentIndex} 
+          />
+          <DesktopSliderView 
+            currentIndex={currentIndex} 
+            nextSlide={nextSlide} 
+            prevSlide={prevSlide} 
+          />
 
-              {/* Mobile Navigation Dots */}
-              <div className="flex items-center justify-center gap-3 mt-8">
-                {slides.map((_, index) => (
-                  <div 
-                    key={index} 
-                    onClick={() => setCurrentIndex(index)}
-                    className={`h-1.5 transition-all rounded-full ${index === currentIndex ? 'w-8 bg-black' : 'w-2 bg-gray-200'}`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* DESKTOP SLIDER (Original Layout Maintained) */}
-            <div className="hidden lg:block">
-              <div className="flex gap-6 items-start">
-                 <div className="w-[60%] relative h-[600px] rounded-[3rem] overflow-hidden shadow-2xl">
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={currentIndex}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.6 }}
-                        className="absolute inset-0"
-                      >
-                        <Image
-                          src={slides[currentIndex].image}
-                          alt={slides[currentIndex].title}
-                          fill
-                          className="object-cover"
-                        />
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-
-                  {currentIndex < slides.length - 1 && (
-                    <div className="w-[35%] relative h-[500px] rounded-[2.5rem] mt-12 overflow-hidden opacity-40 grayscale hover:grayscale-0 transition-all">
-                      <Image
-                        src={slides[currentIndex + 1].image}
-                        alt={slides[currentIndex + 1].title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  )}
-              </div>
-
-              {/* Desktop Controls */}
-              <div className="flex gap-4 justify-end mt-8 pr-12">
-                <button onClick={prevSlide} className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button onClick={nextSlide} className="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors">
-                  <ChevronRight className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-
-          </div>
         </div>
       </div>
       

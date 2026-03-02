@@ -5,34 +5,45 @@ import taskDoer from "../../public/assets/taskDoer.png"
 import taskGiver from "../../public/assets/taskGiver.png"
 import { Button } from "@/components/ui/button";
 
-import { motion } from "framer-motion";
+import { 
+  motion, 
+  useMotionValue, 
+  useTransform, 
+  animate, 
+  useInView 
+} from "framer-motion";
 import Link from "next/link";
-import { useMotionValue, useTransform, animate } from "framer-motion";
-import { useEffect } from "react";
-
+import { useEffect, useRef } from "react";
 
 const Banner = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true }); // runs only first time
+
   const count = useMotionValue(0);
-  // Transform the raw number into a formatted string with a comma and '+'
-  const rounded = useTransform(count, (latest) => 
-    Math.round(latest).toLocaleString()
+  const rounded = useTransform(count, (latest) =>
+    Math.round(latest)
   );
 
   useEffect(() => {
-    // Animate from 0 to 10000 over 3 seconds with a smooth 'easeOut'
-    const controls = animate(count, 10000, { 
-      duration: 10, 
-      ease: "easeOut" 
-    });
-    return () => controls.stop();
-  }, [count]);
+    if (isInView) {
+      const controls = animate(count, 10000, {
+        duration: 4,   // smoother than 10 seconds
+        ease: "easeOut",
+      });
+      return () => controls.stop();
+    }
+  }, [isInView, count]);
 
   return (
-    <div className="bg-black rounded-[24px] py-6 text-center shadow-lg">
-      <motion.h2 className="text-white text-4xl font-black mb-0">
-        {rounded}
-      </motion.h2>
-    </div>
+   <motion.h2
+  ref={ref}
+  className="text-white text-4xl font-black mb-0"
+>
+  <motion.span>
+    {rounded}
+  </motion.span>
+  +
+</motion.h2>
   );
 };
 
@@ -123,9 +134,9 @@ const TaskSection = () => {
       {/* Banner */}
       <div className="bg-black rounded-[24px] py-6 text-center shadow-lg">
 
-<h2 className="text-white text-4xl font-black mb-0">
+
   <Banner />
-</h2>
+
 
 <p className="text-white text-[10px] font-bold uppercase tracking-[0.2em] opacity-70">
 

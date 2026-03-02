@@ -63,42 +63,29 @@ const HeroSection1 = () => {
         >
 
           {/* Badge with pulse effect */}
+          
           <motion.div
-            variants={itemDown}
-            className="inline-flex items-center gap-2 bg-white rounded-full border border-gray-100 p-1 pr-4 mb-6 shadow-sm hover:shadow-md transition-all cursor-default"
-          >
-            <div className="relative flex h-2 w-2 mx-2">
+  variants={itemDown}
 
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+  className="inline-flex items-center gap-3 bg-white rounded-full border border-gray-100 py-2 px-5 mb-6 shadow-sm hover:shadow-md transition-all cursor-default"
+>
+  {/* The Live Blinking Dot: No extra margins, purely balanced by the parent padding */}
+  <div className="relative flex h-2 w-2">
+    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+  </div>
 
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-
-            </div>
-            {/* Refined Typography for the dynamic text */}
-            <div className="flex items-center gap-0.5 text-sm font-medium text-gray-600 ">
-              {/* The Live Blinking Dot */}
-
-
-              <span>Get</span>
-              <div className="relative h-5 overflow-hidden flex items-center min-w-[55px] justify-center">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={words[index]}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-
-                    className="absolute font-serif italic text-emerald-600"
-                  >
-                    {words[index]}
-                  </motion.span>
-                </AnimatePresence>
-              </div>
-              <span className="font-semibold text-gray-800">in 10 mins</span>
-            </div>
-          </motion.div>
-
+  {/* Typography Container */}
+  <div className="flex items-center gap-1 text-sm font-medium text-gray-600">
+    <span>Get</span>
+    <div className="relative h-5 overflow-hidden flex items-center min-w-[55px] justify-center">
+      <motion.span className="absolute font-serif italic text-emerald-600">
+        {words[0]}
+      </motion.span>
+    </div>
+    <span className="font-semibold text-gray-800">in 10 mins</span>
+  </div>
+</motion.div>
           {/* Headline */}
           <div className="font-semibold tracking-tight leading-tight mb-8">
             <motion.span
