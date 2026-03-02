@@ -7,17 +7,24 @@ import WaitlistModal from "../JoinWaitList/WaitlistModal";
 import { useState } from "react";
 import { X, CheckCircle, User, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const JobDetailPanel = ({ job, onClose, currentUser, hasApplied, isOwnTask, onApplicationSuccess, mode = "live" }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
 
+  // Initialize Router
+const router = useRouter();
+
   const handleApplyClick = () => {
     if (mode === "showcase") {
       setShowWaitlistModal(true);
-    } else if (!currentUser) {
-      setShowAuthModal(true);
+      return;
+    }
+    
+    if (!currentUser) {
+     router.push(`/login?redirect=/live-tasks/${job.id}`);
     } else {
       setIsModalOpen(true);
     }

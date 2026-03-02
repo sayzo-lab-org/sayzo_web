@@ -6,6 +6,8 @@ import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/Context/AuthContext";
 
 
 const HomeMap = dynamic(() => import("../HomeMap"), {
@@ -44,6 +46,10 @@ const itemUp = {
 const HeroSection1 = () => {
   const words = ["matched", "talent", "skill"];
   const [index, setIndex] = useState(0);
+
+  const router = useRouter();
+  const { user } = useAuth();
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -121,14 +127,21 @@ const HeroSection1 = () => {
             className="flex flex-row sm:flex-row justify-center items-center gap-6 mt-6 mb-4 w-full"
           >
             <Button
-
-              size="sayzobtn"
-
+              size="sayzobtn" 
               className="md:text-lg hover:scale-105 shadow-lg"
+              onClick={() => {
+                if(!user){
+                  router.push('/login')
+                return;
+                }else{
+                  // Open Task Modal or go to post-task page
+                  router.push('/post-task')
+                }
+              }}
             >
               Find Help
-            </Button>
-            <Link href="/live-tasks">
+             </Button>
+             <Link href="/live-tasks">
               <motion.button
                 whileHover={{ x: 5 }}
                 className="group flex items-center gap-1 cursor-pointer text-black text-base md:text-lg font-medium hover:text-emerald-600 transition-all"

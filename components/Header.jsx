@@ -145,25 +145,31 @@ const Header = () => {
 
           {/* DESKTOP NAV */}
           <nav className="hidden lg:flex items-center gap-8">
-            {['Track Tasks', 'Live Tasks', 'Use Cases'].map((item) => (
-              <Link
-                key={item}
-                href={item === 'Track Tasks' ? (user ? "/track-tasks" : "/login") : `/${item.toLowerCase().replace(' ', '-')}`}
-                className="group relative"
-              >
-                <motion.span
-                  className="text-sm font-semibold text-zinc-600 group-hover:text-black flex items-center transition-colors"
+            {['Track Tasks', 'Live Tasks', 'Use Cases'].map((item) => {
+
+              const path =`/${item.toLowerCase().replace(' ', '-')}`
+
+              const isProtected = item ==='Trace Tasks';
+              return (
+                <Link
+                  key={item}
+                  href={isProtected? (user? path : '/login'):path}
+                  className="group relative"
                 >
-                  {item}
-                  <ArrowUpRight
-                    className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
+                  <motion.span
+                    className="text-sm font-semibold text-zinc-600 group-hover:text-black flex items-center transition-colors"
+                  >
+                    {item}
+                    <ArrowUpRight
+                      className="w-3 h-3 text-gray-400 -mt-2 -ml-0.5 transition-all duration-300 ease-out 
                     group-hover:scale-110 group-hover:text-[#0ca37f] group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    strokeWidth={3}
-                  />
-                </motion.span>
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-emerald-500 transition-all duration-300 group-hover:w-full" />
-              </Link>
-            ))}
+                      strokeWidth={3}
+                    />
+                  </motion.span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-emerald-500 transition-all duration-300 group-hover:w-full" />
+                </Link>
+              );
+            })}
 
             <div className="h-6 w-[1px] bg-gray-200 mx-2" />
 
@@ -189,14 +195,17 @@ const Header = () => {
               <div className="flex items-center gap-3">
                 <Button
                   size="sayzobtn"
-
-                  onClick={() => setIsTaskOpen(true)}
-                  /* Added whitespace-nowrap and adjusted padding for tighter screens */
-                  className="  text-sm border bg-[#F8FAFC] text-black hover:bg-primary-btn whitespace-nowrap transition-all"
+                  onClick={() => {
+                    if (!user) {
+                      router.push("/login");
+                      return;
+                    }
+                    setIsTaskOpen(true);
+                  }}
+                  className="text-sm border bg-[#F8FAFC] text-black hover:bg-primary-btn whitespace-nowrap transition-all"
                 >
                   <span className="flex items-center gap-2">
                     <Plus className="w-4 h-4" />
-                    {/* Ensure the text is also wrapped or defined clearly */}
                     <span className="text-sm font-medium">Post Task</span>
                   </span>
                 </Button>
@@ -227,18 +236,25 @@ const Header = () => {
 
           {/* MOBILE NAV */}
           <div className="lg:hidden flex items-center gap-2">
-             <Button
-                  size="sayzobtn"
-                  onClick={() => setIsTaskOpen(true)}
-                  /* Added whitespace-nowrap and adjusted padding for tighter screens */
-                  className=" border bg-[#F8FAFC] text-black hover:bg-primary-btn whitespace-nowrap transition-all"
-                >
-                  <span className="flex items-center gap-2">
-                    <Plus className="w-4 h-4" />
-                    {/* Ensure the text is also wrapped or defined clearly */}
-                    <span className="text-sm font-medium">Post Task</span>
-                  </span>
-                </Button>
+
+            <Button
+              size="sayzobtn"
+              onClick={() => {
+                if (!user) {
+                  router.push('/login')
+                } else {
+                  setIsTaskOpen(true)
+                }
+              }}
+              /* Added whitespace-nowrap and adjusted padding for tighter screens */
+              className=" border bg-[#F8FAFC] text-black hover:bg-primary-btn whitespace-nowrap transition-all"
+            >
+              <span className="flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                {/* Ensure the text is also wrapped or defined clearly */}
+                <span className="text-sm font-medium">Post Task</span>
+              </span>
+            </Button>
             {/* PROFILE ICON - Show when logged in or admin */}
             {(user || isAdmin) && (
               <motion.button

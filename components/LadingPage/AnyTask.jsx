@@ -92,7 +92,7 @@ const TaskSection = () => {
             </h3>
           </div>
           {/* working on onbarding route */}
-          <Link href="/login" className="absolute bottom-8 right-8 z-30">
+          <Link href="/" className="absolute bottom-8 right-8 z-30">
             <Button
               className=" text-white px-6 py-3.5 rounded-2xl  uppercase tracking-wider transition-all shadow-xl active:scale-95">
               Join as a Task Giver

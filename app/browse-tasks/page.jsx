@@ -10,6 +10,7 @@ import {
   Briefcase,
   Search,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { getApprovedTasks } from "@/lib/firebase";
 import TaskDoerAuthModal from "@/components/TaskDoerAuthModal";
 import ApplicationModal from "@/components/ApplicationModal";
@@ -21,6 +22,10 @@ export default function BrowseTasksPage() {
   const [filteredTasks, setFilteredTasks] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const router = useRouter();
+  const routerServerGlobal = useRouter();
+
 
   // Use centralized auth context
   const { isAuthenticated, user } = useAuth();
@@ -87,7 +92,8 @@ export default function BrowseTasksPage() {
     if (isAuthenticated) {
       setShowApplicationModal(true);
     } else {
-      setShowAuthModal(true);
+      routerServerGlobal.push("/login");
+      
     }
   };
 
@@ -281,7 +287,15 @@ export default function BrowseTasksPage() {
                 {/* Card Footer */}
                 <div className="px-5 py-4 bg-gray-50 border-t border-gray-100">
                   <button
-                    onClick={() => handleApplyClick(task)}
+                   onClick={() => {
+                 
+                    if (!isAuthenticated) {
+                      router.push("/login");
+                    } else {
+                      handleApplyClick(task);
+                    }
+                
+                  }}
                     className="w-full bg-black hover:bg-gray-800 text-white py-3 rounded-lg font-medium transition-colors"
                   >
                     Apply Now
