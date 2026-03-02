@@ -123,49 +123,57 @@ const CommunityFirst = () => {
   const prevSlide = () => setCurrentIndex((prev) => prev === 0 ? slides.length - 1 : prev - 1);
 
   return (
-    <section className="min-h-screen bg-white px-4 py-12 lg:p-8 border-y border-gray-100">
+    <section className="min-h-screen bg-white px-4 py-8 lg:p-8">
       <div className="max-w-7xl mx-auto w-full">
         <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-20">
 
           {/* LEFT CONTENT SECTION */}
-          <div className="w-full lg:w-[35%] flex flex-col justify-between lg:min-h-[600px]">
-            <div>
-              <div className="hidden lg:flex items-center gap-4 text-sm text-gray-400 mb-8">
-                {slides.map((_, index) => (
-                  <div key={index} className="flex items-center gap-2 shrink-0">
-                    <span className={index === currentIndex ? 'text-black bg-gray-200 py-2 px-3 rounded-full font-bold text-lg' : 'text-gray-400 italic font-medium'}>
-                      {(index + 1).toString().padStart(2, '0')}
-                    </span>
-                    {index === currentIndex && index < slides.length - 1 && (
-                      <div className="w-24 h-[1px] bg-black" />
-                    )}
-                  </div>
-                ))}
-              </div>
-              
-              <p className="text-gray-600 text-sm md:text-base leading-relaxed max-w-sm mb-6 lg:mb-0">
-                The hyperlocal workforce infrastructure built for real-life work,
-                real urgency, and real money. SAYZO solves the five biggest
-                failures of local work at once.
-              </p>
-            </div>
+        {/* LEFT CONTENT SECTION */}
+<div className="w-full lg:w-[35%] flex flex-col justify-between lg:min-h-[600px]">
+  
+  {/* Added flex-col-reverse for mobile to put Heading on top */}
+  <div className="flex flex-col-reverse lg:flex-col">
+    
+    {/* Description: Now second on mobile */}
+    <p className="text-gray-600 text-sm md:text-base leading-relaxed max-w-sm mt-6 lg:mt-0 mb-6 lg:mb-0">
+      The hyperlocal workforce infrastructure built for real-life work,
+      real urgency, and real money. SAYZO solves the five biggest
+      failures of local work at once.
+    </p>
 
-            <div className="mt-4 lg:mt-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05] mb-8">
-                Community-First,<br />
-                Hyperlocal Task<br />
-                Marketplace.
-              </h1>
-
-              <button 
-                onClick={() => setIsModalOpen(true)} 
-                className="hidden md:inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full text-sm font-bold hover:bg-emerald-600 transition-all"
-              >
-                Join waitlist
-                <ArrowUpRight className="w-5 h-5 rounded-full p-1 bg-white text-black" />
-              </button>
-            </div>
+    {/* Heading: Now first on mobile */}
+    <div className="mt-4 lg:mt-auto">
+      {/* Desktop-only Numbers: Hidden on mobile to keep top clean */}
+      <div className="hidden lg:flex items-center gap-4 text-sm text-gray-400 mb-8">
+        {slides.map((_, index) => (
+          <div key={index} className="flex items-center gap-2 shrink-0">
+            <span className={index === currentIndex ? 'text-black bg-gray-200 py-2 px-3 rounded-full font-bold text-lg' : 'text-gray-400 italic font-medium'}>
+              {(index + 1).toString().padStart(2, '0')}
+            </span>
+            {index === currentIndex && index < slides.length - 1 && (
+              <div className="w-24 h-[1px] bg-black" />
+            )}
           </div>
+        ))}
+      </div>
+
+      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05]">
+        Community-First,<br />
+        Hyperlocal Task<br />
+        Marketplace.
+      </h1>
+    </div>
+  </div>
+
+  {/* Desktop Button: remains hidden on mobile */}
+  <button 
+    onClick={() => setIsModalOpen(true)} 
+    className="hidden lg:inline-flex items-center gap-3 bg-black text-white px-8 py-4 rounded-full text-sm font-bold hover:bg-emerald-600 transition-all mt-8"
+  >
+    Join waitlist
+    <ArrowUpRight className="w-5 h-5 rounded-full p-1 bg-white text-black" />
+  </button>
+</div>
 
           {/* RIGHT CONTENT SECTION (Divided) */}
           <MobileSliderView 
