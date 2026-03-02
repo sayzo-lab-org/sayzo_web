@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import Frame1 from "@/public/assets/Frame1.png"
@@ -102,7 +103,7 @@ const DesktopSliderView = ({ currentIndex, nextSlide, prevSlide }) => {
       </div>
 
       {/* Desktop Controls */}
-      <div className="flex gap-4 justify-end mt-8 pr-12">
+      <div className="flex gap-4 justify-end mt-8 pr-12 border border-gray-200">
         <button onClick={prevSlide} className="w-14 h-14 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -124,12 +125,12 @@ const CommunityFirst = () => {
   const prevSlide = () => setCurrentIndex((prev) => prev === 0 ? slides.length - 1 : prev - 1);
 
   return (
-    <section className="min-h-screen bg-white px-4 py-8 ">
+    <section className="min-h-screen bg-white px-4 py-8 lg:p-8 border-y border-gray-100 ">
       <div className="max-w-7xl mx-auto w-full">
         <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-20">
 
           {/* LEFT CONTENT SECTION */}
-          <div className="w-full lg:w-[35%] flex flex-col-reverse lg:flex-col justify-between lg:min-h-[600px]">
+          <div className="w-full lg:w-[35%] flex flex-col-reverse lg:flex-col justify-between lg:min-h-[600px] ">
             
 
               {/* steps 01 -> 02 -> 03... */}
@@ -189,13 +190,14 @@ const CommunityFirst = () => {
 
       {/* Mobile-only CTA */}
       <div className="md:hidden mt-12 flex justify-center">
-        <button
+        <Button
+        size="sayzobtn"
           onClick={() => setIsModalOpen(true)}
-          className="w-full bg-black text-white py-5 rounded-2xl font-bold flex items-center justify-center gap-3"
+          className=" bg-black text-white font-sm flex items-center justify-center gap-3 text-sm  hover:bg-emerald-600 transition-all"
         >
           Join waitlist
-          <ArrowUpRight className="w-5 h-5 p-1 bg-white text-black rounded-full" />
-        </button>
+          <ArrowUpRight className="w-5 h-5 bg-white text-black rounded-full" />
+        </Button>
       </div>
 
       <WaitlistModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
