@@ -8,8 +8,6 @@ import HowItWorks from "@/components/LadingPage/HowItWorks";
 
 
 export default function Home () {
-  
-
   return (
     <>
     <HeroSection1/>

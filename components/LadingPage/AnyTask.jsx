@@ -3,10 +3,49 @@
 import Image from "next/image";
 import taskDoer from "../../public/assets/taskDoer.png"
 import taskGiver from "../../public/assets/taskGiver.png"
+import { Button } from "@/components/ui/button";
 
-import { motion } from "framer-motion";
+import { 
+  motion, 
+  useMotionValue, 
+  useTransform, 
+  animate, 
+  useInView 
+} from "framer-motion";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
+const Banner = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true }); // runs only first time
+
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) =>
+    Math.round(latest)
+  );
+
+  useEffect(() => {
+    if (isInView) {
+      const controls = animate(count, 10000, {
+        duration: 4,   // smoother than 10 seconds
+        ease: "easeOut",
+      });
+      return () => controls.stop();
+    }
+  }, [isInView, count]);
+
+  return (
+   <motion.h2
+  ref={ref}
+  className="text-white text-4xl font-black mb-0"
+>
+  <motion.span>
+    {rounded}
+  </motion.span>
+  +
+</motion.h2>
+  );
+};
 
 const AnyTask = () => {
   return (
@@ -53,9 +92,10 @@ const TaskSection = () => {
           </div>
           {/* working on onbarding route */}
          <Link href="/login" className="absolute bottom-8 right-8 z-30">
-             <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-emerald-600 hover:text-white px-6 py-3.5 rounded-2xl font-bold text-[13px] uppercase tracking-wider transition-all shadow-xl active:scale-95">
+             <Button 
+             className=" text-white px-6 py-3.5 rounded-2xl  uppercase tracking-wider transition-all shadow-xl active:scale-95">
               Join as a Task Giver
-            </button>
+            </Button>
           </Link>
         </motion.div>
 
@@ -83,9 +123,9 @@ const TaskSection = () => {
           </div>
             {/* working on onbarding route */}
           <Link href="/" className="absolute bottom-8 right-8 z-30">
-           <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-black hover:text-white px-6 py-3.5 rounded-2xl font-bold text-[13px] uppercase tracking-wider transition-all shadow-xl active:scale-95">
+           <Button className=" px-6 py-3.5 rounded-2xl font-bold text-[13px] uppercase tracking-wider transition-all shadow-xl active:scale-95">
               Join as a Task Doer
-            </button>
+            </Button>
           </Link>
         </motion.div>
       </div>
@@ -93,7 +133,9 @@ const TaskSection = () => {
       {/* Banner */}
       <div className="bg-black rounded-[24px] py-6 text-center shadow-lg">
 
-<h2 className="text-white text-4xl font-black mb-0">10,000+</h2>
+
+  <Banner />
+
 
 <p className="text-white text-[10px] font-bold uppercase tracking-[0.2em] opacity-70">
 

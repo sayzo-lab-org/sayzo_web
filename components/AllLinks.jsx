@@ -91,7 +91,7 @@ const AllLinks = () => {
               <p className="text-sm md:text-xl">Follow us</p>
 
               <div className="flex gap-5 text-gray-300">
-                <Facebook className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" />
+             < Link href="https://www.facebook.com/profile.php?id=61587450170775" target="blank">  <Facebook className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></Link>                                                                      
                <Link href="https://www.linkedin.com/company/sayzoindia/" target="blank" ><Linkedin className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></Link> 
                <Link href="https://x.com/Sayzoindia" target="black"> <Twitter className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></Link>
                <Link href="https://www.instagram.com/sayzoindia/" target="blank"><Instagram className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></Link> 

@@ -138,7 +138,7 @@ const Header = () => {
     <div>
       {/* HEADER */}
       <header className="relative z-40 bg-background/95 backdrop-blur">
-        <div className="mx-auto flex items-center justify-between px-3 py-4 sm:px-16">
+        <div className="mx-auto flex items-center justify-between px-3 py-3 sm:px-16">
           <Link href="/">
             <Image src={Maskgroup} alt="Sayzo" width={150} />
           </Link>
@@ -169,38 +169,42 @@ const Header = () => {
 
             {!user ? (
               <div className="flex items-center gap-4">
-                <button
+                <Button
+                  variant="outline"
+                  size="sayzobtn"
                   onClick={() => router.push('/login')}
-                  className="text-sm font-bold text-zinc-600 hover:text-black transition-all"
+
                 >
                   Login
-                </button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                </Button>
+                <Button
                   onClick={() => router.push('/signup')}
-                  className="rounded-full px-7 py-2.5 text-sm bg-black text-white hover:bg-zinc-800 transition-all shadow-lg shadow-black/5"
+                  size="sayzobtn"
+                  className="text-sm hover:scale-105 transition-all shadow-lg shadow-black/5"
                 >
                   Get Started
-                </motion.button>
+                </Button>
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <Button
+                  size="sayzobtn"
+
                   onClick={() => setIsTaskOpen(true)}
-                  className="rounded-full border bg-[#F8FAFC] text-black hover:bg-primary-btn hover:text-white hover:border-primary-btn border-black px-5 py-2 text-sm"
+                  /* Added whitespace-nowrap and adjusted padding for tighter screens */
+                  className="  text-sm border bg-[#F8FAFC] text-black hover:bg-primary-btn whitespace-nowrap transition-all"
                 >
                   <span className="flex items-center gap-2">
                     <Plus className="w-4 h-4" />
-                    Post Task
+                    {/* Ensure the text is also wrapped or defined clearly */}
+                    <span className="text-sm font-medium">Post Task</span>
                   </span>
-                </motion.button>
+                </Button>
 
                 <Button
+                  size="sayzobtn"
                   onClick={() => setIsWaitlistOpen(true)}
-                  className="rounded-full px-6 py-2 text-sm bg-black text-white hover:bg-zinc-800 transition-all"
+                  className="text-sm hover:bg-zinc-800 transition-all"
                 >
                   Join Waitlist
                 </Button>
@@ -223,19 +227,18 @@ const Header = () => {
 
           {/* MOBILE NAV */}
           <div className="lg:hidden flex items-center gap-2">
-            <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    onClick={() => setIsTaskOpen(true)}
-    /* Added whitespace-nowrap and adjusted padding for tighter screens */
-    className="rounded-full border bg-[#F8FAFC] text-black hover:bg-primary-btn px-3 py-1.5 whitespace-nowrap transition-all"
-  >
-    <span className="flex items-center gap-2">
-      <Plus className="w-4 h-4" />
-      {/* Ensure the text is also wrapped or defined clearly */}
-      <span className="text-sm font-medium">Post Task</span>
-    </span>
-  </motion.button>
+             <Button
+                  size="sayzobtn"
+                  onClick={() => setIsTaskOpen(true)}
+                  /* Added whitespace-nowrap and adjusted padding for tighter screens */
+                  className=" border bg-[#F8FAFC] text-black hover:bg-primary-btn whitespace-nowrap transition-all"
+                >
+                  <span className="flex items-center gap-2">
+                    <Plus className="w-4 h-4" />
+                    {/* Ensure the text is also wrapped or defined clearly */}
+                    <span className="text-sm font-medium">Post Task</span>
+                  </span>
+                </Button>
             {/* PROFILE ICON - Show when logged in or admin */}
             {(user || isAdmin) && (
               <motion.button
