@@ -1,13 +1,22 @@
 import React from 'react';
 import { CATEGORY_STYLES } from '@/public/data/MARQUEE_DATA';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+
+
 
 const Badge = ({ category }) => {
   const styleClass = CATEGORY_STYLES[category] || 'bg-gray-100 text-gray-400';
 
+
+const router = useRouter();
   return (
-    <span className={`px-4 py-1.5 rounded-3xl text-[13px] font-semibold tracking-tight ${styleClass}`}>
+    <Button 
+    size="sayzobtn"
+    onClick={()=> router.push("/use-cases")}
+    className={`px-4 py-1.5 rounded-full text-[13px] font-bold tracking-tight bg-emerald-700 hover:bg-emerald-700 `}>
       {category}
-    </span>
+    </Button>
   );
 };
 

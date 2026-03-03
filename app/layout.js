@@ -126,4 +126,4 @@ export default function RootLayout({ children }) {
       </PolicyProvider>
     </html>
   );
-} 
+}

@@ -1,4 +1,5 @@
 import { CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const JobCard = ({ job, onApply, hasApplied = false }) => {
   return (
@@ -25,23 +26,25 @@ const JobCard = ({ job, onApply, hasApplied = false }) => {
 
         <div className="flex justify-end">
           {hasApplied ? (
-            <button
+            <Button
+              size="sayzobtn"
               disabled
-              className="flex items-center gap-2 bg-gray-200 text-gray-500 px-7 py-3 rounded-full font-medium text-base cursor-not-allowed"
+              className="flex items-center gap-2 bg-gray-200 text-gray-500 font-medium text-base cursor-not-allowed"
             >
               <CheckCircle className="w-5 h-5" />
               Applied
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
+              size="sayzobtn"
               onClick={() => onApply?.(job)}
-              className="flex items-center gap-2 bg-[#13a884] hover:bg-[#0f8c6e] text-white px-7 py-3 rounded-full font-medium text-base transition-all transform active:scale-95"
+              className="flex items-center gap-2 bg-[#13a884] hover:bg-[#0f8c6e] text-white font-medium text-base transition-all transform active:scale-95"
             >
               Apply now
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
-            </button>
+            </Button>
           )}
         </div>
       </div>

@@ -186,9 +186,10 @@ const Header = () => {
                 <Button
                   onClick={() => router.push('/signup')}
                   size="sayzobtn"
-                  className="text-sm hover:scale-105 transition-all shadow-lg shadow-black/5"
+                  className=" bg-emerald-700 hover:bg-emerald-700 text-sm hover:scale-105 transition-all shadow-lg shadow-black/5"
                 >
-                  Get Started
+                  <Plus className="w-4 h-4" />
+                  Post Task
                 </Button>
               </div>
             ) : (
@@ -369,7 +370,7 @@ const Header = () => {
             <div className="flex items-center justify-between mb-8">
               <Image src={Maskgroup2} alt="Sayzo Logo" width={110} />
               <motion.button
-                whileTap={{ scale: 0.9, rotate: 90 }}
+                whileTap={{ rotate: 55 }}
                 onClick={() => setOpen(false)}
                 className="p-2 bg-gray-50 rounded-full"
               >
@@ -397,7 +398,7 @@ const Header = () => {
                     href={item === 'Track Tasks' ? (user ? "/track-tasks" : "/login") : `/${item.toLowerCase().replace(' ', '-')}`}
                     className="flex items-center justify-between py-4 px-2 group"
                   >
-                    <span className="text-xl font-bold text-zinc-800 group-hover:text-emerald-600 transition-colors">
+                    <span className="text-sm text-zinc-800 group-hover:text-emerald-600 transition-colors">
                       {item}
                     </span>
                     <ArrowUpRight className="w-5 h-5 text-gray-300 group-hover:text-emerald-500 transition-all group-hover:-translate-y-1 group-hover:translate-x-1" />
@@ -415,15 +416,16 @@ const Header = () => {
                 }}
                 className="space-y-4"
               >
-                <button
+                <Button
+                size='sayzobtn'
                   onClick={() => {
                     setOpen(false);
                     setIsWaitlistOpen(true);
                   }}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl py-4 font-bold shadow-lg shadow-emerald-200 transition-all active:scale-[0.98]"
+                  className="w-full text-white font-bold transition-all hover:scale-102"
                 >
                   Join Waitlist
-                </button>
+                </Button>
 
                 {!user && (
                   <Link

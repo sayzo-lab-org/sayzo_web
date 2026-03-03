@@ -17,7 +17,7 @@ import { useEffect, useRef } from "react";
 
 const Banner = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true }); // runs only first time
+  const isInView = useInView(ref, { once: true });
 
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) =>
@@ -27,7 +27,7 @@ const Banner = () => {
   useEffect(() => {
     if (isInView) {
       const controls = animate(count, 10000, {
-        duration: 4,   // smoother than 10 seconds
+        duration: 4,
         ease: "easeOut",
       });
       return () => controls.stop();
@@ -49,19 +49,25 @@ const Banner = () => {
 
 const AnyTask = () => {
   return (
-    <section className="max-w-250 mx-auto p-4 pb-10">
+   <section className="max-w-250 mx-auto p-4 pb-10">
       <div className='flex justify-center mb-10'>
-        <p className='font-medium text-[30px] sm:text-[40px] md:text-5xl lg:text-6xl text-center leading-tight'>
-          Any Task. Any Moment.<br />Any Skills.
-          <span className="font-serif italic text-[#0ca37f]"> In 10 Minutes</span>
-        </p>
+         <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className='font-semibold font-inter text-3xl sm:text-[45px] md:text-6xl lg:text-7xl text-center leading-[1.1] tracking-tighter'
+        >
+          Any Task. Any Moment.<br />
+          Any Skills.
+          <span className="font-serif font-thin text-[#0ca37f] ml-2 block sm:inline">
+            In 10 Minutes
+          </span>
+        </motion.p>
       </div>
       <TaskSection />
     </section>
   )
 }
-
-
 
 const TaskSection = () => {
   return (

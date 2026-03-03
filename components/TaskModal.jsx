@@ -20,6 +20,9 @@ const TaskModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState("");
   const [formPhase, setFormPhase] = useState("edit"); // "edit" | "preview" | "confirm"
 
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+
   // Auth states
   const [emailSent, setEmailSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
@@ -41,10 +44,17 @@ const TaskModal = ({ isOpen, onClose }) => {
     skills: [],
     experience: "",
   });
-
-  const input =
+const inputClass =
     "w-full bg-[#18181B] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border border-zinc-800 focus:outline-none focus:border-zinc-600";
 
+
+  const getInputClass = (field) =>
+  `w-full bg-[#111] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border transition-all duration-200 focus:outline-none 
+   ${
+     hasSubmitted && fieldErrors[field]
+       ? "border-red-500 focus:border-red-500"
+       : "border-zinc-800 focus:border-white"
+   }`;
   // Restore form draft from localStorage (saved before magic link)
   const restoreFormDraft = () => {
     const draftStr = localStorage.getItem("sayzo_task_draft");
@@ -216,37 +226,58 @@ const TaskModal = ({ isOpen, onClose }) => {
     }));
   };
 
-  const validate = () => {
-    if (!form.customerName.trim()) return "Your name is required";
-    if (!form.taskName.trim()) return "Task name is required";
-    if (!isVerified) return "Please sign in to continue";
-    if (!form.phone.trim()) return "Phone number is required";
-    if (taskType === "offline" && !form.location.trim())
-      return "Location is required for offline tasks";
-    if (!form.description.trim()) return "Description is required";
-    if (!form.amount.trim()) return "Amount is required";
-    if (!form.duration.trim()) return "Duration is required";
-    if (form.skills.length === 0) return "At least one skill is required";
-    if (!form.experience) return "Select experience level";
-    return "";
-  };
+const validate = () => {
+  const errors = {};
+
+  if (!isVerified) errors.auth = "Please sign in to continue";
+
+  if (!form.customerName.trim())
+    errors.customerName = "Your name is required";
+
+  if (!form.taskName.trim())
+    errors.taskName = "Task name is required";
+
+  if (!form.phone.trim())
+    errors.phone = "Phone number is required";
+
+  if (!email.trim())
+    errors.email = "Email is required";
+
+  if (taskType === "offline" && !form.location.trim())
+    errors.location = "Location is required";
+
+  if (!form.description.trim())
+    errors.description = "Description is required";
+
+  if (!form.amount.trim())
+    errors.amount = "Amount is required";
+  else if (isNaN(form.amount))
+    errors.amount = "Amount must be a number";
+
+  if (!form.duration.trim())
+    errors.duration = "Duration is required";
+
+  if (form.skills.length === 0)
+    errors.skills = "At least one skill is required";
+
+  if (!form.experience)
+    errors.experience = "Select experience level";
+
+  setFieldErrors(errors);
+  return Object.keys(errors).length === 0;
+};
+
+  
 
   const handlePreview = () => {
-    const validationError = validate();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-    setError("");
-    setFormPhase("preview");
-  };
+  setHasSubmitted(true);
+  if (!validate()) return;
+  setFormPhase("preview");
+};
 
-  const submitTask = async () => {
-    const validationError = validate();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+const submitTask = async () => {
+  setHasSubmitted(true);
+  if (!validate()) return;
 
     setError("");
     setLoading(true);
@@ -393,14 +424,14 @@ const TaskModal = ({ isOpen, onClose }) => {
 
                     {/* Form Fields */}
                     <input
-                      className={input}
+                      className={inputClass}
                       placeholder="Your Name *"
                       name="customerName"
                       value={form.customerName}
                       onChange={handleChange}
                     />
                     <input
-                      className={input}
+                      className={inputClass}
                       placeholder="Task Name *"
                       name="taskName"
                       value={form.taskName}
@@ -434,7 +465,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
                             <input
                               type="email"
-                              className={`${input} pl-12 pr-28`}
+                              className={`${inputClass} pl-12 pr-28`}
                               placeholder="Your Email *"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
@@ -471,7 +502,7 @@ const TaskModal = ({ isOpen, onClose }) => {
 
                         {/* Phone from profile (editable) */}
                         <input
-                          className={input}
+                          className={inputClass}
                           placeholder="Phone Number *"
                           name="phone"
                           inputMode="numeric"
@@ -488,7 +519,7 @@ const TaskModal = ({ isOpen, onClose }) => {
 
                     {taskType === "offline" && (
                       <input
-                        className={input}
+                        className={inputClass}
                         placeholder="Location *"
                         name="location"
                         value={form.location}
@@ -497,7 +528,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                     )}
 
                     <textarea
-                      className={`${input} h-32`}
+                      className={`${inputClass} h-32`}
                       placeholder="Description *"
                       name="description"
                       value={form.description}
@@ -507,7 +538,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                     <div className="grid grid-cols-2 gap-3">
                       <select
                         name="budgetType"
-                        className={input}
+                        className={inputClass}
                         value={form.budgetType}
                         onChange={handleChange}
                       >
@@ -515,7 +546,9 @@ const TaskModal = ({ isOpen, onClose }) => {
                         <option value="negotiable">Negotiable</option>
                       </select>
                       <input
-                        className={input}
+                        type="number"
+                        min="1"
+                        className={inputClass}
                         placeholder="Amount *"
                         name="amount"
                         value={form.amount}
@@ -524,7 +557,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                     </div>
 
                     <input
-                      className={input}
+                      className={inputClass}
                       placeholder="Duration (3 hours, 5 days, 1 month) *"
                       name="duration"
                       value={form.duration}
@@ -586,7 +619,7 @@ const TaskModal = ({ isOpen, onClose }) => {
 
                     <select
                       name="experience"
-                      className={input}
+                      className={inputClass}
                       value={form.experience}
                       onChange={handleChange}
                     >

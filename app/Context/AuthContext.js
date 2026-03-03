@@ -2,8 +2,9 @@
 
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, getUserProfile } from "@/lib/firebase";
+import { auth, getUserProfile, saveUserProfile } from "@/lib/firebase";
 import { isAdminEmail } from "@/lib/adminConfig";
+
 
 const AuthContext = createContext(null);
 
@@ -93,7 +94,22 @@ export function AuthProvider({ children }) {
         setIsAdmin(isAdminEmail(currentUser.email));
 
         try {
-          const profile = await fetchUserProfile(currentUser.uid);
+          let profile = await fetchUserProfile(currentUser.uid);
+
+          if (!profile) {
+            await saveUserProfile(currentUser.uid, {
+              name: currentUser.displayName || "",
+              email: currentUser.email || "",
+              photo: currentUser.photoURL || "",
+              provider: currentUser.providerData[0]?.providerId || "unknown",
+              role: "taskDoer", // default role
+              profileCompleted: false,
+            });
+
+            // Fetch again after creation
+            profile = await fetchUserProfile(currentUser.uid);
+          }
+
           setUserProfile(profile);
         } catch (error) {
           console.error("Error fetching user profile:", error);
