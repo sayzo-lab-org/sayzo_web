@@ -15,7 +15,7 @@ import { getApprovedTasks } from "@/lib/firebase";
 import TaskDoerAuthModal from "@/components/TaskDoerAuthModal";
 import ApplicationModal from "@/components/ApplicationModal";
 import { useAuth } from "@/app/Context/AuthContext";
-import Button from "@/components/Button";
+import { Button } from "@/components/ui/button";
 
 
 export default function BrowseTasksPage() {
@@ -289,7 +289,7 @@ export default function BrowseTasksPage() {
                 {/* Card Footer */}
                 <div className="px-5 py-4 bg-gray-50 border-t border-gray-100">
                   <Button
-                  
+
                    onClick={() => {
                  
                     if (!isAuthenticated) {
