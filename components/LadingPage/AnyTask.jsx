@@ -17,7 +17,7 @@ import { useEffect, useRef } from "react";
 
 const Banner = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true }); // runs only first time
+  const isInView = useInView(ref, { once: true });
 
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) =>
@@ -27,7 +27,7 @@ const Banner = () => {
   useEffect(() => {
     if (isInView) {
       const controls = animate(count, 10000, {
-        duration: 4,   // smoother than 10 seconds
+        duration: 4,
         ease: "easeOut",
       });
       return () => controls.stop();
@@ -37,7 +37,7 @@ const Banner = () => {
   return (
     <motion.h2
       ref={ref}
-      className="text-white text-4xl font-black mb-0"
+      className="text-white text-4xl font-black mb-0 border border-yellow-300"
     >
       <motion.span>
         {rounded}
@@ -49,64 +49,67 @@ const Banner = () => {
 
 const AnyTask = () => {
   return (
-    <section className="max-w-250 mx-auto p-4 pb-10">
-      <div className='flex justify-center mb-10'>
-        <p className='font-medium text-[30px] sm:text-[40px] md:text-5xl lg:text-6xl text-center leading-tight'>
-          Any Task. Any Moment.<br />Any Skills.
-          <span className="font-serif italic text-[#0ca37f]"> In 10 Minutes</span>
-        </p>
+    <section className="max-w-250 mx-auto  lg:mt-1 pb-10 border border-red-400">
+      <div className='flex justify-center mb-10 md:mb-16 border border-blue-400'>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className='font-semibold font-inter text-[32px] sm:text-[45px] md:text-6xl lg:text-7xl text-center leading-[1.1] tracking-tighter border border-green-400'
+        >
+          Any Task. Any Moment.<br />
+          Any Skills.
+          <span className="font-serif font-thin text-[#0ca37f] ml-2 block sm:inline">
+            In 10 Minutes
+          </span>
+        </motion.p>
       </div>
       <TaskSection />
     </section>
   )
 }
 
-
-
 const TaskSection = () => {
   return (
-    <div className="max-w-5xl mx-auto py-4">
+    <div className="max-w-5xl mx-auto -mt-5 border  border-purple-400">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5 border border-pink-400">
 
-        {/* Card 1: Task Giver */}
+        {/* Card 1 */}
         <motion.div
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all"
+          className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all border border-indigo-400"
         >
-          {/* Background Image */}
           <Image
             src={taskGiver}
             alt="Task Giver"
             fill
-            className="object-cover transition-transform duration-500 blur-xs  group-hover:scale-110"
+            className="object-cover transition-transform duration-500 blur-xs group-hover:scale-110"
           />
 
-          {/* Overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 z-10" />
 
-          <div className="relative z-20 p-8">
+          <div className="relative z-20 p-8 border border-white/30">
             <h3 className="text-3xl font-black text-white leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
               Let's hire in <br /> minutes
             </h3>
           </div>
-          {/* working on onbarding route */}
+
           <Link href="/" className="absolute bottom-8 right-8 z-30">
             <Button
-              className=" text-white px-6 py-3.5 rounded-2xl  uppercase tracking-wider transition-all shadow-xl active:scale-95">
+              className="text-white px-6 py-3.5 rounded-2xl uppercase tracking-wider transition-all shadow-xl active:scale-95">
               Join as a Task Giver
             </Button>
           </Link>
         </motion.div>
 
-        {/* Card 2: Task Doer */}
+        {/* Card 2 */}
         <motion.div
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all "
+          className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all border border-indigo-400"
         >
-          {/* Background Image */}
           <Image
             src={taskDoer}
             alt="Task Doer"
@@ -114,17 +117,16 @@ const TaskSection = () => {
             className="object-cover transition-transform duration-500 blur-xs group-hover:scale-110"
           />
 
-          {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 z-10" />
 
-          <div className="relative z-20 p-8">
+          <div className="relative z-20 p-8 border border-white/30">
             <h3 className="text-3xl font-black text-white leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
               Guaranteed<br /> Earning
             </h3>
           </div>
-          {/* working on onbarding route */}
+
           <Link href="/" className="absolute bottom-8 right-8 z-30">
-            <Button className=" px-6 py-3.5 rounded-2xl font-bold text-[13px] uppercase tracking-wider transition-all shadow-xl active:scale-95">
+            <Button className="px-6 py-3.5 rounded-2xl font-bold text-[13px] uppercase tracking-wider transition-all shadow-xl active:scale-95">
               Join as a Task Doer
             </Button>
           </Link>
@@ -132,9 +134,9 @@ const TaskSection = () => {
       </div>
 
       {/* Banner */}
-      <div className="bg-black rounded-[24px] py-6 text-center shadow-lg">
+      <div className="bg-black rounded-[24px] py-6 text-center shadow-lg border border-orange-400">
         <Banner />
-        <p className="text-white text-[10px] font-bold uppercase tracking-[0.2em] opacity-70">
+        <p className="text-white text-[10px] font-bold uppercase tracking-[0.2em] opacity-70 border border-gray-500">
           Active Task Doers
         </p>
       </div>

@@ -8,11 +8,16 @@ import { useState } from "react";
 import { X, CheckCircle, User, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {Button} from "../ui/button";
+import { useAuth } from "@/app/Context/AuthContext";
 
 const JobDetailPanel = ({ job, onClose, currentUser, hasApplied, isOwnTask, onApplicationSuccess, mode = "live" }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
+
+  // Get userProfile
+  const { userProfile } = useAuth();
 
   // Initialize Router
 const router = useRouter();
@@ -80,13 +85,13 @@ const router = useRouter();
 
       {/* COMPANY */}
       <div className="flex items-center gap-2 mt-3">
-        <Image
-          src="https://github.com/shadcn.png"
-          alt="Company logo"
-          width={28}
-          height={28}
-          className="rounded-full"
-        />
+       <Image
+  src={job.company?.photo || userProfile?.photo ||"https://github.com/shadcn.png"}
+  alt="User profile"
+  width={28}
+  height={28}
+  className="rounded-full"
+/>
         <p className="text-sm text-gray-700">
           {job.company?.name || "Independent Task Giver"}
         </p>
@@ -119,12 +124,12 @@ const router = useRouter();
           </p>
         </div>
 
-        <div>
+        {/* <div>
           <p className="text-gray-400">Category</p>
           <p className="font-semibold text-gray-700">
             {job.category}
           </p>
-        </div>
+        </div> */}
 
         <div>
           <p className="text-gray-400">Duration</p>
@@ -132,13 +137,15 @@ const router = useRouter();
             {job.duration}
           </p>
         </div>
-
+       {job.experienceLevel && (
         <div>
           <p className="text-gray-400">Experience</p>
           <p className="font-semibold text-gray-700">
             {job.experienceLevel}
           </p>
         </div>
+       )}
+        
       </div>
 
       {/* SKILLS */}
@@ -199,12 +206,13 @@ const router = useRouter();
           Task Completed
         </button>
       ) : (
-        <button
+        <Button
+          size="sayzobtn"
           onClick={handleApplyClick}
-          className="mt-8 w-full bg-primary-btn text-white py-3 rounded-lg font-medium flex items-center justify-center gap-3 hover:opacity-95 transition"
+          className="mt-8 w-full bg-primary-btn text-white font-medium flex items-center justify-center gap-3 transition hover:bg-emerald-600 hover:scale-102"
         >
           {mode === "showcase" ? "Join Waitlist" : "Apply now"}
-        </button>
+        </Button>
       )}
 
       <TaskDoerAuthModal

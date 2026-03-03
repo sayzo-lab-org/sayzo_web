@@ -74,8 +74,8 @@
   --font-tinos: 'Tinos', serif;
   --font-instrument-serif: 'Instrument Serif', serif;
 
-  --background: oklch(1 0 0);
-  --foreground: #181F25;
+  --background: #FFFFFF;
+  --foreground: #000000;
 
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -154,7 +154,8 @@
 ========================= */
 @layer base {
   body {
-    @apply font-sans overflow-x-hidden overflow-y-scroll;
+    @apply font-sans overflow-x-hidden overflow-y-scroll bg-white text-[#181F25];
+    background-color: #FFFFFF !important; /* Forces pure white */
   }
 
   
