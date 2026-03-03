@@ -49,13 +49,13 @@ const Banner = () => {
 
 const AnyTask = () => {
   return (
-    <section className="max-w-250 mx-auto  lg:mt-1 pb-10">
-      <div className='flex justify-center mb-10 md:mb-16'>
-        <motion.p
+   <section className="max-w-250 mx-auto p-4 pb-10">
+      <div className='flex justify-center mb-10'>
+         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className='font-semibold font-inter text-[32px] sm:text-[45px] md:text-6xl lg:text-7xl text-center leading-[1.1] tracking-tighter'
+          className='font-semibold font-inter text-3xl sm:text-[45px] md:text-6xl lg:text-7xl text-center leading-[1.1] tracking-tighter'
         >
           Any Task. Any Moment.<br />
           Any Skills.
@@ -71,23 +71,25 @@ const AnyTask = () => {
 
 const TaskSection = () => {
   return (
-    <div className="max-w-5xl mx-auto -mt-5">
+    <div className="max-w-5xl mx-auto py-4">
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
 
-        {/* Card 1 */}
+        {/* Card 1: Task Giver */}
         <motion.div
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all"
         >
+          {/* Background Image */}
           <Image
             src={taskGiver}
             alt="Task Giver"
             fill
-            className="object-cover transition-transform duration-500 blur-xs group-hover:scale-110"
+            className="object-cover transition-transform duration-500 blur-xs  group-hover:scale-110"
           />
 
+          {/* Overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 z-10" />
 
           <div className="relative z-20 p-8">
@@ -95,21 +97,22 @@ const TaskSection = () => {
               Let's hire in <br /> minutes
             </h3>
           </div>
-
+          {/* working on onbarding route */}
           <Link href="/" className="absolute bottom-8 right-8 z-30">
             <Button
-              className="text-white px-6 py-3.5 rounded-2xl uppercase tracking-wider transition-all shadow-xl active:scale-95">
+              className=" text-white px-6 py-3.5 rounded-2xl  uppercase tracking-wider transition-all shadow-xl active:scale-95">
               Join as a Task Giver
             </Button>
           </Link>
         </motion.div>
 
-        {/* Card 2 */}
+        {/* Card 2: Task Doer */}
         <motion.div
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all"
+          className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all "
         >
+          {/* Background Image */}
           <Image
             src={taskDoer}
             alt="Task Doer"
@@ -117,6 +120,7 @@ const TaskSection = () => {
             className="object-cover transition-transform duration-500 blur-xs group-hover:scale-110"
           />
 
+          {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 z-10" />
 
           <div className="relative z-20 p-8">
@@ -124,9 +128,9 @@ const TaskSection = () => {
               Guaranteed<br /> Earning
             </h3>
           </div>
-
+          {/* working on onbarding route */}
           <Link href="/" className="absolute bottom-8 right-8 z-30">
-            <Button className="px-6 py-3.5 rounded-2xl font-bold text-[13px] uppercase tracking-wider transition-all shadow-xl active:scale-95">
+            <Button className=" px-6 py-3.5 rounded-2xl font-bold text-[13px] uppercase tracking-wider transition-all shadow-xl active:scale-95">
               Join as a Task Doer
             </Button>
           </Link>
