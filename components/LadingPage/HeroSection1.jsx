@@ -59,19 +59,19 @@ const HeroSection1 = () => {
     return () => clearInterval(interval);
   }, []);
   return (
- <section className="relative py-24 mt-15 bg-white overflow-hidden border border-red-300">
-  <div className="max-w-7xl mx-auto px-6 relative z-10 border border-blue-300">
+ <section className="relative py-24 mt-15 bg-white overflow-hidden">
+  <div className="max-w-7xl mx-auto px-6 relative z-10 ">
     <motion.div
       variants={container}
       initial="hidden"
       animate="show"
-      className="flex flex-col items-center text-center space-y-12 border border-green-300"
+      className="flex flex-col items-center text-center space-y-12"
     >
 
       {/* Badge */}
       <motion.div
         variants={itemDown}
-        className="inline-flex items-center gap-3 bg-white rounded-full border border-gray-200 py-2 px-5 shadow-sm hover:shadow-md transition-all cursor-default border border-purple-300"
+        className="inline-flex items-center gap-3 bg-white rounded-full  py-2 px-5 shadow-sm hover:shadow-md transition-all cursor-default"
       >
         <div className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -93,13 +93,13 @@ const HeroSection1 = () => {
       <div className="font-semibold -mt-7 -p-2 tracking-tight leading-tight ">
         <motion.span
           variants={itemDown}
-          className="block text-black text-4xl md:text-6xl lg:text-8xl border border-yellow-300"
+          className="block text-black text-4xl md:text-6xl lg:text-8xl"
         >
           Post a task.
         </motion.span>
         <motion.span
           variants={itemDown}
-          className="text-primary-btn text-4xl md:text-6xl lg:text-8xl border border-yellow-300"
+          className="text-primary-btn text-4xl md:text-6xl lg:text-8xl"
         >
           Get it done.
         </motion.span>
@@ -108,7 +108,7 @@ const HeroSection1 = () => {
       {/* Map */}
       <motion.div
         variants={itemUp}
-        className="w-full max-w-5xl -mt-2 mx-auto border border-gray-200 rounded-xl shadow-sm overflow-hidden border border-pink-300"
+        className="w-full max-w-5xl -mt-2 mx-auto rounded-xl shadow-sm overflow-hidden "
       >
         <HomeMap />
       </motion.div>
@@ -116,7 +116,7 @@ const HeroSection1 = () => {
       {/* CTA */}
       <motion.div
         variants={itemUp}
-        className="flex flex-row justify-center items-center gap-6 -mt-2  w-full border border-indigo-300"
+        className="flex flex-row justify-center items-center gap-6 -mt-2  w-full"
       >
         <Button
           size="sayzobtn"

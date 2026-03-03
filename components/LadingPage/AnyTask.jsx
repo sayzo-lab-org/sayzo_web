@@ -37,7 +37,7 @@ const Banner = () => {
   return (
     <motion.h2
       ref={ref}
-      className="text-white text-4xl font-black mb-0 border border-yellow-300"
+      className="text-white text-4xl font-black mb-0"
     >
       <motion.span>
         {rounded}
@@ -49,13 +49,13 @@ const Banner = () => {
 
 const AnyTask = () => {
   return (
-    <section className="max-w-250 mx-auto  lg:mt-1 pb-10 border border-red-400">
-      <div className='flex justify-center mb-10 md:mb-16 border border-blue-400'>
+    <section className="max-w-250 mx-auto  lg:mt-1 pb-10">
+      <div className='flex justify-center mb-10 md:mb-16'>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className='font-semibold font-inter text-[32px] sm:text-[45px] md:text-6xl lg:text-7xl text-center leading-[1.1] tracking-tighter border border-green-400'
+          className='font-semibold font-inter text-[32px] sm:text-[45px] md:text-6xl lg:text-7xl text-center leading-[1.1] tracking-tighter'
         >
           Any Task. Any Moment.<br />
           Any Skills.
@@ -71,15 +71,15 @@ const AnyTask = () => {
 
 const TaskSection = () => {
   return (
-    <div className="max-w-5xl mx-auto -mt-5 border  border-purple-400">
+    <div className="max-w-5xl mx-auto -mt-5">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5 border border-pink-400">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
 
         {/* Card 1 */}
         <motion.div
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all border border-indigo-400"
+          className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all"
         >
           <Image
             src={taskGiver}
@@ -90,7 +90,7 @@ const TaskSection = () => {
 
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 z-10" />
 
-          <div className="relative z-20 p-8 border border-white/30">
+          <div className="relative z-20 p-8">
             <h3 className="text-3xl font-black text-white leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
               Let's hire in <br /> minutes
             </h3>
@@ -108,7 +108,7 @@ const TaskSection = () => {
         <motion.div
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all border border-indigo-400"
+          className="relative group bg-[#B3B3B3] rounded-[32px] min-h-[280px] hover:shadow-lg shadow-black/20 overflow-hidden cursor-pointer transition-all"
         >
           <Image
             src={taskDoer}
@@ -119,7 +119,7 @@ const TaskSection = () => {
 
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 z-10" />
 
-          <div className="relative z-20 p-8 border border-white/30">
+          <div className="relative z-20 p-8">
             <h3 className="text-3xl font-black text-white leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
               Guaranteed<br /> Earning
             </h3>
@@ -134,9 +134,9 @@ const TaskSection = () => {
       </div>
 
       {/* Banner */}
-      <div className="bg-black rounded-[24px] py-6 text-center shadow-lg border border-orange-400">
+      <div className="bg-black rounded-[24px] py-6 text-center shadow-lg">
         <Banner />
-        <p className="text-white text-[10px] font-bold uppercase tracking-[0.2em] opacity-70 border border-gray-500">
+        <p className="text-white text-[10px] font-bold uppercase tracking-[0.2em] opacity-70">
           Active Task Doers
         </p>
       </div>

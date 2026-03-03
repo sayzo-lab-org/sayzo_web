@@ -32,13 +32,13 @@ const RoleToggle = () => {
   const [activeRole, setActiveRole] = useState(USER_ROLE.DOER);
 
   return (
-    <div className="flex flex-col items-center gap-6 border mb-2 border-yellow-400">
+    <div className="flex flex-col items-center gap-6 mb-2">
 
       {/* Toggle */}
-      <div className="relative inline-flex bg-[#F4F5F7] p-1 rounded-full select-none border border-blue-400">
+      <div className="relative inline-flex bg-[#F4F5F7] p-1 rounded-full select-none">
 
         <div
-          className={`absolute top-1 bottom-1 bg-black rounded-full transition-all duration-300 border border-green-400 ${
+          className={`absolute top-1 bottom-1 bg-black rounded-full transition-all duration-300 ${
             activeRole === USER_ROLE.DOER
               ? 'left-1 w-[160px]'
               : 'left-[164px] w-[160px]'
@@ -47,7 +47,7 @@ const RoleToggle = () => {
 
         <button
           onClick={() => setActiveRole(USER_ROLE.DOER)}
-          className={`relative z-10 w-[160px] py-3 text-sm font-medium rounded-full border border-yellow-400 ${
+          className={`relative z-10 w-[160px] py-3 text-sm font-medium rounded-full ${
             activeRole === USER_ROLE.DOER ? 'text-white' : 'text-black'
           }`}
         >
@@ -65,9 +65,9 @@ const RoleToggle = () => {
       </div>
 
       {/* 3 Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl pb-2 mb-2 border border-black-400">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl pb-2 mb-2">
         {FEATURES[activeRole].map((item, index) => (
-          <div key={index} className="flex flex-col items-center text-center border border-indigo-400">
+          <div key={index} className="flex flex-col items-center text-center ">
 
             <div className="w-full">
               <Image
@@ -75,11 +75,11 @@ const RoleToggle = () => {
                 alt={item.title}
                 width={1000}
                 height={600}
-                className="w-full h-[220px] object-cover rounded-xl border border-cyan-400"
+                className="w-full h-[220px] object-cover rounded-xl"
               />
             </div>
 
-            <p className="mt-3 text-2xl font-medium border border-lime-400">
+            <p className="mt-3 text-2xl font-medium">
               {item.title}
             </p>
 

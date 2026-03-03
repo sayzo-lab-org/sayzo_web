@@ -186,9 +186,10 @@ const Header = () => {
                 <Button
                   onClick={() => router.push('/signup')}
                   size="sayzobtn"
-                  className="text-sm hover:scale-105 transition-all shadow-lg shadow-black/5"
+                  className=" bg-emerald-700 hover:bg-emerald-700 text-sm hover:scale-105 transition-all shadow-lg shadow-black/5"
                 >
-                  Get Started
+                  <Plus className="w-4 h-4" />
+                  Post Task
                 </Button>
               </div>
             ) : (

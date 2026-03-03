@@ -44,6 +44,9 @@ const TaskModal = ({ isOpen, onClose }) => {
     skills: [],
     experience: "",
   });
+const inputClass =
+    "w-full bg-[#18181B] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border border-zinc-800 focus:outline-none focus:border-zinc-600";
+
 
   const getInputClass = (field) =>
   `w-full bg-[#111] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border transition-all duration-200 focus:outline-none 
@@ -421,14 +424,14 @@ const submitTask = async () => {
 
                     {/* Form Fields */}
                     <input
-                      className={input}
+                      className={inputClass}
                       placeholder="Your Name *"
                       name="customerName"
                       value={form.customerName}
                       onChange={handleChange}
                     />
                     <input
-                      className={input}
+                      className={inputClass}
                       placeholder="Task Name *"
                       name="taskName"
                       value={form.taskName}
@@ -462,7 +465,7 @@ const submitTask = async () => {
                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
                             <input
                               type="email"
-                              className={`${input} pl-12 pr-28`}
+                              className={`${inputClass} pl-12 pr-28`}
                               placeholder="Your Email *"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
@@ -499,7 +502,7 @@ const submitTask = async () => {
 
                         {/* Phone from profile (editable) */}
                         <input
-                          className={input}
+                          className={inputClass}
                           placeholder="Phone Number *"
                           name="phone"
                           inputMode="numeric"
@@ -516,7 +519,7 @@ const submitTask = async () => {
 
                     {taskType === "offline" && (
                       <input
-                        className={input}
+                        className={inputClass}
                         placeholder="Location *"
                         name="location"
                         value={form.location}
@@ -525,7 +528,7 @@ const submitTask = async () => {
                     )}
 
                     <textarea
-                      className={`${input} h-32`}
+                      className={`${inputClass} h-32`}
                       placeholder="Description *"
                       name="description"
                       value={form.description}
@@ -535,7 +538,7 @@ const submitTask = async () => {
                     <div className="grid grid-cols-2 gap-3">
                       <select
                         name="budgetType"
-                        className={input}
+                        className={inputClass}
                         value={form.budgetType}
                         onChange={handleChange}
                       >
@@ -545,7 +548,7 @@ const submitTask = async () => {
                       <input
                         type="number"
                         min="1"
-                        className={input}
+                        className={inputClass}
                         placeholder="Amount *"
                         name="amount"
                         value={form.amount}
@@ -554,7 +557,7 @@ const submitTask = async () => {
                     </div>
 
                     <input
-                      className={input}
+                      className={inputClass}
                       placeholder="Duration (3 hours, 5 days, 1 month) *"
                       name="duration"
                       value={form.duration}
@@ -616,7 +619,7 @@ const submitTask = async () => {
 
                     <select
                       name="experience"
-                      className={input}
+                      className={inputClass}
                       value={form.experience}
                       onChange={handleChange}
                     >

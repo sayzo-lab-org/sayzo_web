@@ -96,7 +96,7 @@ const DesktopSliderView = ({ currentIndex, nextSlide, prevSlide }) => {
               src={slides[currentIndex + 1].image}
               alt={slides[currentIndex + 1].title}
               fill
-              className="object-cover"
+              className="object-contain"
             />
           </div>
         )}
@@ -125,7 +125,7 @@ const CommunityFirst = () => {
   const prevSlide = () => setCurrentIndex((prev) => prev === 0 ? slides.length - 1 : prev - 1);
 
   return (
-    <section className=" bg-white px-4 py-2 mt-5 lg:pt-8 border border-green-500 ">
+    <section className=" bg-white px-4 py-2 mt-5 lg:pt-8">
       <div className="max-w-7xl mx-auto w-full"> 
         <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-20">
 
