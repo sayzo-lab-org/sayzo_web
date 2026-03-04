@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Loader2, CheckCircle, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { saveUserProfile, auth } from "@/lib/firebase";
+import { saveUserProfile, auth ,getUserProfile} from "@/lib/firebase";
 
 // Error boundary for modal
 class ModalErrorBoundary extends React.Component {
@@ -69,6 +69,35 @@ const ProfileCompletionModal = ({
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+  const fetchProfile = async () => {
+
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
+
+      const existingProfile = await getUserProfile(currentUser.uid);
+       if (existingProfile.profileCompleted) {
+        onSuccess?.(existingProfile);
+        return;
+      }
+      
+      if (existingProfile) {
+        setForm({
+          fullName: existingProfile.fullName || "",
+          phone: existingProfile.phone || "",
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+    }
+  };
+
+  if (isOpen) {
+    fetchProfile();
+  }
+}, [isOpen]);
+
 
   const input =
     "w-full bg-[#18181B] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border border-zinc-800 focus:outline-none focus:border-zinc-600";
@@ -85,7 +114,7 @@ const ProfileCompletionModal = ({
 
   const validate = () => {
     if (!form.fullName.trim()) return "Full name is required";
-    if (form.phone.length !== 10) return "Enter valid 10-digit phone number";
+    if (!form.phone || form.phone.length !== 10) return "Enter valid 10-digit phone number";
     return "";
   };
 
@@ -106,8 +135,7 @@ const ProfileCompletionModal = ({
       }
 
       await saveUserProfile(currentUser.uid, {
-        fullName: form.fullName.trim(),
-        phone: form.phone,
+        ...form,
         email: userEmail || currentUser.email,
         profileCompleted: true,
         emailVerified: true,
