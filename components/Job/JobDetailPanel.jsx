@@ -86,7 +86,7 @@ const router = useRouter();
       {/* COMPANY */}
       <div className="flex items-center gap-2 mt-3">
        <Image
-  src={job.company?.photo || userProfile?.photo ||"https://github.com/shadcn.png"}
+  src={job.giver?.photo || "https://github.com/shadcn.png"}
   alt="User profile"
   width={28}
   height={28}
