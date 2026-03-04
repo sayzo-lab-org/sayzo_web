@@ -240,8 +240,9 @@ const validate = () => {
   if (!form.phone.trim())
     errors.phone = "Phone number is required";
 
-  if (!email.trim())
-    errors.email = "Email is required";
+  // email importing from data set to no need to validate
+  // if (!email.trim())
+  //   errors.email = "Email is required";
 
   if (taskType === "offline" && !form.location.trim())
     errors.location = "Location is required";
@@ -270,8 +271,13 @@ const validate = () => {
   
 
   const handlePreview = () => {
-  setHasSubmitted(true);
-  if (!validate()) return;
+ setHasSubmitted(true);
+
+  const valid = validate();
+  console.log("Preview validation:", valid, fieldErrors);
+
+  if (!valid) return;
+
   setFormPhase("preview");
 };
 
@@ -424,14 +430,15 @@ const submitTask = async () => {
 
                     {/* Form Fields */}
                     <input
-                      className={inputClass}
-                      placeholder="Your Name *"
-                      name="customerName"
-                      value={form.customerName}
-                      onChange={handleChange}
-                    />
+  className={getInputClass("customerName")}
+  placeholder="Your Name *"
+  name="customerName"
+  value={form.customerName}
+  disabled={userProfile?.fullName}
+  onChange={handleChange}
+/>
                     <input
-                      className={inputClass}
+                       className={getInputClass("taskName")}
                       placeholder="Task Name *"
                       name="taskName"
                       value={form.taskName}
@@ -502,7 +509,7 @@ const submitTask = async () => {
 
                         {/* Phone from profile (editable) */}
                         <input
-                          className={inputClass}
+                           className={getInputClass("phone")}
                           placeholder="Phone Number *"
                           name="phone"
                           inputMode="numeric"
@@ -519,7 +526,7 @@ const submitTask = async () => {
 
                     {taskType === "offline" && (
                       <input
-                        className={inputClass}
+                        className={getInputClass("location")}
                         placeholder="Location *"
                         name="location"
                         value={form.location}
@@ -528,7 +535,7 @@ const submitTask = async () => {
                     )}
 
                     <textarea
-                      className={`${inputClass} h-32`}
+                      className={`${getInputClass("description")} h-32`}
                       placeholder="Description *"
                       name="description"
                       value={form.description}
@@ -546,18 +553,18 @@ const submitTask = async () => {
                         <option value="negotiable">Negotiable</option>
                       </select>
                       <input
-                        type="number"
-                        min="1"
-                        className={inputClass}
-                        placeholder="Amount *"
-                        name="amount"
-                        value={form.amount}
-                        onChange={handleChange}
-                      />
+  type="number"
+  min="1"
+  className={getInputClass("amount")}
+  placeholder="Amount *"
+  name="amount"
+  value={form.amount}
+  onChange={handleChange}
+/>
                     </div>
 
                     <input
-                      className={inputClass}
+                      className={getInputClass("duration")}
                       placeholder="Duration (3 hours, 5 days, 1 month) *"
                       name="duration"
                       value={form.duration}
@@ -617,12 +624,12 @@ const submitTask = async () => {
                       )}
                     </div>
 
-                    <select
-                      name="experience"
-                      className={inputClass}
-                      value={form.experience}
-                      onChange={handleChange}
-                    >
+                   <select
+  name="experience"
+  className={getInputClass("experience")}
+  value={form.experience}
+  onChange={handleChange}
+>
                       <option value="">Select Experience *</option>
                       <option value="beginner">Beginner</option>
                       <option value="intermediate">Intermediate</option>
@@ -770,7 +777,7 @@ const submitTask = async () => {
       {/* Profile Completion Modal */}
       <ProfileCompletionModal
         isOpen={showProfileModal}
-        onClose={() => {}}
+        onClose={() => setShowProfileModal(false)}
         onSuccess={handleProfileComplete}
         userEmail={email}
       />
