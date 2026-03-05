@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signupWithEmail, loginWithGoogle, saveUserProfile } from "@/lib/firebase";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
-import { getUserProfile } from "@/lib/firebase";
+import { signupWithEmail, loginWithGoogle, saveUserProfile, getUserProfile } from "@/lib/firebase";
+import { motion } from "framer-motion";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook, FaApple } from "react-icons/fa";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -15,135 +13,135 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Email Signup
-const handleSignup = async (e) => {
-  e.preventDefault();
-  setError(null);
-  setLoading(true);
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-  try {
-    const user = await signupWithEmail(email, password);
-
-    await saveUserProfile(user.uid, {
-      email: user.email,
-      role: "task_doer",
-      profileCompleted: true, // since no onboarding now
-    });
-
-    router.push("/"); //Go to home
-  } catch (err) {
-    setError(err.message || "Failed to create account.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-// Google Signup
-const handleGoogleSignup = async () => {
-  setError(null);
-  setGoogleLoading(true);
-
-  try {
-    const user = await loginWithGoogle();
-
-    const existingProfile = await getUserProfile(user.uid);
-
-    if (!existingProfile) {
+    try {
+      const user = await signupWithEmail(email, password);
       await saveUserProfile(user.uid, {
         email: user.email,
         role: "task_doer",
         profileCompleted: true,
       });
+      router.push("/");
+    } catch (err) {
+      setError(err.message || "Failed to create account.");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    router.push("/");
-  } catch (err) {
-    console.error(err);
-    setError(err.message || "Google sign-up failed.");
-  } finally {
-    setGoogleLoading(false);
-  }
-};
+  const handleGoogleSignup = async () => {
+    setError(null);
+    try {
+      const user = await loginWithGoogle();
+      const existingProfile = await getUserProfile(user.uid);
+      if (!existingProfile) {
+        await saveUserProfile(user.uid, {
+          email: user.email,
+          role: "task_doer",
+          profileCompleted: true,
+        });
+      }
+      router.push("/notifications")
+    } catch (err) {
+      setError(err.message || "Google sign-up failed.");
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8 space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-center">Create Account</h1>
-          <p className="text-sm text-gray-500 text-center mt-2">
-            Already have an account?{" "}
-            <button
-              onClick={() => router.push("/login")}
-              className="text-[#0ca37f] font-medium hover:underline"
-            >
-              Log in
-            </button>
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#F3F4F6] flex items-center justify-center p-6">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-[40px] shadow-sm w-full max-w-[440px] p-8 md:p-12"
+      >
+        <h1 className="text-[25px] font-semibold text-gray-900 mb-2">
+          Create Account
+        </h1>
+        <p className="text-[#9CA3AF] mb-10 text-lg">
+          Join SAYZO and get things done instantly.
+        </p>
 
-        {/* Google Button */}
-        <Button
-          variant="outline"
-          onClick={handleGoogleSignup}
-          disabled={googleLoading}
-          className="w-full h-11 flex gap-2"
-        >
-          {googleLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            "Sign up with Google"
-          )}
-        </Button>
-
-        <div className="relative text-center text-xs text-gray-400">
-          <span className="bg-white px-2 relative z-10">OR</span>
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t"></div>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSignup} className="space-y-4">
+        <form onSubmit={handleSignup} className="space-y-6">
           {error && (
             <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
               {error}
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label>Email</Label>
-            <Input
+          {/* Email Field */}
+          <div>
+            <label className="block text-lg font-medium text-gray-900 mb-3">
+              Email Address
+            </label>
+            <input
               type="email"
               placeholder="name@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="w-full bg-[#F8F9FB] border-none rounded-3xl py-5 px-6 text-gray-600 text-lg focus:ring-2 focus:ring-[#0ca37f] outline-none transition-all"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>Password</Label>
-            <Input
+          {/* Password Field */}
+          <div>
+            <label className="block text-lg font-medium text-gray-900 mb-3">
+              Password
+            </label>
+            <input
               type="password"
               placeholder="Minimum 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="w-full bg-[#F8F9FB] border-none rounded-3xl py-5 px-6 text-gray-600 text-lg focus:ring-2 focus:ring-[#0ca37f] outline-none transition-all"
             />
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full">
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : (
-              "Create Account"
-            )}
-          </Button>
+          {/* Sign Up Button */}
+          <button 
+            type="submit"
+            disabled={loading}
+            className="w-full bg-black text-white py-5 rounded-[24px] text-xl font-semibold mt-4 active:scale-[0.98] transition-transform disabled:opacity-50"
+          >
+            {loading ? "Creating..." : "Sign Up"}
+          </button>
+
+          {/* Social Auth */}
+          <div className="pt-8 text-center">
+            <p className="text-[#9CA3AF] text-lg mb-6">Or Sign Up with</p>
+            <div className="flex justify-center gap-4">
+              {/* <button type="button" className="w-20 h-20 bg-[#F8F9FB] rounded-3xl flex items-center justify-center text-3xl hover:bg-gray-100 transition-colors">
+                <FaFacebook className="text-[#1877F2]" />
+              </button> */}
+              <button type="button" onClick={handleGoogleSignup} className="w-20 h-20 bg-[#F8F9FB] rounded-3xl flex items-center justify-center text-3xl hover:bg-gray-100 transition-colors">
+                <FcGoogle />
+              </button>
+              {/* <button type="button" className="w-20 h-20 bg-[#F8F9FB] rounded-3xl flex items-center justify-center text-3xl hover:bg-gray-100 transition-colors">
+                <FaApple className="text-black" />
+              </button> */}
+            </div>
+          </div>
+
+          {/* Footer Link */}
+          <p className="text-center text-[#9CA3AF] text-lg pt-4">
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={() => router.push("/login")}
+              className="text-[#0ca37f] font-semibold hover:underline"
+            >
+              Log In
+            </button>
+          </p>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }

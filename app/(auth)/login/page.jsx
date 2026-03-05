@@ -8,10 +8,9 @@ import {
   getUserProfile,
   saveUserProfile,
 } from "@/lib/firebase";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook, FaApple } from "react-icons/fa";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,140 +18,156 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Email Login
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setError(null);
-  setLoading(true);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-  try {
-    await loginWithEmail(email, password);
-
-    router.push(searchParams.get("redirect") || "/");
-  } catch (err) {
-    setError("Invalid email or password. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-// Google Login
-const handleGoogleLogin = async () => {
-  setError(null);
-  setGoogleLoading(true);
-
-  try {
-    const user = await loginWithGoogle();
-
-    // Optional: Ensure profile exists (for first-time Google users)
-    const profile = await getUserProfile(user.uid);
-
-    if (!profile) {
-      await saveUserProfile(user.uid, {
-        email: user.email,
-        role: "task_doer",
-        profileCompleted: true,
-      });
+    try {
+      await loginWithEmail(email, password);
+      router.push("/"); 
+    } catch (err) {
+      setError("Invalid email or password. Please try again.");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    router.push("/"); // go home
-  } catch (err) {
-    console.error("Google Login Error:", err);
-    setError(err.message || "Google sign-in failed.");
-  } finally {
-    setGoogleLoading(false);
-  }
-};
+  const handleGoogleLogin = async () => {
+    setError(null);
+    try {
+      const user = await loginWithGoogle();
+      const profile = await getUserProfile(user.uid);
+
+      if (!profile) {
+        await saveUserProfile(user.uid, {
+          email: user.email,
+          role: "task_doer",
+          profileCompleted: true,
+        });
+      }
+      router.push("/");
+    } catch (err) {
+      setError(err.message || "Google sign-in failed.");
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8 space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-center">Welcome Back</h1>
-          <p className="text-sm text-gray-500 text-center mt-2">
-            New to Sayzo?{" "}
-            <button
-              onClick={() => router.push("/signup")}
-              className="text-[#0ca37f] font-medium hover:underline"
-            >
-              Create an account
-            </button>
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#F3F4F6] flex items-center justify-center p-6">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-[40px] shadow-sm w-full max-w-[440px] p-8 md:p-12"
+      >
+        <h1 className="text-[24px] font-bold text-gray-900 mb-2">
+          Welcome to SAYZO
+        </h1>
+        <p className="text-[#9CA3AF] mb-8 text-base">
+          Sign in to connect with people around you.
+        </p>
 
-        {/* Google Login */}
-        <Button
-          variant="outline"
-          onClick={handleGoogleLogin}
-          disabled={googleLoading}
-          className="w-full h-11 flex gap-2"
-        >
-          {googleLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            "Continue with Google"
-          )}
-        </Button>
-
-        <div className="relative text-center text-xs text-gray-400">
-          <span className="bg-white px-2 relative z-10">OR</span>
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t"></div>
-          </div>
-        </div>
-
-        {/* Email Login Form */}
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-5">
           {error && (
             <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
               {error}
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label>Email</Label>
-            <Input
+          {/* Email Field */}
+          <div>
+            <label className="block text-base font-medium text-gray-900 mb-2">
+              Email Address
+            </label>
+            <input
               type="email"
               placeholder="name@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="w-full bg-[#F8F9FB] border-none rounded-2xl py-4 px-5 text-gray-600 text-base focus:ring-2 focus:ring-[#0ca37f] outline-none transition-all"
             />
           </div>
 
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <Label>Password</Label>
+          {/* Password Field */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <label className="text-base font-medium text-gray-900">
+                Password
+              </label>
               <button
                 type="button"
                 onClick={() => router.push("/forgot-password")}
-                className="text-xs text-[#0ca37f] hover:underline"
+                className="text-sm text-[#0ca37f] font-medium hover:underline"
               >
                 Forgot?
               </button>
             </div>
-
-            <Input
+            <input
               type="password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="w-full bg-[#F8F9FB] border-none rounded-2xl py-4 px-5 text-gray-600 text-base focus:ring-2 focus:ring-[#0ca37f] outline-none transition-all"
             />
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full">
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : (
-              "Sign In"
-            )}
-          </Button>
+          {/* Remember Me Toggle (Optional, based on Frame 30) */}
+          <div className="flex items-center gap-2">
+            <input type="checkbox" id="remember" className="w-4 h-4 rounded border-gray-300 accent-black" />
+            <label htmlFor="remember" className="text-sm text-gray-400">Remember me</label>
+          </div>
+
+          {/* Log In Button */}
+          <button 
+            type="submit"
+            disabled={loading}
+            className="w-full bg-black text-white py-4 rounded-[20px] text-lg font-semibold mt-2 active:scale-[0.98] transition-transform disabled:opacity-50"
+          >
+            {loading ? "Signing In..." : "Log In"}
+          </button>
+
+          {/* Social Auth Section */}
+          <div className="pt-6 text-center">
+            <p className="text-[#9CA3AF] text-sm mb-4">Or Log In with</p>
+            <div className="flex justify-center gap-4">
+              {/* <button 
+                type="button" 
+                className="w-16 h-16 bg-[#F8F9FB] rounded-2xl flex items-center justify-center text-2xl hover:bg-gray-100 transition-colors"
+              >
+                <FaFacebook className="text-[#1877F2]" />
+              </button> */}
+              <button 
+                type="button" 
+                onClick={handleGoogleLogin} 
+                className="w-16 h-16 bg-[#F8F9FB] rounded-2xl flex items-center justify-center text-2xl hover:bg-gray-100 transition-colors"
+              >
+                <FcGoogle />
+              </button>
+              {/* <button 
+                type="button" 
+                className="w-16 h-16 bg-[#F8F9FB] rounded-2xl flex items-center justify-center text-2xl hover:bg-gray-100 transition-colors"
+              >
+                <FaApple className="text-black" />
+              </button> */}
+            </div>
+          </div>
+
+          {/* Footer Link */}
+          <p className="text-center text-[#9CA3AF] text-base pt-2">
+            New to SAYZO?{" "}
+            <button
+              type="button"
+              onClick={() => router.push("/signup")}
+              className="text-[#0ca37f] font-semibold hover:underline"
+            >
+              Sign Up
+            </button>
+          </p>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }
