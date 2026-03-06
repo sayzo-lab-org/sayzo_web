@@ -143,17 +143,6 @@ const HeroSection1 = () => {
             <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
           </motion.button>
         </Link>
-
-{/* reset button to clear local storage */}
-        <button
-onClick={()=>{
-localStorage.clear()
-sessionStorage.clear()
-location.reload()
-}}
->
-Reset App
-</button>
       </motion.div>
 
     </motion.div>
