@@ -29,7 +29,6 @@ export default function ClientLayout({ children }) {
 
   return (
     <>
-      {/* Splash only on homepage */}
       {showSplash && pathname === "/" && (
         <SplashScreen onFinish={handleFinish} />
       )}

@@ -20,12 +20,19 @@ export default function SignupPage() {
   const [error, setError] = useState(null);
 
   const handleSignup = async (e) => {
+    
     e.preventDefault();
     setError(null);
     setLoading(true);
 
+    if (!/^[6-9]\d{9}$/.test(mobileNumber)) {
+  setError("Please enter a valid phone number");
+  setLoading(false);
+  return;
+}
+
     try {
-      // Create the user in Firebase Auth
+     
       const user = await signupWithEmail(email, password);
       
       // Save all profile data securely in Firestore
@@ -47,26 +54,28 @@ export default function SignupPage() {
   };
 
   const handleGoogleSignup = async () => {
-    setError(null);
-    try {
-      const user = await loginWithGoogle();
-      const existingProfile = await getUserProfile(user.uid);
-      
-      if (!existingProfile) {
-        // For Google users, we save their default info
-        await saveUserProfile(user.uid, {
-          name: user.displayName || "",
-          email: user.email,
-          
-          profileCompleted: true,
-          createdAt: new Date().toISOString()
-        });
-      }
-      router.push("/notifications");
-    } catch (err) {
-      setError(err.message || "Google sign-up failed.");
+  setError(null);
+
+  try {
+    const user = await loginWithGoogle();
+    const existingProfile = await getUserProfile(user.uid);
+
+    if (!existingProfile) {
+      await saveUserProfile(user.uid, {
+        name: user.displayName || user.email.split("@")[0],
+        email: user.email,
+       avatar: user.photoURL,
+        role: "task_doer",
+        profileCompleted: true,
+        createdAt: new Date().toISOString(),
+      });
     }
-  };
+
+    router.push("/notifications");
+  } catch (err) {
+    setError(err.message || "Google sign-up failed.");
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#F3F4F6] flex items-center justify-center p-6 py-12">
@@ -107,13 +116,16 @@ export default function SignupPage() {
             <label className="block text-base font-medium text-gray-900 mb-2">Mobile number</label>
             <div className="relative">
               <input
-                type="tel"
-                placeholder="+91 9836578999"
-                value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
-                required
-                className="w-full bg-[#F8F9FB] border-none rounded-2xl py-4 px-5 text-gray-600 text-base focus:ring-2 focus:ring-[#0ca37f] outline-none transition-all"
-              />
+  type="tel"
+  placeholder="+91 9836578999"
+  value={mobileNumber}
+  onChange={(e) => {
+    setMobileNumber(e.target.value);
+    setError(null);
+  }}
+  required
+  className="w-full bg-[#F8F9FB] border-none rounded-2xl py-4 px-5 text-gray-600 text-base focus:ring-2 focus:ring-[#0ca37f] outline-none transition-all"
+/>
               {/* <button type="button" className="absolute right-5 top-1/2 -translate-y-1/2 text-[#0ca37f] font-semibold text-sm hover:underline">
                 Verify
               </button> */}

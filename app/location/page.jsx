@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState  , useEffect} from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,44 @@ export default function LocationPermissionScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+ useEffect(() => {
+  const savedLocation = localStorage.getItem("sayzo_user_location");
+  const skipped = localStorage.getItem("sayzo_location_skipped");
+
+if (savedLocation || skipped) {
+  router.replace("/");
+  return;
+}
+
+  if (navigator.permissions) {
+    navigator.permissions.query({ name: "geolocation" }).then((permission) => {
+
+      if (permission.state === "granted") {
+
+        navigator.geolocation.getCurrentPosition((position) => {
+
+          const coords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+
+          localStorage.setItem(
+            "sayzo_user_location",
+            JSON.stringify(coords)
+          );
+
+          router.replace("/");
+        });
+
+      }
+
+      // if denied → keep screen
+      // if prompt → wait for button click
+
+    });
+  }
+}, [router]);
 
   const handleAllowLocation = () => {
   setLoading(true);
@@ -127,7 +165,10 @@ export default function LocationPermissionScreen() {
             </button>
 
             <button 
-              onClick={() => router.push("/")}
+              onClick={() => {
+  localStorage.setItem("sayzo_location_skipped", "true");
+  router.replace("/");
+}}
               className="text-center text-[#9CA3AF] text-base md:text-[18px] font-medium hover:text-gray-600 transition-colors py-2"
             >
               Another time

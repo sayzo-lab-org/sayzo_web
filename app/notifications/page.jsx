@@ -12,7 +12,7 @@ export default function NotificationScreen() {
   useEffect(() => {
     const seen = localStorage.getItem("sayzo_notifications_seen");
 
-    if (seen || Notification.permission === "granted") {
+    if (seen) {
       router.replace("/location");
     }
   }, [router]);

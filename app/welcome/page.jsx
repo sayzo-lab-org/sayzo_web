@@ -3,15 +3,25 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAuth } from "@/app/Context/AuthContext";
 import communityCircle from "../../public/assets/communityCircle.png"; 
 
 export default function WelcomeScreen({ onSkip }) {
     const router = useRouter()
+    const { user } = useAuth();
+
+useEffect(() => {
+  if (user) {
+    router.replace("/notifications");
+  }
+}, [user,router]);
+
   return (
     <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-[#F3F4F6] overflow-hidden">
       {/* Skip Button - Adjusted for mobile visibility */}
       <button
-        onClick={()=>router.push("/")}
+        onClick={()=>router.replace("/")}
         className="absolute top-8 right-8 md:top-12 md:right-12 z-50 text-[16px] md:text-[19px] font-medium text-gray-800 hover:opacity-60 transition-opacity"
       >
         Skip
@@ -57,19 +67,19 @@ export default function WelcomeScreen({ onSkip }) {
 
           <div className="flex flex-col gap-3 md:gap-5">
             <button 
-            onClick={() => router.push("/login")}
+            onClick={() => router.replace("/login")}
             className="w-full bg-black text-white py-4 md:py-6 rounded-[20px] md:rounded-[28px] text-[18px] md:text-[20px] font-semibold transition-transform active:scale-[0.98]">
               Log In
             </button>
 
             <button
-            onClick={() => router.push("/signup")}
+            onClick={() => router.replace("/signup")}
             className="w-full bg-[#F8F9FB] text-gray-900 py-4 md:py-6 rounded-[20px] md:rounded-[28px] text-[18px] md:text-[20px] font-semibold transition-transform active:scale-[0.98]">
               Sign Up
             </button>
 
             <button 
-               onClick={()=>router.push("/notifications")}
+               onClick={()=>router.replace("/notifications")}
               className="mt-4 lg:mt-6 text-center text-[#9CA3AF] text-[16px] md:text-[18px] font-medium hover:text-gray-600"
             >
               Continue as a guest

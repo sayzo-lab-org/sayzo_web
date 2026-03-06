@@ -27,7 +27,7 @@ export default function LoginPage() {
 
     try {
       await loginWithEmail(email, password);
-      router.push("/notifications"); 
+      router.replace("/notifications"); 
     } catch (err) {
       setError("Invalid email or password. Please try again.");
     } finally {
@@ -47,7 +47,7 @@ export default function LoginPage() {
           profileCompleted: true,
         });
       }
-      router.push("/notifications");
+     router.replace("/notifications");
     } catch (err) {
       setError(err.message || "Google sign-in failed.");
     }
