@@ -127,7 +127,7 @@ export default function LocationPermissionScreen() {
             </button>
 
             <button 
-              onClick={() => router.push("/signup")}
+              onClick={() => router.push("/")}
               className="text-center text-[#9CA3AF] text-base md:text-[18px] font-medium hover:text-gray-600 transition-colors py-2"
             >
               Another time

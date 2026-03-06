@@ -69,7 +69,7 @@ export default function WelcomeScreen({ onSkip }) {
             </button>
 
             <button 
-               onClick={()=>router.push("/")}
+               onClick={()=>router.push("/notifications")}
               className="mt-4 lg:mt-6 text-center text-[#9CA3AF] text-[16px] md:text-[18px] font-medium hover:text-gray-600"
             >
               Continue as a guest
