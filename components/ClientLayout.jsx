@@ -17,7 +17,14 @@ export default function ClientLayout({ children }) {
 
   const handleFinish = () => {
     setShowSplash(false);
-    router.replace("/welcome");
+
+    const seen = localStorage.getItem("sayzo_welcome_seen");
+
+    if (seen) {
+      router.replace("/");
+    } else {
+      router.replace("/welcome");
+    }
   };
 
   return (
@@ -27,7 +34,6 @@ export default function ClientLayout({ children }) {
         <SplashScreen onFinish={handleFinish} />
       )}
 
-      {/* Main layout */}
       {!showSplash && (
         <>
           <HeaderWrapper />

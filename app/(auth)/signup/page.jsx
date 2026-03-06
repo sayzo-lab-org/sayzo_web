@@ -24,10 +24,9 @@ export default function SignupPage() {
       const user = await signupWithEmail(email, password);
       await saveUserProfile(user.uid, {
         email: user.email,
-        role: "task_doer",
         profileCompleted: true,
       });
-      router.push("/");
+     router.push("/notifications");
     } catch (err) {
       setError(err.message || "Failed to create account.");
     } finally {
@@ -43,7 +42,6 @@ export default function SignupPage() {
       if (!existingProfile) {
         await saveUserProfile(user.uid, {
           email: user.email,
-          role: "task_doer",
           profileCompleted: true,
         });
       }

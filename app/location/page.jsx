@@ -12,46 +12,58 @@ export default function LocationPermissionScreen() {
   const [error, setError] = useState(null);
 
   const handleAllowLocation = () => {
-    setLoading(true);
-    setError(null);
+  setLoading(true);
+  setError(null);
 
-    if (!navigator.geolocation) {
-      setError("Geolocation is not supported by your browser.");
+  if (!navigator.geolocation) {
+    setError("Geolocation is not supported by your browser.");
+    setLoading(false);
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+
+      const coords = {
+        lat: latitude,
+        lng: longitude
+      };
+
+      localStorage.setItem(
+        "sayzo_user_location",
+        JSON.stringify(coords)
+      );
+
+      console.log("Location captured:", coords);
+
       setLoading(false);
-      return;
-    }
+      router.replace("/");
+    },
+    (err) => {
+      setLoading(false);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        
-        // Optionally save to localStorage or your global state/database
-        localStorage.setItem("user_location", JSON.stringify({ lat: latitude, lng: longitude }));
-
-        console.log("Location captured:", latitude, longitude);
-        setLoading(false);
-        router.push("/"); // Navigate to next step on success
-      },
-      (err) => {
-        setLoading(false);
-        switch (err.code) {
-          case err.PERMISSION_DENIED:
-            setError("Please allow location access to continue.");
-            break;
-          case err.POSITION_UNAVAILABLE:
-            setError("Location information is unavailable.");
-            break;
-          case err.TIMEOUT:
-            setError("The request to get user location timed out.");
-            break;
-          default:
-            setError("An unknown error occurred.");
-            break;
-        }
+      switch (err.code) {
+        case err.PERMISSION_DENIED:
+          setError("Please allow location access to continue.");
+          break;
+        case err.POSITION_UNAVAILABLE:
+          setError("Location information is unavailable.");
+          break;
+        case err.TIMEOUT:
+          setError("Location request timed out.");
+          break;
+        default:
+          setError("Something went wrong.");
       }
-    );
-  };
-
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    }
+  );
+};
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col lg:flex-row bg-white overflow-hidden">
       

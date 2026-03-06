@@ -27,7 +27,7 @@ export default function LoginPage() {
 
     try {
       await loginWithEmail(email, password);
-      router.push("/"); 
+      router.push("/notifications"); 
     } catch (err) {
       setError("Invalid email or password. Please try again.");
     } finally {
@@ -44,11 +44,10 @@ export default function LoginPage() {
       if (!profile) {
         await saveUserProfile(user.uid, {
           email: user.email,
-          role: "task_doer",
           profileCompleted: true,
         });
       }
-      router.push("/");
+      router.push("/notifications");
     } catch (err) {
       setError(err.message || "Google sign-in failed.");
     }
