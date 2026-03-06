@@ -49,6 +49,9 @@ const handleGoogleSignup = async () => {
   try {
     const user = await loginWithGoogle();
 
+    // Mobile redirect flow
+    if (!user) return;
+
     const existingProfile = await getUserProfile(user.uid);
 
     if (!existingProfile) {
@@ -59,7 +62,7 @@ const handleGoogleSignup = async () => {
       });
     }
 
-    router.push("/");
+    router.replace("/");
   } catch (err) {
     console.error(err);
     setError(err.message || "Google sign-up failed.");
