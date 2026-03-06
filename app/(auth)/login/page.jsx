@@ -59,16 +59,13 @@ export default function LoginPage() {
     }
   };
 
-  // Google Login
+// Google Login
 const handleGoogleLogin = async () => {
   setError(null);
   setGoogleLoading(true);
 
   try {
     const user = await loginWithGoogle();
-
-    // On mobile redirect flow returns null
-    if (!user) return;
 
     const profile = await getUserProfile(user.uid);
 

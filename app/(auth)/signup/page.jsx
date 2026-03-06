@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signupWithEmail, loginWithGoogle, saveUserProfile } from "@/lib/firebase";
+import { signupWithEmail, loginWithGoogle, saveUserProfile, getUserProfile } from "@/lib/firebase";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
-import { getUserProfile } from "@/lib/firebase";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -19,57 +19,54 @@ export default function SignupPage() {
   const [error, setError] = useState(null);
 
   // Email Signup
-const handleSignup = async (e) => {
-  e.preventDefault();
-  setError(null);
-  setLoading(true);
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-  try {
-    const user = await signupWithEmail(email, password);
+    try {
+      const user = await signupWithEmail(email, password);
 
-    await saveUserProfile(user.uid, {
-      email: user.email,
-      role: "task_doer",
-      profileCompleted: true, // since no onboarding now
-    });
-
-    router.push("/"); //Go to home
-  } catch (err) {
-    setError(err.message || "Failed to create account.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-// Google Signup
-const handleGoogleSignup = async () => {
-  setError(null);
-  setGoogleLoading(true);
-
-  try {
-    const user = await loginWithGoogle();
-
-    // Mobile redirect flow
-    if (!user) return;
-
-    const existingProfile = await getUserProfile(user.uid);
-
-    if (!existingProfile) {
       await saveUserProfile(user.uid, {
         email: user.email,
         role: "task_doer",
         profileCompleted: true,
       });
-    }
 
-    router.replace("/");
-  } catch (err) {
-    console.error(err);
-    setError(err.message || "Google sign-up failed.");
-  } finally {
-    setGoogleLoading(false);
-  }
-};
+      router.replace("/");
+    } catch (err) {
+      setError(err.message || "Failed to create account.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Google Signup
+  const handleGoogleSignup = async () => {
+    setError(null);
+    setGoogleLoading(true);
+
+    try {
+      const user = await loginWithGoogle();
+
+      const existingProfile = await getUserProfile(user.uid);
+
+      if (!existingProfile) {
+        await saveUserProfile(user.uid, {
+          email: user.email,
+          role: "task_doer",
+          profileCompleted: true,
+        });
+      }
+
+      router.replace("/");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Google sign-up failed.");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
