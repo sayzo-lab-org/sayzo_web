@@ -59,13 +59,13 @@ const HeroSection1 = () => {
     return () => clearInterval(interval);
   }, []);
   return (
- <section className="relative py-24 mt-15 bg-white overflow-hidden">
+ <section className="relative py-16 md:py-24 mt-20 lg:mt-22  bg-white overflow-hidden">
   <div className="max-w-7xl mx-auto px-6 relative z-10 ">
     <motion.div
       variants={container}
       initial="hidden"
       animate="show"
-      className="flex flex-col items-center text-center space-y-12"
+      className="flex flex-col items-center text-center gap-10 md:gap-14 md:gap-12"
     >
 
       {/* Badge */}
@@ -90,25 +90,26 @@ const HeroSection1 = () => {
       </motion.div>
 
       {/* Headline */}
-      <div className="font-semibold -mt-7 -p-2 tracking-tight leading-tight ">
-        <motion.span
-          variants={itemDown}
-          className="block text-black text-4xl md:text-6xl lg:text-8xl"
-        >
-          Post a task.
-        </motion.span>
-        <motion.span
-          variants={itemDown}
-          className="text-primary-btn text-4xl md:text-6xl lg:text-8xl"
-        >
-          Get it done.
-        </motion.span>
-      </div>
+      <div className="flex flex-col sm:flex-row items-center justify-center text-center  sm:gap-x-4 font-semibold tracking-tight leading-tight gap-2">
+  <motion.span 
+    variants={itemDown} 
+    className="text-black text-4xl md:text-6xl lg:text-8xl"
+  >
+    Post a task.
+  </motion.span>
+  
+  <motion.span 
+    variants={itemDown} 
+    className="text-primary-btn text-4xl md:text-6xl lg:text-8xl"
+  >
+    Get it done.
+  </motion.span>
+</div>
 
       {/* Map */}
       <motion.div
         variants={itemUp}
-        className="w-full max-w-5xl -mt-2 mx-auto rounded-xl shadow-sm overflow-hidden "
+        className="w-full max-w-5xl mx-auto rounded-xl shadow-sm overflow-hidden "
       >
         <HomeMap />
       </motion.div>
@@ -120,7 +121,7 @@ const HeroSection1 = () => {
       >
         <Button
           size="sayzobtn"
-          className="md:text-lg hover:scale-105 shadow-lg"
+          className="md:text-lg hover:scale-105 shadow-lg "
           onClick={() => {
             if (!user) {
               router.push('/login')
@@ -142,6 +143,17 @@ const HeroSection1 = () => {
             <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
           </motion.button>
         </Link>
+
+{/* reset button to clear local storage */}
+        <button
+onClick={()=>{
+localStorage.clear()
+sessionStorage.clear()
+location.reload()
+}}
+>
+Reset App
+</button>
       </motion.div>
 
     </motion.div>
