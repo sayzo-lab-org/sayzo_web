@@ -10,12 +10,14 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import MagicLinkHandler from "@/components/MagicLinkHandler";
 
 export default function ClientLayout({ children }) {
+ 
   const router = useRouter();
   const pathname = usePathname();
 
   const [showSplash, setShowSplash] = useState(pathname === "/");
 
   const handleFinish = () => {
+   
     setShowSplash(false);
 
     const seen = localStorage.getItem("sayzo_welcome_seen");
