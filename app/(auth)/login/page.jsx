@@ -10,7 +10,6 @@ import {
 } from "@/lib/firebase";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook, FaApple } from "react-icons/fa";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -58,25 +57,26 @@ export default function LoginPage() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-[40px] shadow-sm w-full max-w-[440px] p-8 md:p-12"
+        // Reduced max-width to 420px for a more compact feel
+        className="bg-white rounded-[40px] shadow-sm w-full max-w-[420px] p-8 md:p-10"
       >
-        <h1 className="text-[24px] font-bold text-gray-900 mb-2">
+        <h1 className="text-[22px] md:text-[24px] font-bold text-gray-900 mb-1.5 tracking-tight">
           Welcome to SAYZO
         </h1>
-        <p className="text-[#9CA3AF] mb-8 text-base">
+        <p className="text-[#9CA3AF] mb-8 text-sm md:text-base">
           Sign in to connect with people around you.
         </p>
 
-        <form onSubmit={handleLogin} className="space-y-5">
+        <form onSubmit={handleLogin} className="space-y-4 md:space-y-5">
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+            <div className="text-xs md:text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">
               {error}
             </div>
           )}
 
           {/* Email Field */}
           <div>
-            <label className="block text-base font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-gray-900 mb-2">
               Email Address
             </label>
             <input
@@ -85,20 +85,20 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-[#F8F9FB] border-none rounded-2xl py-4 px-5 text-gray-600 text-base focus:ring-2 focus:ring-[#0ca37f] outline-none transition-all"
+              className="w-full bg-[#F8F9FB] border-none rounded-2xl py-3.5 px-5 text-gray-600 text-sm md:text-base focus:ring-2 focus:ring-[#0ca37f] outline-none transition-all placeholder:text-gray-300"
             />
           </div>
 
           {/* Password Field */}
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="text-base font-medium text-gray-900">
+              <label className="text-sm font-medium text-gray-900">
                 Password
               </label>
               <button
                 type="button"
                 onClick={() => router.push("/forgot-password")}
-                className="text-sm text-[#0ca37f] font-medium hover:underline"
+                className="text-xs text-[#0ca37f] font-semibold hover:underline"
               >
                 Forgot?
               </button>
@@ -109,58 +109,46 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full bg-[#F8F9FB] border-none rounded-2xl py-4 px-5 text-gray-600 text-base focus:ring-2 focus:ring-[#0ca37f] outline-none transition-all"
+              className="w-full bg-[#F8F9FB] border-none rounded-2xl py-3.5 px-5 text-gray-600 text-sm md:text-base focus:ring-2 focus:ring-[#0ca37f] outline-none transition-all placeholder:text-gray-300"
             />
           </div>
 
-          {/* Remember Me Toggle (Optional, based on Frame 30) */}
-          <div className="flex items-center gap-2">
-            <input type="checkbox" id="remember" className="w-4 h-4 rounded border-gray-300 accent-black" />
-            <label htmlFor="remember" className="text-sm text-gray-400">Remember me</label>
+          {/* Remember Me Toggle */}
+          <div className="flex items-center gap-2 pt-1">
+            <input type="checkbox" id="remember" className="w-3.5 h-3.5 rounded border-gray-300 accent-black cursor-pointer" />
+            <label htmlFor="remember" className="text-xs md:text-sm text-gray-400 cursor-pointer">Remember me</label>
           </div>
 
           {/* Log In Button */}
           <button 
             type="submit"
             disabled={loading}
-            className="w-full bg-black text-white py-4 rounded-[20px] text-lg font-semibold mt-2 active:scale-[0.98] transition-transform disabled:opacity-50"
+            className="w-full bg-black text-white py-4 rounded-[20px] text-base md:text-lg font-semibold mt-2 active:scale-[0.97] transition-all disabled:opacity-50 shadow-lg shadow-black/5"
           >
             {loading ? "Signing In..." : "Log In"}
           </button>
 
           {/* Social Auth Section */}
           <div className="pt-6 text-center">
-            <p className="text-[#9CA3AF] text-sm mb-4">Or Log In with</p>
-            <div className="flex justify-center gap-4">
-              {/* <button 
-                type="button" 
-                className="w-16 h-16 bg-[#F8F9FB] rounded-2xl flex items-center justify-center text-2xl hover:bg-gray-100 transition-colors"
-              >
-                <FaFacebook className="text-[#1877F2]" />
-              </button> */}
+            <p className="text-[#9CA3AF] text-[12px] uppercase tracking-widest font-bold mb-4">Or Log In with</p>
+            <div className="flex justify-center">
               <button 
                 type="button" 
                 onClick={handleGoogleLogin} 
-                className="w-16 h-16 bg-[#F8F9FB] rounded-2xl flex items-center justify-center text-2xl hover:bg-gray-100 transition-colors"
+                className="w-14 h-14 bg-[#F8F9FB] rounded-2xl flex items-center justify-center text-2xl hover:bg-gray-100 transition-all active:scale-95 border border-gray-50"
               >
                 <FcGoogle />
               </button>
-              {/* <button 
-                type="button" 
-                className="w-16 h-16 bg-[#F8F9FB] rounded-2xl flex items-center justify-center text-2xl hover:bg-gray-100 transition-colors"
-              >
-                <FaApple className="text-black" />
-              </button> */}
             </div>
           </div>
 
           {/* Footer Link */}
-          <p className="text-center text-[#9CA3AF] text-base pt-2">
+          <p className="text-center text-[#9CA3AF] text-sm md:text-base pt-2">
             New to SAYZO?{" "}
             <button
               type="button"
               onClick={() => router.push("/signup")}
-              className="text-[#0ca37f] font-semibold hover:underline"
+              className="text-[#0ca37f] font-bold hover:underline"
             >
               Sign Up
             </button>
