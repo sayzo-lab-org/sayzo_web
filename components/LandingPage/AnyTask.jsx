@@ -50,22 +50,26 @@ const Banner = () => {
 const AnyTask = () => {
   return (
    <section className="max-w-250 mx-auto p-4 pb-10">
-      <div className='flex justify-center mb-10'>
-         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className='font-semibold font-inter text-3xl sm:text-[45px] md:text-6xl lg:text-7xl text-center leading-[1.1] tracking-tighter'
-        >
-          Any Task. Any Moment.<br />
-          Any Skills.
-          <span className="font-serif font-thin text-[#0ca37f] ml-2 block sm:inline">
-            In 10 Minutes
-          </span>
-        </motion.p>
-      </div>
-      <TaskSection />
-    </section>
+  <div className='flex justify-center mb-10'>
+    <motion.p
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className='font-semibold font-inter text-3xl sm:text-[45px] md:text-6xl lg:text-7xl text-center leading-[1.1] tracking-tighter'
+    >
+      {/* Hidden break on mobile to keep "Any Task. Any Moment." on one line */}
+      Any Task. Any Moment.<br className="hidden sm:block" />
+      
+      <span className="block sm:inline">
+        Any Skills.
+        <span className="font-serif font-thin text-[#0ca37f] ml-2 italic">
+          In 10 Minutes
+        </span>
+      </span>
+    </motion.p>
+  </div>
+  <TaskSection />
+</section>
   )
 }
 
