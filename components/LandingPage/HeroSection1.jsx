@@ -90,17 +90,17 @@ const HeroSection1 = () => {
       </motion.div>
 
       {/* Headline */}
-      <div className="flex flex-col sm:flex-row items-center justify-center text-center  sm:gap-x-4 font-semibold tracking-tight leading-tight gap-2">
+      <div className="flex flex-col md:flex-row items-center justify-center text-center  sm:gap-x-4 md:gap-x-4 md:px-4 font-semibold tracking-tight leading-tight gap-2">
   <motion.span 
     variants={itemDown} 
-    className="text-black text-4xl md:text-6xl lg:text-8xl"
+    className="text-black text-4xl md:text-5xl lg:text-8xl whitespace-nowrap"
   >
     Post a task.
   </motion.span>
   
   <motion.span 
     variants={itemDown} 
-    className="text-primary-btn text-4xl md:text-6xl lg:text-8xl"
+    className="text-primary-btn text-4xl md:text-5xl lg:text-8xl whitespace-nowrap"
   >
     Get it done.
   </motion.span>
@@ -109,7 +109,8 @@ const HeroSection1 = () => {
       {/* Map */}
       <motion.div
         variants={itemUp}
-        className="w-full max-w-5xl mx-auto rounded-xl shadow-sm overflow-hidden "
+        className="w-full max-w-5xl mx-auto rounded-xl shadow-sm "
+
       >
         <HomeMap />
       </motion.div>

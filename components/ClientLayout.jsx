@@ -25,7 +25,9 @@ export default function ClientLayout({ children }) {
     if (seen) {
       router.replace("/");
     } else {
-      router.replace("/welcome");
+
+      router.replace("/");
+
     }
   };
 

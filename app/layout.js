@@ -10,6 +10,7 @@ import { AuthProvider } from "@/app/Context/AuthContext";
 import AllLinks from "@/components/AllLinks";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import MagicLinkHandler from "@/components/MagicLinkHandler";
+import ClientLayout from "@/components/ClientLayout";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -115,7 +116,9 @@ export default function RootLayout({ children }) {
           <main>
             <ErrorBoundary>
               <MagicLinkHandler>
-                {children}
+               <ClientLayout>
+              {children}
+            </ClientLayout>
               </MagicLinkHandler>
             </ErrorBoundary>
           </main>
