@@ -110,6 +110,7 @@ const HeroSection1 = () => {
       <motion.div
         variants={itemUp}
         className="w-full max-w-5xl mx-auto rounded-xl shadow-sm "
+
       >
         <HomeMap />
       </motion.div>
