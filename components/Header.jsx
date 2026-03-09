@@ -147,13 +147,13 @@ const Header = () => {
           <nav className="hidden lg:flex items-center gap-8">
             {['Track Tasks', 'Live Tasks', 'Use Cases'].map((item) => {
 
-              const path =`/${item.toLowerCase().replace(' ', '-')}`
+              const path = `/${item.toLowerCase().replace(' ', '-')}`
 
-              const isProtected = item ==='Trace Tasks';
+              const isProtected = item === 'Trace Tasks';
               return (
                 <Link
                   key={item}
-                  href={isProtected? (user? path : '/login'):path}
+                  href={isProtected ? (user ? path : '/login') : path}
                   className="group relative"
                 >
                   <motion.span
@@ -222,16 +222,67 @@ const Header = () => {
             )}
 
             {(user || isAdmin) && (
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setIsProfileOpen(true)}
-                className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${isAdmin ? "border-green-200 bg-green-50" : "border-gray-100 bg-gray-50"
-                  } transition-all`}
-              >
-                <User className={`w-5 h-5 ${isAdmin ? "text-green-600" : "text-zinc-600"}`} />
-                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse" />
-              </motion.button>
+             <motion.button
+  whileHover={{ scale: 1.08 }}
+  whileTap={{ scale: 0.92 }}
+  onClick={() => setIsProfileOpen(true)}
+  // Pure circle with a subtle outer ring
+  className="relative w-11 h-11 rounded-full p-[2px] bg-white border-2 border-[#10b981] shadow-sm overflow-visible transition-all hover:shadow-emerald-100"
+>
+  <div className="w-full h-full rounded-full overflow-hidden relative">
+    {(userProfile?.photoURL || user?.photoURL) ? (
+      <Image
+        src={userProfile?.photoURL || user?.photoURL}
+        alt="User Avatar"
+        width={44}
+        height={44}
+        className="object-cover w-full h-full"
+      />
+    ) : (
+      <div className="flex items-center justify-center w-full h-full bg-gradient-to-tr from-[#10b981] to-[#059669] text-white text-[14px] font-black uppercase">
+        {(userProfile?.name || user?.displayName || "U")
+          .split(" ")
+          .map((n) => n[0])
+          .slice(0, 2)
+          .join("")}
+      </div>
+    )}
+  </div>
+
+  {/* Status Indicator - Pinned to the border curve */}
+  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#10b981] border-2 border-white rounded-full shadow-md z-20" />
+</motion.button>
+
+//google acc img
+
+              //  <motion.button
+              //   whileHover={{ scale: 1.1 }}
+              //   whileTap={{ scale: 0.9 }}
+              //   onClick={() => setIsProfileOpen(true)}
+              //   className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-gray-100"
+              // >
+              //   {(userProfile?.photoURL || user?.photoURL) ? (
+              //     <Image
+              //       src={userProfile?.photoURL || user?.photoURL}
+              //       alt="User Avatar"
+              //       width={40}
+              //       height={40}
+              //       className="object-cover w-full h-full"
+              //     />
+              //   ) : (
+              //     <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white text-sm font-bold">
+              //       {(userProfile?.name || user?.displayName || "U")
+              //         .split(" ")
+              //         .map((n) => n[0])
+              //         .slice(0, 2)
+              //         .join("")
+              //         .toUpperCase()}
+              //     </div>
+              //   )}
+
+              //   <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse" />
+              // </motion.button>
+
             )}
           </nav>
 
@@ -306,38 +357,99 @@ const Header = () => {
               exit={{ y: 20, opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Header */}
               <div className="p-6 bg-zinc-950 text-white relative">
-                <button onClick={() => setIsProfileOpen(false)} className="absolute right-4 top-4 opacity-70 hover:opacity-100">
+                <button
+                  onClick={() => setIsProfileOpen(false)}
+                  className="absolute right-4 top-4 opacity-70 hover:opacity-100"
+                >
                   <X size={20} />
                 </button>
+
                 <div className="flex flex-col items-center gap-3 mt-4">
-                  <User className="w-10 h-10 text-white" />
+                  {/* Avatar */}
+                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 flex items-center justify-center text-white text-lg font-bold">
+                    {(userProfile?.photoURL || user?.photoURL) ? (
+                      <Image
+                        src={userProfile?.photoURL || user?.photoURL}
+                        alt="User Avatar"
+                        width={64}
+                        height={64}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      (userProfile?.name || user?.displayName || "U")
+                        .split(" ")
+                        .map((n) => n[0])
+                        .slice(0, 2)
+                        .join("")
+                        .toUpperCase()
+                    )}
+                  </div>
+
+                  {/* Name */}
                   <div className="text-center">
-                    <h2 className="text-xl font-bold">{userProfile?.fullName || 'User'}</h2>
-                    {isAdmin && <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-400">Administrator</span>}
+                    <h2 className="text-xl font-bold">
+                      {userProfile?.name ||
+                        user?.displayName ||
+                        "User"}
+                    </h2>
+
+                    {isAdmin && (
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-400">
+                        Administrator
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
 
-              <motion.div variants={modalStagger} initial="initial" animate="animate" className="p-6 space-y-3">
-                <motion.div variants={modalItem} className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+              {/* Profile Info */}
+              <motion.div
+                variants={modalStagger}
+                initial="initial"
+                animate="animate"
+                className="p-6 space-y-3"
+              >
+                {/* Email */}
+                <motion.div
+                  variants={modalItem}
+                  className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100"
+                >
                   <Mail className="w-5 h-5 text-gray-400" />
+
                   <div className="overflow-hidden">
-                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-tight">Email Address</p>
-                    <p className="text-sm font-semibold truncate text-gray-700">{user?.email || "Not available"}</p>
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-tight">
+                      Email Address
+                    </p>
+
+                    <p className="text-sm font-semibold truncate text-gray-700">
+                      {userProfile?.email || user?.email || "Not available"}
+                    </p>
                   </div>
                 </motion.div>
 
-                {userProfile?.phone && (
-                  <motion.div variants={modalItem} className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                {/* Phone */}
+                {userProfile?.mobile && (
+                  <motion.div
+                    variants={modalItem}
+                    className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100"
+                  >
                     <Phone className="w-5 h-5 text-gray-400" />
+
                     <div>
-                      <p className="text-[10px] uppercase font-bold text-gray-400 tracking-tight">Phone</p>
-                      <p className="text-sm font-semibold text-gray-700">{userProfile.phone}</p>
+                      <p className="text-[10px] uppercase font-bold text-gray-400 tracking-tight">
+                        Phone
+                      </p>
+
+                      <p className="text-sm font-semibold text-gray-700">
+                        {userProfile.mobile}
+                      </p>
                     </div>
                   </motion.div>
                 )}
 
+                {/* Logout */}
                 <motion.button
                   variants={modalItem}
                   onClick={handleLogout}
@@ -348,6 +460,7 @@ const Header = () => {
                     <LogOut className="w-5 h-5" />
                     Sign Out
                   </div>
+
                   <ArrowUpRight className="w-4 h-4 opacity-50" />
                 </motion.button>
               </motion.div>
@@ -355,7 +468,6 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* MOBILE DROPDOWN */}
       <AnimatePresence>
         {open && (
@@ -417,7 +529,7 @@ const Header = () => {
                 className="space-y-4"
               >
                 <Button
-                size='sayzobtn'
+                  size='sayzobtn'
                   onClick={() => {
                     setOpen(false);
                     setIsWaitlistOpen(true);

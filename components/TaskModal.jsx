@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -34,27 +36,28 @@ const TaskModal = ({ isOpen, onClose }) => {
 
   const [form, setForm] = useState({
     customerName: "",
-    taskName: "",
     phone: "",
-    location: "",
+    taskName: "",
     description: "",
+    category: "",
+    projectType: "",
+    projectLength: "",
     budgetType: "fixed",
     amount: "",
-    duration: "",
     skills: [],
     experience: "",
+    location: "",
   });
-const inputClass =
-    "w-full bg-[#18181B] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border border-zinc-800 focus:outline-none focus:border-zinc-600";
-
+  const inputClass =
+    "w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-emerald-700 ";
 
   const getInputClass = (field) =>
-  `w-full bg-[#111] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border transition-all duration-200 focus:outline-none 
-   ${
-     hasSubmitted && fieldErrors[field]
-       ? "border-red-500 focus:border-red-500"
-       : "border-zinc-800 focus:border-white"
-   }`;
+    `w-full border rounded-lg px-4 py-3 text-sm focus:outline-none transition
+  ${hasSubmitted && fieldErrors[field]
+      ? "border-red-500 focus:ring-red-400"
+      : "border-gray-300 focus:ring-green-500"
+    }`;
+
   // Restore form draft from localStorage (saved before magic link)
   const restoreFormDraft = () => {
     const draftStr = localStorage.getItem("sayzo_task_draft");
@@ -155,10 +158,22 @@ const inputClass =
   const suggestedSkills = ['Web Development', 'Graphic Design', 'Writing', 'Data Entry', 'Video Editing', 'Photography'];
 
   const handleAddSkill = () => {
-    const skill = skillInput.trim();
+    const skill = skillInput.trim().toLowerCase();
+
     if (skill && !form.skills.includes(skill)) {
-      setForm((prev) => ({ ...prev, skills: [...prev.skills, skill] }));
+      setForm((prev) => ({
+        ...prev,
+        skills: [...prev.skills, skill],
+      }));
+
       setSkillInput("");
+    }
+  };
+
+  const handleSkillKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddSkill();
     }
   };
 
@@ -167,13 +182,6 @@ const inputClass =
       ...prev,
       skills: prev.skills.filter((s) => s !== skillToRemove),
     }));
-  };
-
-  const handleSkillKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddSkill();
-    }
   };
 
   const handleSendMagicLink = async () => {
@@ -226,64 +234,70 @@ const inputClass =
     }));
   };
 
-const validate = () => {
-  const errors = {};
+  const validate = () => {
+    const errors = {};
 
-  if (!isVerified) errors.auth = "Please sign in to continue";
+    if (!isVerified) errors.auth = "Please sign in to continue";
 
-  if (!form.customerName.trim())
-    errors.customerName = "Your name is required";
+    if (!form.customerName.trim())
+      errors.customerName = "Your name is required";
 
-  if (!form.taskName.trim())
-    errors.taskName = "Task name is required";
+    if (!form.taskName.trim())
+      errors.taskName = "Task name is required";
 
-  if (!form.phone.trim())
-    errors.phone = "Phone number is required";
+    // if (!form.phone.trim())
+    //   errors.phone = "Phone number is required";
 
-  // email importing from data set to no need to validate
-  // if (!email.trim())
-  //   errors.email = "Email is required";
+    // email importing from data set to no need to validate
+    // if (!email.trim())
+    //   errors.email = "Email is required";
 
-  if (taskType === "offline" && !form.location.trim())
-    errors.location = "Location is required";
+    if (!form.category)
+      errors.category = "Please select a category";
 
-  if (!form.description.trim())
-    errors.description = "Description is required";
+    if (!form.projectType)
+      errors.projectType = "Select project type";
 
-  if (!form.amount.trim())
-    errors.amount = "Amount is required";
-  else if (isNaN(form.amount))
-    errors.amount = "Amount must be a number";
+    if (taskType === "offline" && !form.location.trim())
+      errors.location = "Location is required";
 
-  if (!form.duration.trim())
-    errors.duration = "Duration is required";
+    if (!form.description.trim())
+      errors.description = "Description is required";
 
-  if (form.skills.length === 0)
-    errors.skills = "At least one skill is required";
+    if (!form.amount.trim())
+      errors.amount = "Amount is required";
+    else if (isNaN(form.amount))
+      errors.amount = "Amount must be a number";
 
-  if (!form.experience)
-    errors.experience = "Select experience level";
+    if (!form.projectLength.trim())
+      errors.projectLength = "Project length is required";
 
-  setFieldErrors(errors);
-  return Object.keys(errors).length === 0;
-};
+    if (form.skills.length === 0)
+      errors.skills = "At least one skill is required";
 
-  
+    if (!form.experience)
+      errors.experience = "Select experience level";
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+
 
   const handlePreview = () => {
- setHasSubmitted(true);
+    setHasSubmitted(true);
 
-  const valid = validate();
-  console.log("Preview validation:", valid, fieldErrors);
+    const valid = validate();
+    console.log("Preview validation:", valid, fieldErrors);
 
-  if (!valid) return;
+    if (!valid) return;
 
-  setFormPhase("preview");
-};
+    setFormPhase("preview");
+  };
 
-const submitTask = async () => {
-  setHasSubmitted(true);
-  if (!validate()) return;
+  const submitTask = async () => {
+    setHasSubmitted(true);
+    if (!validate()) return;
 
     setError("");
     setLoading(true);
@@ -297,19 +311,21 @@ const submitTask = async () => {
 
       const taskData = {
         taskType,
-        taskName: form.taskName,
-        customerName: form.customerName,
-        phone: form.phone,
-        email: currentUser.email,
-        giverId: currentUser.uid,
-        userId: currentUser.uid,
-        location: taskType === "offline" ? form.location : "Online",
-        description: form.description,
-        budgetType: form.budgetType,
-        amount: form.amount,
-        duration: form.duration,
-        skills: form.skills.join(", "),
-        experience: form.experience,
+  taskName: form.taskName,
+  customerName: form.customerName,
+  phone: form.phone,
+  email: currentUser.email,
+  giverId: currentUser.uid,
+  userId: currentUser.uid,
+  location: taskType === "offline" ? form.location : "Online",
+  description: form.description,
+  category: form.category,
+  projectType: form.projectType,
+  projectLength: form.projectLength,
+  budgetType: form.budgetType,
+  amount: Number(form.amount),
+  skills: form.skills,
+  experience: form.experience,
       };
 
       // Save name to localStorage for future pre-fill
@@ -359,15 +375,17 @@ const submitTask = async () => {
       setEmail("");
       setForm({
         customerName: "",
-        taskName: "",
         phone: "",
-        location: "",
+        taskName: "",
         description: "",
+        category: "",
+        projectType: "",
+        projectLength: "",
         budgetType: "fixed",
         amount: "",
-        duration: "",
         skills: [],
         experience: "",
+        location: "",
       });
     }
     setSkillInput("");
@@ -380,15 +398,15 @@ const submitTask = async () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div className="fixed inset-0 z-[999] bg-black/80 backdrop-blur flex items-center justify-center p-4">
-            <motion.div className="w-full max-w-md bg-black border border-zinc-800 rounded-2xl">
+            <motion.div className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-gray-200">
               <div className="flex justify-between items-center px-6 py-4 border-b border-zinc-800">
-                <h2 className="text-xl text-white font-semibold">
+                <h2 className="text-lg font-semibold text-gray-900">
                   {formPhase === "edit" && "Create a Task"}
                   {formPhase === "preview" && "Preview Task"}
                   {formPhase === "confirm" && "Confirm Task"}
                 </h2>
                 <button onClick={resetAndClose}>
-                  <X className="text-zinc-400 hover:text-white" />
+                  <X className="text-gray-400 hover:text-gray-900" />
                 </button>
               </div>
 
@@ -396,7 +414,7 @@ const submitTask = async () => {
                 {success ? (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
                     <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
-                    <h3 className="text-white text-xl font-semibold">
+                    <h3 className="text-gray-900 text-xl font-semibold">
                       Task Submitted for Approval
                     </h3>
                     <p className="text-zinc-400 mt-2">
@@ -410,120 +428,44 @@ const submitTask = async () => {
                     </button>
                   </div>
                 ) : formPhase === "edit" ? (
-                  <>
-                    {/* Task Type Toggle */}
-                    <div className="flex gap-2 mb-4">
+                  <div className="space-y-6">
+
+                    {/* TASK TYPE */}
+                    <div className="grid grid-cols-2 gap-3">
                       {["online", "offline"].map((type) => (
                         <button
                           key={type}
                           onClick={() => setTaskType(type)}
-                          className={`flex-1 py-3 rounded-xl font-semibold ${
-                            taskType === type
-                              ? "bg-white text-black"
-                              : "bg-zinc-900 text-white"
-                          }`}
+                          className={`py-3 rounded-lg text-semibold font-medium transition border
+        ${taskType === type
+                              ? "bg-emerald-700 text-white "
+                              : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
+                            }`}
                         >
                           {type === "online" ? "Online Task" : "Offline Task"}
                         </button>
                       ))}
                     </div>
 
-                    {/* Form Fields */}
-                    <input
-  className={getInputClass("customerName")}
-  placeholder="Your Name *"
-  name="customerName"
-  value={form.customerName}
-  disabled={userProfile?.fullName}
-  onChange={handleChange}
-/>
-                    <input
-                       className={getInputClass("taskName")}
-                      placeholder="Task Name *"
-                      name="taskName"
-                      value={form.taskName}
-                      onChange={handleChange}
-                    />
+                    {/* BASIC DETAILS */}
+                    <div className="space-y-4">
 
-                    {/* Email Auth Section */}
-                    {!isVerified ? (
-                      <>
-                        {emailSent ? (
-                          <div className="bg-zinc-900 rounded-xl p-4 my-2">
-                            <div className="flex items-center gap-3 mb-2">
-                              <Mail className="w-5 h-5 text-green-500" />
-                              <span className="text-white font-medium">
-                                Check Your Email
-                              </span>
-                            </div>
-                            <p className="text-zinc-400 text-sm">
-                              We sent a sign-in link to{" "}
-                              <span className="text-white">{email}</span>
-                            </p>
-                            <button
-                              onClick={() => setEmailSent(false)}
-                              className="text-zinc-400 hover:text-white text-sm underline mt-2"
-                            >
-                              Use a different email
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
-                            <input
-                              type="email"
-                              className={`${inputClass} pl-12 pr-28`}
-                              placeholder="Your Email *"
-                              value={email}
-                              onChange={(e) => setEmail(e.target.value)}
-                              onKeyDown={(e) =>
-                                e.key === "Enter" && handleSendMagicLink()
-                              }
-                            />
-                            <button
-                              onClick={handleSendMagicLink}
-                              disabled={!email || authLoading}
-                              className="absolute right-2 top-1/2 -translate-y-1/2 bg-zinc-700 text-white text-sm px-3 py-2 rounded-lg disabled:opacity-50"
-                            >
-                              {authLoading ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                "Sign In"
-                              )}
-                            </button>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {/* Verified - Show email and phone from profile */}
-                        <div className="bg-zinc-900/50 rounded-xl px-4 py-3 my-2 flex items-center gap-3">
-                          <CheckCircle className="w-5 h-5 text-green-500" />
-                          <div>
-                            <p className="text-white text-sm">{email}</p>
-                            <p className="text-zinc-500 text-xs">
-                              Signed in
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Phone from profile (editable) */}
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-gray-700">
+                          Task Name
+                        </label>
                         <input
-                           className={getInputClass("phone")}
-                          placeholder="Phone Number *"
-                          name="phone"
-                          inputMode="numeric"
-                          value={form.phone}
-                          onChange={(e) => {
-                            const v = e.target.value.replace(/\D/g, "");
-                            if (v.length <= 10) {
-                              setForm((p) => ({ ...p, phone: v }));
-                            }
-                          }}
+                          className={getInputClass("taskName")}
+                          placeholder="e.g., Website Development"
+                          name="taskName"
+                          value={form.taskName}
+                          onChange={handleChange}
                         />
-                      </>
-                    )}
+                      </div>
 
+                    </div>
+
+                    {/* LOCATION */}
                     {taskType === "offline" && (
                       <input
                         className={getInputClass("location")}
@@ -534,76 +476,146 @@ const submitTask = async () => {
                       />
                     )}
 
-                    <textarea
-                      className={`${getInputClass("description")} h-32`}
-                      placeholder="Description *"
-                      name="description"
-                      value={form.description}
-                      onChange={handleChange}
-                    />
-
-                    <div className="grid grid-cols-2 gap-3">
+                    {/* CATEGORY */}
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700">Category</label>
                       <select
-                        name="budgetType"
-                        className={inputClass}
-                        value={form.budgetType}
+                        name="category"
+                        className={getInputClass("category")}
+                        value={form.category}
                         onChange={handleChange}
                       >
-                        <option value="fixed">Fixed Price</option>
-                        <option value="negotiable">Negotiable</option>
+                        <option value="">Select category</option>
+
+                        <option value="coaching">Coaching, Teaching & Advisory Skills</option>
+                        <option value="strategy">Strategy & Consulting Skills</option>
+                        <option value="data">Data & Analytics Skills</option>
+                        <option value="design">Design & Creative Skills</option>
+                        <option value="development">Development & Engineering Skills</option>
+                        <option value="marketing">Marketing Execution Skills</option>
+                        <option value="media">Video, Audio & Media Skills</option>
+                        <option value="writing">Writing & Documentation Skills</option>
+                        <option value="photography">Photography Skills</option>
+                        <option value="operations">Operations, Execution & Management Skills</option>
+                        <option value="legal">Legal, Finance & Compliance Skills</option>
+                        <option value="events">Events, Architecture & Industry Skills</option>
                       </select>
-                      <input
-  type="number"
-  min="1"
-  className={getInputClass("amount")}
-  placeholder="Amount *"
-  name="amount"
-  value={form.amount}
-  onChange={handleChange}
-/>
                     </div>
 
-                    <input
-                      className={getInputClass("duration")}
-                      placeholder="Duration (3 hours, 5 days, 1 month) *"
-                      name="duration"
-                      value={form.duration}
-                      onChange={handleChange}
-                    />
-                    {/* Skills Input */}
-                    <div className="my-2">
-                      <div className="flex gap-2 mb-2">
+                    {/* DESCRIPTION */}
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700">Description</label>
+                      <textarea
+                        className={`${getInputClass("description")} resize-none overflow-hidden`}
+                        placeholder="Describe your task..."
+                        name="description"
+                        value={form.description || ""}
+                        onChange={handleChange}
+                        onInput={(e) => {
+                          e.target.style.height = "auto";
+                          e.target.style.height = e.target.scrollHeight + "px";
+                        }}
+                      />
+                    </div>
+
+                    {/* BUDGET */}
+                    <div className="grid grid-cols-2 gap-4">
+
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-gray-700">Budget Type</label>
+                        <select
+                          name="budgetType"
+                          className={inputClass}
+                          value={form.budgetType}
+                          onChange={handleChange}
+                        >
+                          <option value="fixed">Fixed</option>
+                          <option value="negotiable">Negotiable</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-gray-700">Amount</label>
+                        <input
+                          type="number"
+                          className={getInputClass("amount")}
+                          placeholder="500"
+                          name="amount"
+                          value={form.amount}
+                          onChange={handleChange}
+                        />
+                      </div>
+
+                    </div>
+
+                    {/* PROJECT DETAILS */}
+                    <div className="grid grid-cols-2 gap-4">
+
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-gray-700">Project Type</label>
+                        <select
+                          name="projectType"
+                          className={getInputClass("projectType")}
+                          value={form.projectType}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select type</option>
+                          <option value="one-time">One Time</option>
+                          <option value="ongoing">Ongoing</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-gray-700">
+                          Project Length
+                        </label>
+
                         <input
                           type="text"
+                          name="projectLength"
+                          list="project-length-options"
+                          className={getInputClass("projectLength")}
+                          value={form.projectLength || ""}
+                          onChange={handleChange}
+                          placeholder="Select or type duration"
+                        />
+
+                        <datalist id="project-length-options">
+                          <option value="Less than 1 day" />
+                          <option value="Less than 1 week" />
+                          <option value="Less than 1 month" />
+                          <option value="1–3 months" />
+                        </datalist>
+                      </div>
+
+                    </div>
+
+                    {/* SKILLS */}
+                    <div className="space-y-2">
+
+                      <label className="text-sm font-medium text-gray-700">
+                        Skills Required
+                      </label>
+
+                      {/* Input + Add Button */}
+                      <div className="flex gap-2">
+                        <input
                           value={skillInput}
                           onChange={(e) => setSkillInput(e.target.value)}
                           onKeyDown={handleSkillKeyDown}
-                          placeholder="Add a skill *"
-                          className="flex-1 bg-[#18181B] text-white placeholder:text-zinc-500 px-4 py-3 rounded-xl border border-zinc-800 focus:outline-none focus:border-zinc-600"
+                          placeholder="React, Node.js..."
+                          className="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                         />
+
                         <button
                           type="button"
                           onClick={handleAddSkill}
-                          className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl transition"
+                          className="px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
                         >
-                          <Plus className="w-5 h-5" />
+                          <Plus className="w-4 h-4" />
                         </button>
-                      </div>
 
-                      {/* Suggested Skills */}
-                      <div className="flex flex-wrap gap-1.5 mt-2">
-                        {suggestedSkills
-                          .filter((skill) => !form.skills.includes(skill))
-                          .map((skill) => (
-                            <button
-                              key={skill}
-                              type="button"
-                              onClick={() => setForm((prev) => ({ ...prev, skills: [...prev.skills, skill] }))}
-                              className="text-xs px-2 py-1 rounded-md bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white transition"
-                            >
-                              + {skill}
-                            </button>
-                          ))}
+
                       </div>
 
                       {/* Selected Skills */}
@@ -612,132 +624,193 @@ const submitTask = async () => {
                           {form.skills.map((skill) => (
                             <span
                               key={skill}
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/20 text-green-500 text-sm"
+                              className="flex items-center gap-1 px-3 py-1 text-xs bg-green-100 text-emerald-700 rounded-full"
                             >
                               {skill}
-                              <button type="button" onClick={() => handleRemoveSkill(skill)}>
-                                <X className="w-3.5 h-3.5 hover:text-white" />
+
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveSkill(skill)}
+                              >
+                                <X className="w-3 h-3" />
                               </button>
                             </span>
                           ))}
                         </div>
                       )}
+
                     </div>
 
-                   <select
-  name="experience"
-  className={getInputClass("experience")}
-  value={form.experience}
-  onChange={handleChange}
->
-                      <option value="">Select Experience *</option>
-                      <option value="beginner">Beginner</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="expert">Expert</option>
-                    </select>
+                    {/* EXPERIENCE */}
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700">
+                        Experience Level
+                      </label>
 
-                    {error && (
-                      <p className="text-red-400 text-sm mt-2">{error}</p>
-                    )}
+                      <select
+                        name="experience"
+                        className={getInputClass("experience")}
+                        value={form.experience}
+                        onChange={handleChange}
+                      >
+                        <option value="">Entry Level</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="expert">Expert</option>
+                      </select>
+                    </div>
 
+                    {/* BUTTON */}
                     <button
                       disabled={!isVerified}
                       onClick={handlePreview}
-                      className="w-full mt-4 bg-white text-black py-4 rounded-full font-semibold disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="w-full bg-emerald-700 py-3 text-white rounded-lg font-medium transition disabled:opacity-50"
                     >
-                      Preview
+                      Preview Task
                     </button>
-                  </>
+
+                  </div>
                 ) : formPhase === "preview" ? (
                   <>
-                    {/* Preview Phase - Read-only task details */}
-                    <div className="space-y-3">
-                      <div className="bg-zinc-900 rounded-xl p-4">
-                        <p className="text-zinc-400 text-sm">Task Type</p>
-                        <p className="text-white">{taskType === "online" ? "Online Task" : "Offline Task"}</p>
+                    {/* Preview */}
+                    <div className="space-y-6">
+
+                      {/* Task Header */}
+                      <div className="border border-gray-200 rounded-lg p-4">
+                        <p className="text-xs text-gray-500 mb-1">Task</p>
+                        <p className="text-lg font-semibold text-gray-900">
+                          {form.taskName}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {taskType === "online" ? "Online Task" : "Offline Task"}
+                        </p>
                       </div>
 
-                      <div className="bg-zinc-900 rounded-xl p-4">
-                        <p className="text-zinc-400 text-sm">Task Name</p>
-                        <p className="text-white">{form.taskName}</p>
-                      </div>
+                      {/* User Info */}
+                      <div className="grid grid-cols-2 gap-4">
 
-                      <div className="bg-zinc-900 rounded-xl p-4">
-                        <p className="text-zinc-400 text-sm">Your Name</p>
-                        <p className="text-white">{form.customerName}</p>
-                      </div>
-
-                      <div className="bg-zinc-900 rounded-xl p-4">
-                        <p className="text-zinc-400 text-sm">Email</p>
-                        <p className="text-white">{email}</p>
-                      </div>
-
-                      <div className="bg-zinc-900 rounded-xl p-4">
-                        <p className="text-zinc-400 text-sm">Phone Number</p>
-                        <p className="text-white">{form.phone}</p>
-                      </div>
-
-                      {taskType === "offline" && (
-                        <div className="bg-zinc-900 rounded-xl p-4">
-                          <p className="text-zinc-400 text-sm">Location</p>
-                          <p className="text-white">{form.location}</p>
+                        <div>
+                          <p className="text-xs text-gray-500">Your Name</p>
+                          <p className="text-gray-900 font-medium">{form.customerName}</p>
                         </div>
-                      )}
 
-                      <div className="bg-zinc-900 rounded-xl p-4">
-                        <p className="text-zinc-400 text-sm">Description</p>
-                        <p className="text-white whitespace-pre-wrap">{form.description}</p>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-zinc-900 rounded-xl p-4">
-                          <p className="text-zinc-400 text-sm">Budget Type</p>
-                          <p className="text-white">{form.budgetType === "fixed" ? "Fixed Price" : "Negotiable"}</p>
+                        <div>
+                          <p className="text-xs text-gray-500">Email</p>
+                          <p className="text-gray-900">{email}</p>
                         </div>
-                        <div className="bg-zinc-900 rounded-xl p-4">
-                          <p className="text-zinc-400 text-sm">Amount</p>
-                          <p className="text-white">{form.amount}</p>
+
+                        <div>
+                          <p className="text-xs text-gray-500">Phone</p>
+                          <p className="text-gray-900">{form.phone}</p>
+                        </div>
+
+                        {taskType === "offline" && (
+                          <div>
+                            <p className="text-xs text-gray-500">Location</p>
+                            <p className="text-gray-900">{form.location}</p>
+                          </div>
+                        )}
+
+                      </div>
+
+                      {/* Description */}
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Description</p>
+                        <p className="whitespace-pre-wrap text-gray-900">
+                          {form.description}
+                        </p>
+                      </div>
+
+                      {/* Category + Project Info */}
+                      <div className="grid grid-cols-2 gap-4">
+
+                        <div>
+                          <p className="text-xs text-gray-500">Category</p>
+                          <p className="text-gray-900">{form.category}</p>
+                        </div>
+
+                        <div>
+                          <p className="text-xs text-gray-500">Project Type</p>
+                          <p className="text-gray-900">{form.projectType}</p>
+                        </div>
+
+                        <div>
+                          <p className="text-xs text-gray-500">Project Length</p>
+                          <p className="text-gray-900">{form.projectLength}</p>
+                        </div>
+
+                      </div>
+
+                      {/* Budget */}
+                      <div className="grid grid-cols-2 gap-4 border border-gray-200 rounded-lg p-4">
+
+                        <div>
+                          <p className="text-xs text-gray-500">Budget Type</p>
+                          <p className="text-gray-900">
+                            {form.budgetType === "fixed" ? "Fixed Price" : "Negotiable"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-xs text-gray-500">Amount</p>
+                          <p className="text-lg font-semibold text-green-600">
+                            ₹{form.amount}
+                          </p>
+                        </div>
+
+                      </div>
+
+                      {/* Skills */}
+                      <div>
+                        <p className="text-xs text-gray-500 mb-2">Skills Required</p>
+
+                        <div className="flex flex-wrap gap-2">
+                          {form.skills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full"
+                            >
+                              {skill}
+                            </span>
+                          ))}
                         </div>
                       </div>
 
-                      <div className="bg-zinc-900 rounded-xl p-4">
-                        <p className="text-zinc-400 text-sm">Duration</p>
-                        <p className="text-white">{form.duration}</p>
+                      {/* Experience */}
+                      <div>
+                        <p className="text-xs text-gray-500">Experience Level</p>
+                        <p className="text-gray-900 capitalize">
+                          {form.experience}
+                        </p>
                       </div>
 
-                      <div className="bg-zinc-900 rounded-xl p-4">
-                        <p className="text-zinc-400 text-sm">Skills Required</p>
-                        <p className="text-white">{form.skills.join(", ")}</p>
-                      </div>
-
-                      <div className="bg-zinc-900 rounded-xl p-4">
-                        <p className="text-zinc-400 text-sm">Experience Level</p>
-                        <p className="text-white capitalize">{form.experience}</p>
-                      </div>
                     </div>
 
-                    {/* Preview Phase Buttons */}
-                    <div className="flex gap-3 mt-6">
+                    {/* Buttons */}
+                    <div className="flex gap-3 mt-8">
+
                       <button
                         onClick={() => setFormPhase("edit")}
-                        className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white py-4 rounded-full font-semibold transition"
+                        className="flex-1 border border-gray-300 hover:bg-gray-100 text-gray-800 py-3 rounded-lg font-medium transition"
                       >
                         Make Changes
                       </button>
+
                       <button
                         onClick={() => setFormPhase("confirm")}
-                        className="flex-1 bg-white text-black py-4 rounded-full font-semibold"
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg font-semibold transition"
                       >
-                        Are you sure?
+                        Confirm Task
                       </button>
+
                     </div>
                   </>
                 ) : (
                   <>
                     {/* Confirm Phase */}
                     <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <h3 className="text-white text-xl font-semibold">Ready to post your task?</h3>
-                      <p className="text-zinc-400 mt-2">Click below to submit your task for approval</p>
+                      <h3 className="text-gray-900 text-xl font-semibold">Ready to post your task?</h3>
+                      <p className="text-zinc-500 mt-2">Click below to submit your task for approval</p>
 
                       {error && (
                         <p className="text-red-400 text-sm mt-4">{error}</p>
