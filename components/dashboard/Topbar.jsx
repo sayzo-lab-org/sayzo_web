@@ -3,9 +3,10 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { Bell, Search } from "lucide-react";
 
-export default function Topbar() {
+export default function Topbar({ user }) {
   const pathname = usePathname();
 
   // Helper to get page title from path
@@ -37,12 +38,21 @@ export default function Topbar() {
         
         <div className="h-8 w-px bg-gray-200 mx-1" />
         
-        <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
-           {/* Placeholder for user avatar image */}
-           <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
-             IMG
-           </div>
-        </div>
+        <Link href="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
+          <div className="hidden sm:flex flex-col items-end">
+            <span className="text-sm font-medium text-gray-900">
+              {user?.displayName || "User"}
+            </span>
+            <span className="text-xs text-gray-500">Sayzo Member</span>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-emerald-100 overflow-hidden border border-emerald-200 flex items-center justify-center text-emerald-700 font-medium text-xs uppercase">
+            {user?.photoURL ? (
+              <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"
+            )}
+          </div>
+        </Link>
       </div>
     </div>
   );

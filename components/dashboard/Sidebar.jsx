@@ -22,7 +22,7 @@ const menuItems = [
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ user }) {
   const pathname = usePathname();
 
   return (
@@ -60,13 +60,21 @@ export default function Sidebar() {
       </nav>
 
       <div className="mt-auto pt-6 border-t px-2">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs">
-            U
+        <div className="flex items-center gap-3 w-full">
+          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs uppercase overflow-hidden">
+            {user?.photoURL ? (
+              <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"
+            )}
           </div>
-          <div className="text-sm">
-            <p className="font-medium text-gray-900">User Name</p>
-            <p className="text-xs text-gray-500">user@example.com</p>
+          <div className="flex flex-col min-w-0 overflow-hidden">
+            <p className="text-sm font-medium text-gray-900 truncate">
+              {user?.displayName || "User"}
+            </p>
+            <p className="text-xs text-gray-500 truncate">
+              {user?.email || "No email"}
+            </p>
           </div>
         </div>
       </div>
