@@ -1,6 +1,9 @@
 import { MoreVertical,Share,Clock  } from "lucide-react";
+import ShareTaskModal from "./ShareTaskModal";
+import { useState } from "react";
 
 const JobCard = ({ job, status }) => {
+  const [showShare, setShowShare] = useState(false);
   return (
     <div className="">
       {/* Header */}
@@ -9,7 +12,16 @@ const JobCard = ({ job, status }) => {
           {job.title}
         </h3>
         <div className="flex gap-2.5 text-gray-500">
-        <Share className="w-4.5 h-4.5 "/>
+        <Share
+  className="w-4.5 h-4.5 cursor-pointer"
+  onClick={(e) => {
+    e.stopPropagation();
+    setShowShare(true);
+  
+    const url = `${window.location.origin}/live-tasks?task=${job.id}`;
+
+  }}
+/>
         <MoreVertical className="w-4.5 h-4.5 " />
         
         </div>
@@ -58,8 +70,16 @@ Duration: {job.duration}
             Completed
           </span>
         )}
+        {showShare && (
+  <ShareTaskModal
+    job={job}
+    onClose={() => setShowShare(false)}
+  />
+)}
       </div>
     </div>
+
+    
   );
 };
 

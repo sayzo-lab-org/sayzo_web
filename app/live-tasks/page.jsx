@@ -1,5 +1,6 @@
 import UserPage from "@/components/UserPage";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Browse Live Tasks Near You | Earn Money Helping Neighbors Today",
@@ -19,6 +20,8 @@ export const metadata = {
 
 export default function LiveTasksPage() {
   return (
-              <UserPage mode="live" />
+               <Suspense fallback={<div className="p-10 text-center">Loading tasks...</div>}>
+      <UserPage mode="live" />
+    </Suspense>
   );
 }

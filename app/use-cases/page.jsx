@@ -1,5 +1,6 @@
 
 import UserPage from "@/components/UserPage";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "What Can You Post on SAYZO? | Real Task Examples & Use Cases",
@@ -29,10 +30,11 @@ export default function Home() {
     <FQR/>
     <Blog/> */}
     {/* <FeaturesSectionDemo/> */}
-   
-      <UserPage mode="showcase" />
-      {/* <FQR/> */}
-  
+   <Suspense fallback={<div className="p-10 text-center">Loading...</div>}>
+    <UserPage mode="showcase" />
+   </Suspense>
+     
+      
    
    </main>
   );

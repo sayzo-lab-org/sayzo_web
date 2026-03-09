@@ -15,6 +15,8 @@ import SearchWithPagination from "@/components/SearchWithPagination";
 import CustomIcons from "@/components/CustomIcons";
 import MegaMenu from "./MegaMenu";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 // Map Firestore task to job card format
 const mapTaskToJob = (task) => ({
@@ -50,6 +52,12 @@ const UserPage = ({ mode = "live" }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [myApplications, setMyApplications] = useState([]);
 
+  const searchParams = useSearchParams();
+  const taskIdFromUrl = searchParams.get("task");
+
+  const router = useRouter();
+
+
   // Use centralized auth context
   const { user: currentUser } = useAuth();
 
@@ -60,6 +68,17 @@ const UserPage = ({ mode = "live" }) => {
     // Force re-mount by updating key (subscriptions will re-establish)
     window.location.reload();
   }, []);
+
+  // Auto Select Task From URL
+useEffect(() => {
+  if (!taskIdFromUrl || jobs.length === 0) return;
+
+  const task = jobs.find((job) => job.id === taskIdFromUrl);
+
+  if (task) {
+    setSelectedJob(task);
+  }
+}, [taskIdFromUrl, jobs]);
 
   /* ================= REAL-TIME TASKS SUBSCRIPTION ================= */
   useEffect(() => {
@@ -235,7 +254,11 @@ const UserPage = ({ mode = "live" }) => {
               {paginatedJobs.map((job) => (
                 <div
                   key={job.id}
-                  onClick={() => setSelectedJob(job)}
+                  onClick={() => {
+                    console.log("Job clicked:", job);
+                    setSelectedJob(job)
+                    router.push(`/live-tasks?task=${job.id}`, { scroll: false });
+                  }}
                   className={`cursor-pointer border-2 border-gray-200 rounded-xl p-4 transition ${
                     job.status === 'completed' ? 'hover:border-red-500' : 'hover:border-primary-btn'
                   }`}
@@ -252,7 +275,10 @@ const UserPage = ({ mode = "live" }) => {
                 {paginatedJobs.map((job) => (
                   <div
                     key={job.id}
-                    onClick={() => setSelectedJob(job)}
+                    onClick={() => {
+                       setSelectedJob(job);
+                       router.push(`/live-tasks?task=${job.id}`, { scroll: false });
+                    }}
                     className={`cursor-pointer rounded-xl border-2 p-4 transition
                       ${
                         selectedJob.id === job.id
@@ -267,7 +293,10 @@ const UserPage = ({ mode = "live" }) => {
 
               <JobDetailPanel
                 job={selectedJob}
-                onClose={() => setSelectedJob(null)}
+                onClose={() => {
+  setSelectedJob(null);
+  router.push("/live-tasks", { scroll: false });
+}}
                 currentUser={currentUser}
                 hasApplied={hasApplied(selectedJob?.id)}
                 isOwnTask={isOwnTask(selectedJob)}
@@ -297,7 +326,11 @@ const UserPage = ({ mode = "live" }) => {
           {paginatedJobs.map((job) => (
             <div
               key={job.id}
-              onClick={() => setSelectedJob(job)}
+              onClick={() =>{
+                    console.log("Job clicked:", job);
+                    setSelectedJob(job)
+                    router.push(`/live-tasks?task=${job.id}`, { scroll: false });
+              }}
               className="border-2 border-gray-200 rounded-xl p-4"
             >
               <JobCard job={job} status={job.status} />
@@ -319,7 +352,10 @@ const UserPage = ({ mode = "live" }) => {
           {selectedJob && (
             <JobBottomSheet
               job={selectedJob}
-              onClose={() => setSelectedJob(null)}
+              onClose={() => {
+  setSelectedJob(null);
+  router.push("/live-tasks", { scroll: false });
+}}
               currentUser={currentUser}
               hasApplied={hasApplied(selectedJob?.id)}
               isOwnTask={isOwnTask(selectedJob)}
