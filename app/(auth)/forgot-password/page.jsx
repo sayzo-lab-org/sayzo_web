@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { resetPassword } from "@/lib/firebase";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Loader2, ArrowLeft, MailCheck, ArrowUpRight } from "lucide-react";
 
 export default function ForgotPassword() {
@@ -28,11 +28,11 @@ export default function ForgotPassword() {
     }
   };
 
-  // SUCCESS STATE - Styled to match Sayzo Success UI
+  // SUCCESS STATE
   if (isSent) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F8F9FB] p-6">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-[420px] bg-white rounded-[40px] shadow-sm p-8 md:p-10 text-center space-y-6"
@@ -70,10 +70,10 @@ export default function ForgotPassword() {
     );
   }
 
-  // DEFAULT STATE - Matching Login/Signup Layout
+  // DEFAULT STATE
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F8F9FB] p-6">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-[40px] shadow-sm w-full max-w-[420px] p-8 md:p-10"
@@ -108,7 +108,7 @@ export default function ForgotPassword() {
             />
           </div>
 
-          <button 
+          <button
             type="submit"
             disabled={loading || !email}
             className="w-full bg-black text-white py-4 rounded-[20px] text-base md:text-lg font-semibold mt-2 active:scale-[0.97] transition-all disabled:opacity-50 shadow-lg shadow-black/5"
@@ -118,7 +118,9 @@ export default function ForgotPassword() {
                 <Loader2 className="animate-spin h-5 w-5" />
                 <span>Sending...</span>
               </div>
-            ) : "Reset Password"}
+            ) : (
+              "Reset Password"
+            )}
           </button>
 
           <button
