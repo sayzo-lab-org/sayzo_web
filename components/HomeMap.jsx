@@ -90,14 +90,23 @@ const HomeMap = () => {
         return () => document.removeEventListener('fullscreenchange', handleFsChange);
     }, []);
 
+    // useEffect(() => {
+    //     if ("geolocation" in navigator) {
+    //         navigator.geolocation.getCurrentPosition(async (pos) => {
+    //             const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    //             setUserLoc(coords);
+    //         });
+    //     }
+    // }, []);
+
     useEffect(() => {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                setUserLoc(coords);
-            });
-        }
-    }, []);
+  const storedLoc = localStorage.getItem("sayzo_user_location");
+
+  if (storedLoc) {
+    const coords = JSON.parse(storedLoc);
+    setUserLoc(coords);
+  }
+}, []);
 
     const baseLat = userLoc?.lat || defaultCenter[0];
     const baseLng = userLoc?.lng || defaultCenter[1];

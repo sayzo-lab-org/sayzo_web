@@ -225,7 +225,8 @@ const Header = () => {
              <motion.button
   whileHover={{ scale: 1.08 }}
   whileTap={{ scale: 0.92 }}
-  onClick={() => router.push('/dashboard')}
+
+  onClick={() => setIsProfileOpen(true)}
   // Pure circle with a subtle outer ring
   className="relative w-11 h-11 rounded-full p-[2px] bg-white border-2 border-[#10b981] shadow-sm overflow-visible transition-all hover:shadow-emerald-100"
 >
@@ -251,6 +252,7 @@ const Header = () => {
 
   {/* Status Indicator - Pinned to the border curve */}
   {/* <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#10b981] border-2 border-white rounded-full shadow-md z-20" /> */}
+
 </motion.button>
 
 //google acc img
@@ -488,7 +490,6 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* MOBILE DROPDOWN */}
       <AnimatePresence>
         {open && (
