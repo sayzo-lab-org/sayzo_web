@@ -3298,5 +3298,116 @@ export const rawJobs = [
       "amount": "₹3,000",
       "type": "Open to Negotiate"
     }
+  },
+  {
+    "id": 151,
+    "type": "offline",
+    "title": "Vehicle Inspection & Condition Verification",
+    "deadline": "1 day",
+    "price": "900",
+    "work_mode": "Offline",
+    "skills": [
+      "Vehicle Inspection",
+      "Field Verification",
+      "Documentation"
+    ],
+    "description": "I need someone to inspect a vehicle before it is listed or sold on the platform. This includes checking exterior and interior condition, capturing photos and videos, verifying vehicle documents, and confirming odometer readings. The final report should ensure transparency between buyers and sellers.",
+    "company": {
+      "name": "Rohit Sharma",
+      "about": "Verified task giver on the platform"
+    },
+    "budget": {
+      "amount": "₹900",
+      "type": "Fixed"
+    }
+  },
+  {
+    "id": 152,
+    "type": "offline",
+    "title": "Dealer Inventory Verification",
+    "deadline": "1 day",
+    "price": "1,200",
+    "work_mode": "Offline",
+    "skills": [
+      "Dealer Verification",
+      "Inventory Audit",
+      "Automotive Operations"
+    ],
+    "description": "Visit a dealership yard and verify the vehicles listed by the dealer. Tasks include confirming vehicle availability, checking VIN numbers, capturing photos, and validating the condition of listed cars to maintain accurate platform inventory.",
+    "company": {
+      "name": "Ankit Verma",
+      "about": "Verified task giver on the platform"
+    },
+    "budget": {
+      "amount": "₹1,200",
+      "type": "Fixed"
+    }
+  },
+  {
+    "id": 153,
+    "type": "offline",
+    "title": "Vehicle Photo & Video Capture for Listings",
+    "deadline": "3 hours",
+    "price": "700",
+    "work_mode": "Offline",
+    "skills": [
+      "Vehicle Photography",
+      "Content Capture",
+      "Marketplace Listings"
+    ],
+    "description": "Capture professional photos and short videos of a vehicle for online listings. The visuals should clearly show exterior, interior, dashboard, and key features to improve listing quality and buyer confidence.",
+    "company": {
+      "name": "Neha Kapoor",
+      "about": "Verified task giver on the platform"
+    },
+    "budget": {
+      "amount": "₹700",
+      "type": "Fixed"
+    }
+  },
+  {
+    "id": 154,
+    "type": "offline",
+    "title": "Test Drive Coordination",
+    "deadline": "3 hours",
+    "price": "1,000",
+    "work_mode": "Offline",
+    "skills": [
+      "Test Drive Coordination",
+      "Customer Support",
+      "Vehicle Handling"
+    ],
+    "description": "Coordinate a test drive between a buyer and seller. The task includes verifying the buyer’s identity, supervising the test drive, ensuring vehicle safety, and confirming that the vehicle is returned in the same condition.",
+    "company": {
+      "name": "Aditya Mehta",
+      "about": "Verified task giver on the platform"
+    },
+    "budget": {
+      "amount": "₹1,000",
+      "type": "Fixed"
+    }
+  },
+  {
+    "id": 155,
+    "type": "offline",
+    "title": "Vehicle Pickup & Delivery Support",
+    "deadline": "4 hours",
+    "price": "1,500",
+    "work_mode": "Offline",
+    "skills": [
+      "Vehicle Logistics",
+      "Delivery Coordination",
+      "Field Operations"
+    ],
+    "description": "Coordinate the pickup or delivery of a vehicle between the seller, warehouse, or buyer. Responsibilities include verifying vehicle condition before and after transport and ensuring proper documentation during handover.",
+    "company": {
+      "name": "Karan Malhotra",
+      "about": "Verified task giver on the platform"
+    },
+    "budget": {
+      "amount": "₹1,500",
+      "type": "Fixed"
+    }
   }
+
 ];
