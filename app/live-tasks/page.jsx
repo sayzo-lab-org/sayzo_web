@@ -20,7 +20,7 @@ export const metadata = {
 
 export default function LiveTasksPage() {
   return (
-               <Suspense fallback={<div className="p-10 text-center">Loading tasks...</div>}>
+    <Suspense fallback={<div className="p-10 text-center">Loading tasks...</div>}>
       <UserPage mode="live" />
     </Suspense>
   );

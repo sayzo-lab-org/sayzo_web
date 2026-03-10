@@ -17,6 +17,7 @@ const AllLinks = () => {
      || pathname?.startsWith("/login") 
     || pathname?.startsWith("/signup")
     || pathname?.startsWith("/forgot-password")
+    || pathname?.startsWith("/dashboard")
   ) return null;
 
   return (

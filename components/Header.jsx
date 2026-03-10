@@ -225,6 +225,7 @@ const Header = () => {
              <motion.button
   whileHover={{ scale: 1.08 }}
   whileTap={{ scale: 0.92 }}
+
   onClick={() => setIsProfileOpen(true)}
   // Pure circle with a subtle outer ring
   className="relative w-11 h-11 rounded-full p-[2px] bg-white border-2 border-[#10b981] shadow-sm overflow-visible transition-all hover:shadow-emerald-100"
@@ -250,7 +251,8 @@ const Header = () => {
   </div>
 
   {/* Status Indicator - Pinned to the border curve */}
-  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#10b981] border-2 border-white rounded-full shadow-md z-20" />
+  {/* <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#10b981] border-2 border-white rounded-full shadow-md z-20" /> */}
+
 </motion.button>
 
 //google acc img
@@ -310,15 +312,35 @@ const Header = () => {
             {/* PROFILE ICON - Show when logged in or admin */}
             {(user || isAdmin) && (
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setIsProfileOpen(true)}
-                className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${isAdmin ? "border-green-200 bg-green-50" : "border-gray-100 bg-gray-50"
-                  } transition-all`}
-              >
-                <User className={`w-5 h-5 ${isAdmin ? "text-green-600" : "text-zinc-600"}`} />
-                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse" />
-              </motion.button>
+  whileHover={{ scale: 1.08 }}
+  whileTap={{ scale: 0.92 }}
+  onClick={() => router.push('/dashboard')}
+  // Pure circle with a subtle outer ring
+  className="relative w-11 h-11 rounded-full p-[2px] bg-white border-2 border-[#10b981] shadow-sm overflow-visible transition-all hover:shadow-emerald-100"
+>
+  <div className="w-full h-full rounded-full overflow-hidden relative">
+    {(userProfile?.photoURL || user?.photoURL) ? (
+      <Image
+        src={userProfile?.photoURL || user?.photoURL}
+        alt="User Avatar"
+        width={44}
+        height={44}
+        className="object-cover w-full h-full"
+      />
+    ) : (
+      <div className="flex items-center justify-center w-full h-full bg-gradient-to-tr from-[#10b981] to-[#059669] text-white text-[14px] font-black uppercase">
+        {(userProfile?.name || user?.displayName || "U")
+          .split(" ")
+          .map((n) => n[0])
+          .slice(0, 2)
+          .join("")}
+      </div>
+    )}
+  </div>
+
+  {/* Status Indicator - Pinned to the border curve */}
+  {/* <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#10b981] border-2 border-white rounded-full shadow-md z-20" /> */}
+</motion.button>
             )}
             <button onClick={() => setOpen(true)}>
               <Menu />

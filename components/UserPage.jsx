@@ -15,8 +15,7 @@ import SearchWithPagination from "@/components/SearchWithPagination";
 import CustomIcons from "@/components/CustomIcons";
 import MegaMenu from "./MegaMenu";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 // Map Firestore task to job card format
 const mapTaskToJob = (task) => ({
@@ -25,7 +24,7 @@ const mapTaskToJob = (task) => ({
   status: task.status, // For completed task check
   type: task.taskType || "online",
   title: task.taskName || "Untitled Task",
-  deadline: task.duration || "Flexible",
+  deadline: task.duration || task.projectlength || "Flexible",
   price: task.amount || "0",
   work_mode: task.location === "Online" ? "Online" : "Offline",
   skills: task.skills ? task.skills.split(",").map((s) => s.trim()) : [],
@@ -56,6 +55,7 @@ const UserPage = ({ mode = "live" }) => {
   const taskIdFromUrl = searchParams.get("task");
 
   const router = useRouter();
+  const pathname = usePathname();
 
 
   // Use centralized auth context
@@ -256,8 +256,8 @@ useEffect(() => {
                   key={job.id}
                   onClick={() => {
                     console.log("Job clicked:", job);
-                    setSelectedJob(job)
-                    router.push(`/live-tasks?task=${job.id}`, { scroll: false });
+                    setSelectedJob(job);
+                    router.push(`${pathname}?task=${job.id}`, { scroll: false });
                   }}
                   className={`cursor-pointer border-2 border-gray-200 rounded-xl p-4 transition ${
                     job.status === 'completed' ? 'hover:border-red-500' : 'hover:border-primary-btn'
@@ -277,7 +277,7 @@ useEffect(() => {
                     key={job.id}
                     onClick={() => {
                        setSelectedJob(job);
-                       router.push(`/live-tasks?task=${job.id}`, { scroll: false });
+                       router.push(`${pathname}?task=${job.id}`, { scroll: false });
                     }}
                     className={`cursor-pointer rounded-xl border-2 p-4 transition
                       ${
@@ -295,7 +295,7 @@ useEffect(() => {
                 job={selectedJob}
                 onClose={() => {
   setSelectedJob(null);
-  router.push("/live-tasks", { scroll: false });
+  router.push(pathname, { scroll: false });
 }}
                 currentUser={currentUser}
                 hasApplied={hasApplied(selectedJob?.id)}
@@ -328,8 +328,8 @@ useEffect(() => {
               key={job.id}
               onClick={() =>{
                     console.log("Job clicked:", job);
-                    setSelectedJob(job)
-                    router.push(`/live-tasks?task=${job.id}`, { scroll: false });
+                    setSelectedJob(job);
+                    router.push(`${pathname}?task=${job.id}`, { scroll: false });
               }}
               className="border-2 border-gray-200 rounded-xl p-4"
             >
@@ -354,7 +354,7 @@ useEffect(() => {
               job={selectedJob}
               onClose={() => {
   setSelectedJob(null);
-  router.push("/live-tasks", { scroll: false });
+  router.push(pathname, { scroll: false });
 }}
               currentUser={currentUser}
               hasApplied={hasApplied(selectedJob?.id)}
