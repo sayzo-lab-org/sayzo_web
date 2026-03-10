@@ -320,7 +320,12 @@ export default function AdminDashboard() {
       {/* Skills */}
       {task.skills && (
         <div className="flex flex-wrap gap-1.5 mb-3">
-          {task.skills.split(",").slice(0, 3).map((skill) => (
+          {(Array.isArray(task.skills)
+            ? task.skills
+            : typeof task.skills === "string"
+            ? task.skills.split(",")
+            : []
+          ).slice(0, 3).map((skill) => (
             <span
               key={skill}
               className="text-xs px-2 py-0.5 rounded-md bg-gray-100 text-gray-700 font-medium"
@@ -451,7 +456,12 @@ export default function AdminDashboard() {
           <div className="mt-6">
             <p className="text-sm text-gray-400 mb-2">Skills Required</p>
             <div className="flex flex-wrap gap-2">
-              {task.skills.split(",").map((skill) => (
+              {(Array.isArray(task.skills)
+                ? task.skills
+                : typeof task.skills === "string"
+                ? task.skills.split(",")
+                : []
+              ).map((skill) => (
                 <span
                   key={skill}
                   className="text-sm px-3 py-1 rounded-md bg-gray-100 text-gray-700 font-medium"
@@ -611,7 +621,12 @@ export default function AdminDashboard() {
               <div className="mt-6">
                 <p className="text-sm text-gray-400 mb-2">Skills Required</p>
                 <div className="flex flex-wrap gap-2">
-                  {task.skills.split(",").map((skill) => (
+                  {(Array.isArray(task.skills)
+                    ? task.skills
+                    : typeof task.skills === "string"
+                    ? task.skills.split(",")
+                    : []
+                  ).map((skill) => (
                     <span
                       key={skill}
                       className="text-xs px-2 py-1 rounded-md bg-gray-100 text-gray-700"
