@@ -18,28 +18,36 @@ import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 // Map Firestore task to job card format
-const mapTaskToJob = (task) => ({
-  id: task.id,
-  giverId: task.giverId, // Preserve for ownership check
-  status: task.status, // For completed task check
-  type: task.taskType || "online",
-  title: task.taskName || "Untitled Task",
-  deadline: task.duration || task.projectlength || "Flexible",
-  price: task.amount || "0",
-  work_mode: task.location === "Online" ? "Online" : "Offline",
-  skills: task.skills ? task.skills.split(",").map((s) => s.trim()) : [],
-  tags: task.skills ? task.skills.split(",").map((s) => s.trim()) : [],
-  description: task.description || "",
-  company: {
-    name: task.customerName || "Anonymous",
-    about: "Verified task giver on the platform",
-  },
-  budget: {
-    amount: `₹${task.amount || "0"}`,
-    type: task.budgetType === "fixed" ? "Fixed" : "Open to Negotiate",
-  },
-  duration: task.duration || "Flexible",
-});
+const mapTaskToJob = (task) => {
+  const skillsArray = Array.isArray(task.skills)
+    ? task.skills
+    : typeof task.skills === "string"
+    ? task.skills.split(",").map((s) => s.trim())
+    : [];
+
+  return {
+    id: task.id,
+    giverId: task.giverId, // Preserve for ownership check
+    status: task.status, // For completed task check
+    type: task.taskType || "online",
+    title: task.taskName || "Untitled Task",
+    deadline: task.duration || task.projectlength || "Flexible",
+    price: task.amount || "0",
+    work_mode: task.location === "Online" ? "Online" : "Offline",
+    skills: skillsArray,
+    tags: skillsArray,
+    description: task.description || "",
+    company: {
+      name: task.customerName || "Anonymous",
+      about: "Verified task giver on the platform",
+    },
+    budget: {
+      amount: `₹${task.amount || "0"}`,
+      type: task.budgetType === "fixed" ? "Fixed" : "Open to Negotiate",
+    },
+    duration: task.duration || "Flexible",
+  };
+};
 
 const UserPage = ({ mode = "live" }) => {
   const [jobs, setJobs] = useState([]);
