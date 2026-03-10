@@ -9,6 +9,7 @@ import {
   saveUserProfile,
 } from "@/lib/firebase";
 import { useAuth } from "@/app/Context/AuthContext";
+import { isAdminEmail } from "@/lib/adminConfig";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import { Loader2 } from "lucide-react";
@@ -25,10 +26,10 @@ export default function LoginPage() {
 
   // FIXED: Check for user existence before accessing properties
   useEffect(() => {
-  if (authLoading) return;
-  if (user && user.emailVerified) {
+    if (authLoading) return;
+    if (user && user.emailVerified) {
     router.replace("/");
-  }
+    }
 }, [user, authLoading, router]);
 
   if (authLoading) {
