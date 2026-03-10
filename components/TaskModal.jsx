@@ -311,21 +311,21 @@ const TaskModal = ({ isOpen, onClose }) => {
 
       const taskData = {
         taskType,
-  taskName: form.taskName,
-  customerName: form.customerName,
-  phone: form.phone,
-  email: currentUser.email,
-  giverId: currentUser.uid,
-  userId: currentUser.uid,
-  location: taskType === "offline" ? form.location : "Online",
-  description: form.description,
-  category: form.category,
-  projectType: form.projectType,
-  projectLength: form.projectLength,
-  budgetType: form.budgetType,
-  amount: Number(form.amount),
-  skills: form.skills,
-  experience: form.experience,
+        taskName: form.taskName,
+        customerName: form.customerName,
+        phone: form.phone,
+        email: currentUser.email,
+        giverId: currentUser.uid,
+        userId: currentUser.uid,
+        location: taskType === "offline" ? form.location : "Online",
+        description: form.description,
+        category: form.category,
+        projectType: form.projectType,
+        projectLength: form.projectLength,
+        budgetType: form.budgetType,
+        amount: Number(form.amount),
+        skills: form.skills,
+        experience: form.experience,
       };
 
       // Save name to localStorage for future pre-fill
@@ -486,19 +486,15 @@ const TaskModal = ({ isOpen, onClose }) => {
                         onChange={handleChange}
                       >
                         <option value="">Select category</option>
-
-                        <option value="coaching">Coaching, Teaching & Advisory Skills</option>
-                        <option value="strategy">Strategy & Consulting Skills</option>
-                        <option value="data">Data & Analytics Skills</option>
-                        <option value="design">Design & Creative Skills</option>
-                        <option value="development">Development & Engineering Skills</option>
-                        <option value="marketing">Marketing Execution Skills</option>
-                        <option value="media">Video, Audio & Media Skills</option>
-                        <option value="writing">Writing & Documentation Skills</option>
-                        <option value="photography">Photography Skills</option>
-                        <option value="operations">Operations, Execution & Management Skills</option>
-                        <option value="legal">Legal, Finance & Compliance Skills</option>
-                        <option value="events">Events, Architecture & Industry Skills</option>
+                        
+                        <option value="ai">AI</option>
+                        <option value="graphicsDesign">Graphics & Design</option>
+                        <option value="programmingTech">Programming & Tech</option>
+                        <option value="digitalMarketing">Digital Marketing</option>
+                        <option value="videoAnimation">Video & Animation</option>
+                        <option value="writingTranslation">Writing & Translation</option>
+                        <option value="operations">Execution & Management Skills</option>
+                        <option value="localService">Local Service</option>
                       </select>
                     </div>
 
