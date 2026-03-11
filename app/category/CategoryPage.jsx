@@ -1,7 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { ChevronRight, ArrowLeft, Plus, User, ArrowRight } from "lucide-react";
 import { getCategoryBySlug } from "@/public/data/categories";
-import Header from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 
@@ -25,7 +24,6 @@ const CategoryPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
 
       {/* Breadcrumb */}
       <div className="border-b border-border">

@@ -106,9 +106,9 @@ export default function RootLayout({ children }) {
           `}
         </Script>
       </head>
+      <body>
       <PolicyProvider>
       <AuthProvider>
-      <body>
         <Toaster position="top-right" />
         {/* FULL WIDTH */}
         <HeaderWrapper />
@@ -124,9 +124,9 @@ export default function RootLayout({ children }) {
           </main>
         </div>
         <AllLinks/>
-      </body>
       </AuthProvider>
       </PolicyProvider>
+      </body>
     </html>
   );
 }
