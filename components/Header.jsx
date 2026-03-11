@@ -183,6 +183,7 @@ const Header = () => {
                 >
                   Login
                 </Button>
+
                 <Button
                   onClick={() => router.push('/signup')}
                   size="sayzobtn"
