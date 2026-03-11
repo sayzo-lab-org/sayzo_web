@@ -226,7 +226,7 @@ const Header = () => {
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
 
-                onClick={setIsProfileOpen}
+                onClick={() => setIsProfileOpen(true)}
                 // Pure circle with a subtle outer ring
                 className="relative w-11 h-11 rounded-full p-[2px] bg-white border-2 border-[#10b981] shadow-sm overflow-visible transition-all hover:shadow-emerald-100"
               >
@@ -314,7 +314,7 @@ const Header = () => {
               <motion.button
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
-                onClick={setIsProfileOpen}
+                onClick={() => setIsProfileOpen(true)}
                 // Pure circle with a subtle outer ring
                 className="relative w-11 h-11 rounded-full p-[2px] bg-white border-2 border-[#10b981] shadow-sm overflow-visible transition-all hover:shadow-emerald-100"
               >
