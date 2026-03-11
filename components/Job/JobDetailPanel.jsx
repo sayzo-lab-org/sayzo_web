@@ -8,7 +8,7 @@ import { useState } from "react";
 import { X, CheckCircle, User, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {Button} from "../ui/button";
+import { Button } from "../ui/button";
 import { useAuth } from "@/app/Context/AuthContext";
 
 const JobDetailPanel = ({ job, onClose, currentUser, hasApplied, isOwnTask, onApplicationSuccess, mode = "live" }) => {
@@ -20,16 +20,16 @@ const JobDetailPanel = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
   const { userProfile } = useAuth();
 
   // Initialize Router
-const router = useRouter();
+  const router = useRouter();
 
   const handleApplyClick = () => {
     if (mode === "showcase") {
       setShowWaitlistModal(true);
       return;
     }
-    
+
     if (!currentUser) {
-     router.push(`/login?redirect=/live-tasks/${job.id}`);
+      router.push(`/login?redirect=/live-tasks/${job.id}`);
     } else {
       setIsModalOpen(true);
     }
@@ -50,7 +50,7 @@ const router = useRouter();
 
   return (
     <div className="relative bg-white rounded-xl shadow-2xl p-8 sticky top-6">
-      
+
       {/* CLOSE BUTTON */}
       {onClose && (
         <button
@@ -85,13 +85,13 @@ const router = useRouter();
 
       {/* COMPANY */}
       <div className="flex items-center gap-2 mt-3">
-       <Image
-  src={job.giver?.photo || "https://github.com/shadcn.png"}
-  alt="User profile"
-  width={28}
-  height={28}
-  className="rounded-full"
-/>
+        <Image
+          src={job.giver?.photo || "https://github.com/shadcn.png"}
+          alt="User profile"
+          width={28}
+          height={28}
+          className="rounded-full"
+        />
         <p className="text-sm text-gray-700">
           {job.company?.name || "Independent Task Giver"}
         </p>
@@ -137,15 +137,15 @@ const router = useRouter();
             {job.duration}
           </p>
         </div>
-       {job.experienceLevel && (
-        <div>
-          <p className="text-gray-400">Experience</p>
-          <p className="font-semibold text-gray-700">
-            {job.experienceLevel}
-          </p>
-        </div>
-       )}
-        
+        {job.experienceLevel && (
+          <div>
+            <p className="text-gray-400">Experience</p>
+            <p className="font-semibold text-gray-700">
+              {job.experienceLevel}
+            </p>
+          </div>
+        )}
+
       </div>
 
       {/* SKILLS */}
