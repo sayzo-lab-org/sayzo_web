@@ -46,6 +46,7 @@ const mapTaskToJob = (task) => {
       type: task.budgetType === "fixed" ? "Fixed" : "Open to Negotiate",
     },
     duration: task.duration || "Flexible",
+    experienceLevel: task.experience || "",
   };
 };
 
