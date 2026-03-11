@@ -125,14 +125,12 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
                 {job.duration}
               </p>
             </div>
-            {job.experienceLevel && (
-              <div>
-                <p className="text-gray-400">Experience</p>
-                <p className="font-medium">
-                  {job.experienceLevel}
-                </p>
-              </div>
-            )}
+            <div>
+              <p className="text-gray-400">Experience</p>
+              <p className="font-medium">
+                {job.experienceLevel}
+              </p>
+            </div>
           </div>
 
           {/* SKILLS */}
