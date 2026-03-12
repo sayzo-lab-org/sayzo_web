@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import ApplicationModal from "../ApplicationModal";
 import TaskDoerAuthModal from "../TaskDoerAuthModal";
 import WaitlistModal from "../JoinWaitList/WaitlistModal";
+import { useRouter } from "next/navigation";
 
 const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onApplicationSuccess, mode = "live" }) => {
   const [showSkills, setShowSkills] = useState(false);
@@ -15,11 +16,13 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
 
+  const router = useRouter();
+
   const handleApplyClick = () => {
     if (mode === "showcase") {
       setShowWaitlistModal(true);
     } else if (!currentUser) {
-      setShowAuthModal(true);
+      router.push("/login");
     } else {
       setIsModalOpen(true);
     }
