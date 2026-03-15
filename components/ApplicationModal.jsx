@@ -60,6 +60,7 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
     experience: "",
     canFinishOnTime: "",
     email: "",
+    applicantPhone: "",
     city: "",
   });
 
@@ -94,6 +95,7 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
               ...prev,
               applicantName: profile.fullName || prev.applicantName,
               email: currentUser?.email || profile.email || prev.email,
+              applicantPhone: profile.phone || prev.applicantPhone,
             }));
           }
         } catch (profileErr) {
@@ -134,6 +136,8 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
     if (!form.experience) return "Select your experience level";
     if (!form.canFinishOnTime) return "Please indicate if you can finish on time";
     if (!form.email.trim()) return "Email is required";
+    if (!form.applicantPhone.trim()) return "Mobile number is required";
+    if (!/^\d{10}$/.test(form.applicantPhone.trim())) return "Enter a valid 10-digit mobile number";
     if (!form.city.trim()) return "City is required";
     return "";
   };
@@ -195,6 +199,7 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
       experience: "",
       canFinishOnTime: "",
       email: "",
+      applicantPhone: "",
       city: "",
     });
     onClose();
@@ -329,6 +334,25 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
                     value={form.email}
                     onChange={handleChange}
                   />
+
+                  <div className="relative my-2">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 text-sm font-medium select-none pointer-events-none">
+                      +91
+                    </span>
+                    <input
+                      className={`${input} pl-14 my-0`}
+                      placeholder="Mobile Number *"
+                      type="tel"
+                      name="applicantPhone"
+                      maxLength={10}
+                      inputMode="numeric"
+                      value={form.applicantPhone}
+                      onChange={(e) => {
+                        const cleaned = e.target.value.replace(/\D/g, "").slice(0, 10);
+                        setForm((prev) => ({ ...prev, applicantPhone: cleaned }));
+                      }}
+                    />
+                  </div>
 
                   <input
                     className={input}
