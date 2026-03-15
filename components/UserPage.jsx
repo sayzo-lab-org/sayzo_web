@@ -22,8 +22,8 @@ const mapTaskToJob = (task) => {
   const skillsArray = Array.isArray(task.skills)
     ? task.skills
     : typeof task.skills === "string"
-    ? task.skills.split(",").map((s) => s.trim())
-    : [];
+      ? task.skills.split(",").map((s) => s.trim())
+      : [];
 
   return {
     id: task.id,
@@ -78,15 +78,15 @@ const UserPage = ({ mode = "live" }) => {
   }, []);
 
   // Auto Select Task From URL
-useEffect(() => {
-  if (!taskIdFromUrl || jobs.length === 0) return;
+  useEffect(() => {
+    if (!taskIdFromUrl || jobs.length === 0) return;
 
-  const task = jobs.find((job) => job.id === taskIdFromUrl);
+    const task = jobs.find((job) => job.id === taskIdFromUrl);
 
-  if (task) {
-    setSelectedJob(task);
-  }
-}, [taskIdFromUrl, jobs]);
+    if (task) {
+      setSelectedJob(task);
+    }
+  }, [taskIdFromUrl, jobs]);
 
   /* ================= REAL-TIME TASKS SUBSCRIPTION ================= */
   useEffect(() => {
@@ -267,9 +267,8 @@ useEffect(() => {
                     setSelectedJob(job);
                     router.push(`${pathname}?task=${job.id}`, { scroll: false });
                   }}
-                  className={`cursor-pointer border-2 border-gray-200 rounded-xl p-4 transition ${
-                    job.status === 'completed' ? 'hover:border-red-500' : 'hover:border-primary-btn'
-                  }`}
+                  className={`cursor-pointer border-2 border-gray-200 rounded-xl p-4 transition ${job.status === 'completed' ? 'hover:border-red-500' : 'hover:border-primary-btn'
+                    }`}
                 >
                   <JobCard job={job} status={job.status} />
                 </div>
@@ -284,14 +283,13 @@ useEffect(() => {
                   <div
                     key={job.id}
                     onClick={() => {
-                       setSelectedJob(job);
-                       router.push(`${pathname}?task=${job.id}`, { scroll: false });
+                      setSelectedJob(job);
+                      router.push(`${pathname}?task=${job.id}`, { scroll: false });
                     }}
                     className={`cursor-pointer rounded-xl border-2 p-4 transition
-                      ${
-                        selectedJob.id === job.id
-                          ? "border-primary-btn bg-primary-btn/5"
-                          : `border-gray-200 ${job.status === 'completed' ? 'hover:border-red-500' : 'hover:border-primary-btn'}`
+                      ${selectedJob.id === job.id
+                        ? "border-primary-btn bg-primary-btn/5"
+                        : `border-gray-200 ${job.status === 'completed' ? 'hover:border-red-500' : 'hover:border-primary-btn'}`
                       }`}
                   >
                     <JobCard job={job} status={job.status} />
@@ -302,9 +300,9 @@ useEffect(() => {
               <JobDetailPanel
                 job={selectedJob}
                 onClose={() => {
-  setSelectedJob(null);
-  router.push(pathname, { scroll: false });
-}}
+                  setSelectedJob(null);
+                  router.push(pathname, { scroll: false });
+                }}
                 currentUser={currentUser}
                 hasApplied={hasApplied(selectedJob?.id)}
                 isOwnTask={isOwnTask(selectedJob)}
@@ -334,10 +332,10 @@ useEffect(() => {
           {paginatedJobs.map((job) => (
             <div
               key={job.id}
-              onClick={() =>{
-                    console.log("Job clicked:", job);
-                    setSelectedJob(job);
-                    router.push(`${pathname}?task=${job.id}`, { scroll: false });
+              onClick={() => {
+                console.log("Job clicked:", job);
+                setSelectedJob(job);
+                router.push(`${pathname}?task=${job.id}`, { scroll: false });
               }}
               className="border-2 border-gray-200 rounded-xl p-4"
             >
@@ -361,9 +359,9 @@ useEffect(() => {
             <JobBottomSheet
               job={selectedJob}
               onClose={() => {
-  setSelectedJob(null);
-  router.push(pathname, { scroll: false });
-}}
+                setSelectedJob(null);
+                router.push(pathname, { scroll: false });
+              }}
               currentUser={currentUser}
               hasApplied={hasApplied(selectedJob?.id)}
               isOwnTask={isOwnTask(selectedJob)}
