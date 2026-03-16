@@ -169,6 +169,7 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
 
       await addApplication({
         taskId: task.id,
+        giverId: task.giverId,
         ...form,
       });
       setSuccess(true);
