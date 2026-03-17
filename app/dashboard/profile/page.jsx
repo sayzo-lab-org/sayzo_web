@@ -4,9 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import {
   auth,
-  subscribeToUserProfile,
-  saveUserProfile,
-  storage,
 } from "@/lib/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Link from "next/link";
