@@ -902,15 +902,22 @@ export default function TrackTasksPage() {
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className={`grid gap-4 ${selectedApplicationTask.experience ? 'grid-cols-2' : 'grid-cols-1'}`}>
                               <div>
                                 <p className="text-sm text-gray-500">Duration</p>
                                 <p className="font-medium text-gray-700">{selectedApplicationTask.duration}</p>
                               </div>
-                              <div>
-                                <p className="text-sm text-gray-500">Task Type</p>
-                                <p className="font-medium text-gray-700 capitalize">{selectedApplicationTask.taskType}</p>
-                              </div>
+                              {selectedApplicationTask.experience && (
+                                <div>
+                                  <p className="text-sm text-gray-500">Experience</p>
+                                  <p className="font-medium text-gray-700 capitalize">{selectedApplicationTask.experience}</p>
+                                </div>
+                              )}
+                            </div>
+
+                            <div>
+                              <p className="text-sm text-gray-500">Task Type</p>
+                              <p className="font-medium text-gray-700 capitalize">{selectedApplicationTask.taskType}</p>
                             </div>
 
                             {selectedApplicationTask.taskType === 'offline' && selectedApplicationTask.location && (
@@ -1064,10 +1071,18 @@ export default function TrackTasksPage() {
                       </div>
                     </div>
 
-                    {/* Duration */}
-                    <div className="w-full bg-[#18181B] px-4 py-4 my-2 rounded-xl border border-zinc-800">
-                      <p className="text-zinc-500 text-xs mb-1">Duration</p>
-                      <p className="text-white">{selectedTask.duration}</p>
+                    {/* Duration & Experience */}
+                    <div className={`grid gap-3 ${selectedTask.experience ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                      <div className="w-full bg-[#18181B] px-4 py-4 my-2 rounded-xl border border-zinc-800">
+                        <p className="text-zinc-500 text-xs mb-1">Duration</p>
+                        <p className="text-white">{selectedTask.duration}</p>
+                      </div>
+                      {selectedTask.experience && (
+                        <div className="w-full bg-[#18181B] px-4 py-4 my-2 rounded-xl border border-zinc-800">
+                          <p className="text-zinc-500 text-xs mb-1">Experience</p>
+                          <p className="text-white capitalize">{selectedTask.experience}</p>
+                        </div>
+                      )}
                     </div>
 
                     {/* Location (if offline) */}
@@ -1083,14 +1098,6 @@ export default function TrackTasksPage() {
                       <div className="w-full bg-[#18181B] px-4 py-4 my-2 rounded-xl border border-zinc-800">
                         <p className="text-zinc-500 text-xs mb-1">Skills Required</p>
                         <p className="text-white">{selectedTask.skills}</p>
-                      </div>
-                    )}
-
-                    {/* Experience */}
-                    {selectedTask.experience && (
-                      <div className="w-full bg-[#18181B] px-4 py-4 my-2 rounded-xl border border-zinc-800">
-                        <p className="text-zinc-500 text-xs mb-1">Experience Level</p>
-                        <p className="text-white capitalize">{selectedTask.experience}</p>
                       </div>
                     )}
 
