@@ -3,6 +3,8 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import Maskgroup from "../../public/assets/Maskgroup.svg";
 import { usePathname } from "next/navigation";
 import {
   Briefcase,
@@ -38,10 +40,11 @@ export default function Sidebar({ user }) {
     <div className="flex flex-col h-full py-5 px-3">
       {/* Brand */}
       <div className="mb-7 px-2">
-        <h2 className="text-xl font-bold tracking-tight text-emerald-700">Sayzo</h2>
-        <p className="text-xs text-gray-400 mt-0.5">Dashboard</p>
-      </div>
-
+  <Link href="/" className="flex flex-col items-start">
+    <Image src={Maskgroup} alt="Sayzo" width={150} />
+    {/* <p className="text-xs text-gray-400 mt-1">Dashboard</p> */}
+  </Link>
+</div>
       {/* Nav */}
       <nav className="space-y-0.5 flex-1">
         {menuItems.map((item) => {
