@@ -924,14 +924,18 @@ export default function TrackTasksPage() {
                               <div>
                                 <p className="text-sm text-gray-500 mb-2">Skills Required</p>
                                 <div className="flex flex-wrap gap-2">
-                                  {selectedApplicationTask.skills.split(',').map((skill, index) => (
-                                    <span
-                                      key={index}
-                                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                                    >
-                                      {skill.trim()}
-                                    </span>
-                                  ))}
+                                  {
+                                    (Array.isArray(selectedApplicationTask.skills)
+                                      ? selectedApplicationTask.skills
+                                      : selectedApplicationTask.skills?.split(',') || []
+                                    ).map((skill, index) => (
+                                      <span
+                                        key={index}
+                                        className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                                      >
+                                        {skill.trim()}
+                                      </span>
+                                    ))}
                                 </div>
                               </div>
                             )}
