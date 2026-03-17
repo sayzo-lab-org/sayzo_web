@@ -5,6 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import {
   auth,
 } from "@/lib/firebase";
+import { subscribeToUserProfile } from "@/lib/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Link from "next/link";
 import {

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import Link from "next/link";
+import { subscribeToUserProfile ,subscribeToTasksByGiver} from "@/lib/firebase";
 import { Briefcase, CheckCircle, Users, Activity, ClipboardList, Plus, TrendingUp } from "lucide-react";
 
 export default function DashboardHome() {
