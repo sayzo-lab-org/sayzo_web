@@ -2,7 +2,7 @@ import { blogs } from "@/public/data/blogs";
 import { categories } from "@/public/data/categories";
 
 export default function sitemap() {
-  const baseUrl = "https://sayzo.in";
+  const baseUrl = "https://sayzo.net";
 
   // Done Static Routes with Priority
   const staticRoutes = [

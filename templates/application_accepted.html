@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Application Was Accepted</title>
+  <style>
+    body { margin: 0; padding: 0; background: #f4f4f5; font-family: 'Segoe UI', Arial, sans-serif; color: #111827; }
+    .wrapper { max-width: 580px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .header { background: #0f0f0f; padding: 32px 40px; }
+    .header-logo { color: #ffffff; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+    .header-logo span { color: #a3e635; }
+    .body { padding: 40px; }
+    .badge { display: inline-block; background: #f0fdf4; color: #16a34a; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 100px; margin-bottom: 24px; }
+    h1 { font-size: 22px; font-weight: 700; margin: 0 0 8px; }
+    .subtitle { color: #6b7280; font-size: 15px; margin: 0 0 28px; }
+    .info-card { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px 24px; margin-bottom: 28px; }
+    .info-row { display: flex; gap: 8px; margin-bottom: 8px; font-size: 14px; }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-label { color: #6b7280; min-width: 90px; }
+    .info-value { color: #111827; font-weight: 600; }
+    .cta-btn { display: block; width: fit-content; background: #0f0f0f; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 15px; }
+    .footer { border-top: 1px solid #e5e7eb; padding: 24px 40px; color: #9ca3af; font-size: 13px; }
+    .footer a { color: #6b7280; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <div class="header-logo">sayzo<span>.</span></div>
+    </div>
+    <div class="body">
+      <div class="badge">🎉 Application Accepted</div>
+      <h1>Great news, {{doerName}}!</h1>
+      <p class="subtitle">Your application has been accepted. Time to get to work!</p>
+
+      <div class="info-card">
+        <div class="info-row">
+          <span class="info-label">Task</span>
+          <span class="info-value">{{taskTitle}}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Accepted by</span>
+          <span class="info-value">{{giverName}}</span>
+        </div>
+      </div>
+
+      <a href="{{appLink}}" class="cta-btn">View Task Details →</a>
+    </div>
+    <div class="footer">
+      You applied for a task on <a href="{{appLink}}">Sayzo</a>.<br/>
+      © 2025 Sayzo Networks Pvt. Ltd.
+    </div>
+  </div>
+</body>
+</html>

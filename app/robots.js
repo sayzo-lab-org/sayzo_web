@@ -6,7 +6,7 @@ export default function robots() {
           allow: "/",
         },
       ],
-      sitemap: "https://sayzo.in/sitemap.xml",
+      sitemap: "https://sayzo.net/sitemap.xml",
     };
   }
   

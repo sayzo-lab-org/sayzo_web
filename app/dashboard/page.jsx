@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, subscribeToTasksByGiver, subscribeToUserProfile } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 import Link from "next/link";
 import { Briefcase, CheckCircle, Users, Activity, ClipboardList, Plus, TrendingUp } from "lucide-react";
 
