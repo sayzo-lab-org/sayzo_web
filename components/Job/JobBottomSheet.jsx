@@ -235,7 +235,8 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
           taskName: job.title,
           amount: job.budget?.amount,
           budgetType: job.budget?.type,
-          duration: job.duration
+          duration: job.duration,
+          experience: job.experienceLevel,
         }}
         onSuccess={() => {
           setIsModalOpen(false);

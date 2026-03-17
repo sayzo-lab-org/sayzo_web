@@ -137,14 +137,12 @@ const router = useRouter();
             {job.duration}
           </p>
         </div>
-       {job.experienceLevel && (
         <div>
           <p className="text-gray-400">Experience</p>
           <p className="font-semibold text-gray-700">
             {job.experienceLevel}
           </p>
         </div>
-       )}
         
       </div>
 
@@ -230,7 +228,8 @@ const router = useRouter();
           taskName: job.title,
           amount: job.budget?.amount,
           budgetType: job.budget?.type,
-          duration: job.duration
+          duration: job.duration,
+          experience: job.experienceLevel,
         }}
         onSuccess={() => {
           setIsModalOpen(false);

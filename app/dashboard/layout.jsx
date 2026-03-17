@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
-        router.push("/"); // Redirect to home/login
+        router.push("/login"); // Redirect to login page
       } else {
         setUser(currentUser);
       }

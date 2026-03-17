@@ -1,4 +1,4 @@
-import { MoreVertical,Share,Clock  } from "lucide-react";
+import { MoreVertical, Share, Clock, Briefcase } from "lucide-react";
 import ShareTaskModal from "./ShareTaskModal";
 import { useState } from "react";
 
@@ -45,7 +45,7 @@ const JobCard = ({ job, status }) => {
       </div>
 
       {/* Footer */}
-      <div className="flex gap-6.5 items-center pt-2 text-gray-600">
+      <div className="flex flex-wrap gap-4 items-center pt-2 text-gray-600">
         <span className="flex items-center gap-1.5 font-medium  hover:text-primary-btn">
         {/* <svg
   xmlns="http://www.w3.org/2000/svg"
@@ -64,6 +64,10 @@ Budget: {job.budget.amount}
         </span>
         <span className="flex items-center gap-1 ">
 Duration: {job.duration}
+        </span>
+        <span className="flex items-center gap-1.5">
+          <Briefcase className="w-4 h-4 text-gray-500" />
+          Experience: {job.experienceLevel}
         </span>
         {status === 'completed' && (
           <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-600 rounded-full">

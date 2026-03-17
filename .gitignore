@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase credentials
+*firebase-adminsdk*.json
+*service-account*.json
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
