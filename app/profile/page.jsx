@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { auth, getUserProfile } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Globe, Briefcase, BookOpen } from "lucide-react";
+import { ArrowLeft, Globe, Briefcase, BookOpen, Download, FileText } from "lucide-react";
 import Image from "next/image";
 
 export default function ProfilePage() {
@@ -75,6 +75,30 @@ export default function ProfilePage() {
           </div>
 
         </div>
+
+        {/* Resume Download — visible to any viewer who has the link */}
+        {profile.resumeUrl && (
+          <div className="bg-white rounded-3xl p-6 shadow-sm flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center shrink-0">
+                <FileText size={22} className="text-emerald-600" />
+              </div>
+              <div>
+                <p className="font-bold text-zinc-900">Resume</p>
+                <p className="text-xs text-zinc-500 mt-0.5">Uploaded by the candidate</p>
+              </div>
+            </div>
+            <a
+              href={profile.resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors shrink-0"
+            >
+              <Download size={16} />
+              Download Resume
+            </a>
+          </div>
+        )}
 
         {/* Bio */}
         {profile.bio && (
