@@ -24,7 +24,7 @@ import path from "path";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const FROM_EMAIL = "Sayzo <notifications@sayzo.net>";
-const APP_URL    = process.env.NEXT_PUBLIC_APP_URL || "https://www.sayzo.net";
+const APP_URL    = process.env.NEXT_PUBLIC_APP_URL || "https://www.sayzo.in";
 const MAX_RETRIES = 3;
 const MAX_BATCH_SIZE = 10;
 const PROCESSING_LEASE_MS = 5 * 60 * 1000;
@@ -42,7 +42,7 @@ function renderTemplate(templateName, vars) {
 
 // ─── Email builder ────────────────────────────────────────────────────────────
 function buildEmail(job) {
-  const appLink = `${APP_URL}/dashboard`;
+  const appLink = `${APP_URL}`;
 
   switch (job.type) {
     case "application_received":
