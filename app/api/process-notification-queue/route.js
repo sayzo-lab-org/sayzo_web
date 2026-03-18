@@ -110,9 +110,9 @@ function getAdminDb() {
         },
         appName
       );
-      console.log(`[getAdminDb] Firebase Admin [${appName}] initialized successfully.`);
+      // console.log(`[getAdminDb] Firebase Admin [${appName}] initialized successfully.`);
     } catch (error) {
-      console.error(`[getAdminDb] Firebase Admin [${appName}] initialization error:`, error.message);
+      // console.error(`[getAdminDb] Firebase Admin [${appName}] initialization error:`, error.message);
       throw error;
     }
   }
@@ -166,7 +166,7 @@ async function claimJobs(queueRef, batchSize) {
         claimed.push(claimedJob);
       }
     } catch (claimError) {
-      console.warn(`[queue-worker] Failed to claim job ${docSnap.id}:`, claimError.message);
+      // console.warn(`[queue-worker] Failed to claim job ${docSnap.id}:`, claimError.message);
     }
   }
 
@@ -213,7 +213,7 @@ async function claimJobs(queueRef, batchSize) {
         claimed.push(claimedJob);
       }
     } catch (claimError) {
-      console.warn(`[queue-worker] Failed to recover stuck job ${docSnap.id}:`, claimError.message);
+      // console.warn(`[queue-worker] Failed to recover stuck job ${docSnap.id}:`, claimError.message);
     }
   }
 
