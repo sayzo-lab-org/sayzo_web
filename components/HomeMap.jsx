@@ -177,7 +177,7 @@ const HomeMap = () => {
                         >
                             <Popup className="custom-popup">
                                 {/* Reduced min-width from 120px to 110px for a slimmer look */}
-                                <div className="min-w-[110px]"> 
+                                <div className="min-w-[110px]">
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                                         <span className="text-[10px] uppercase tracking-wider text-gray-400">Available</span>
