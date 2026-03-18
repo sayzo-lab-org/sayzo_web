@@ -6,6 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Topbar from "@/components/dashboard/Topbar";
+import { RoleProvider } from "@/context/RoleContext";
 
 export default function DashboardLayout({ children }) {
   const router = useRouter();
@@ -38,6 +39,7 @@ export default function DashboardLayout({ children }) {
   if (!user) return null;
 
   return (
+    <RoleProvider>
     <div className="flex h-screen overflow-hidden">
 
       {/* ── Desktop Sidebar (md+) ─────────────────────────────────── */}
@@ -92,5 +94,6 @@ export default function DashboardLayout({ children }) {
         </main>
       </div>
     </div>
+    </RoleProvider>
   );
 }
