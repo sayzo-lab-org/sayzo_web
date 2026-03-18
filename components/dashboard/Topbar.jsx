@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Bell, Search ,Send,send } from "lucide-react";
+import { Bell, Menu, Search, Send } from "lucide-react";
 import { subscribeToUserProfile } from "@/lib/firebase";
 import Toggle from "../Toggle";
 
@@ -22,7 +22,7 @@ function getInitials(nameOrEmail) {
   return `${words[0][0]}${words[1][0]}`.toUpperCase();
 }
 
-export default function Topbar({ user }) {
+export default function Topbar({ user, onMenuClick }) {
   const pathname = usePathname();
   const [profile, setProfile] = useState(null);
   
@@ -62,11 +62,15 @@ export default function Topbar({ user }) {
 
   return (
     <div className="h-full flex items-center justify-between px-6">
-      {/* Left: Title */}
+      {/* Left: Hamburger (mobile only) */}
       <div className="flex items-center gap-4">
-        {/* <h1 className="text-xl font-semibold text-gray-800">
-          {getPageTitle()}
-        </h1> */}
+        <button
+          onClick={onMenuClick}
+          aria-label="Open menu"
+          className="md:hidden p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Right: Actions */}

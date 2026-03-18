@@ -48,15 +48,13 @@ export default function TaskCard({
           <p className="line-clamp-2 text-sm text-gray-600">{description}</p>
         ) : null}
 
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <Banknote className="h-4 w-4 text-gray-400" />
           <span>{formatBudget(budget)}</span>
-        </div>
+        </div> */}
 
         {variant === "posted" ? (
           <div className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 text-gray-400" />
-            <span>Posted {formatDate(postedDate)}</span>
           </div>
         ) : (
           <>

@@ -88,7 +88,7 @@ export default function MyTasksPage() {
               budget={getTaskBudget(task)}
               postedDate={task.createdAt}
               href={`/dashboard/tasks/${task.id}`}
-              actionLabel="View Details"
+              // actionLabel="View Details"
               taskId={task.id}
             />
           ))}

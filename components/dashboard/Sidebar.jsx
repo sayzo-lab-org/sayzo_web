@@ -21,6 +21,7 @@ import {
   HelpCircle,
   LogOut,
   Bell,
+  X,
 } from "lucide-react";
 import { logoutUser, subscribeToUserProfile } from "@/lib/firebase";
 
@@ -91,7 +92,7 @@ function AvatarDropdown({ user, profile, onLogout, direction }) {
   );
 }
 
-export default function Sidebar({ user, collapsed, onToggle }) {
+export default function Sidebar({ user, collapsed, onToggle, onClose }) {
   const pathname     = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profile, setProfile]           = useState(null);
@@ -144,11 +145,11 @@ export default function Sidebar({ user, collapsed, onToggle }) {
           <Image src={Maskgroup} alt="Sayzo" width={110} className="shrink-0" />
         </Link>
 
-        {/* Toggle chevron */}
+        {/* Toggle chevron (desktop only) */}
         <button
           onClick={onToggle}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className={`p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0 ${
+          className={`hidden md:flex p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0 ${
             collapsed ? "mt-0" : ""
           }`}
         >
@@ -156,6 +157,17 @@ export default function Sidebar({ user, collapsed, onToggle }) {
             ? <ChevronRight className="w-4 h-4" />
             : <ChevronLeft  className="w-4 h-4" />}
         </button>
+
+        {/* X close button (mobile only) */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            aria-label="Close sidebar"
+            className="md:hidden p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* ── Search ─────────────────────────────────────────────────── */}
@@ -199,6 +211,7 @@ export default function Sidebar({ user, collapsed, onToggle }) {
               key={item.href}
               href={item.href}
               title={collapsed ? item.name : undefined}
+              onClick={onClose}
               className={`flex items-center py-2.5 rounded-lg transition-all duration-150 group ${
                 collapsed ? "justify-center px-2" : "gap-3 px-3"
               } ${
@@ -227,6 +240,7 @@ export default function Sidebar({ user, collapsed, onToggle }) {
         <Link
           href="/dashboard/settings"
           title={collapsed ? "Settings" : undefined}
+          onClick={onClose}
           className={`flex items-center py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors group ${
             collapsed ? "justify-center px-2" : "gap-3 px-3"
           }`}

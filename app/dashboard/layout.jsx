@@ -12,6 +12,7 @@ export default function DashboardLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -38,7 +39,8 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Sidebar */}
+
+      {/* ── Desktop Sidebar (md+) ─────────────────────────────────── */}
       <aside
         className={`hidden md:block shrink-0 border-r bg-white h-full overflow-y-auto transition-all duration-300 ${
           sidebarCollapsed ? "w-15" : "w-64"
@@ -51,10 +53,36 @@ export default function DashboardLayout({ children }) {
         />
       </aside>
 
-      {/* Main Content */}
+      {/* ── Mobile Sidebar Drawer (< md) ──────────────────────────── */}
+      <div className="md:hidden">
+        {/* Overlay */}
+        <div
+          className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
+            isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        />
+
+        {/* Drawer */}
+        <div
+          className={`fixed top-0 left-0 z-50 h-full w-64 overflow-y-auto border-r bg-white transition-transform duration-300 ease-in-out ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <Sidebar
+            user={user}
+            collapsed={false}
+            onToggle={() => {}}
+            onClose={() => setIsSidebarOpen(false)}
+          />
+        </div>
+      </div>
+
+      {/* ── Main Content ──────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col h-full min-w-0">
-        <header className="h-16 shrink-0 bg-white">
-          <Topbar user={user} />
+        <header className="h-16 shrink-0 bg-white border-b border-gray-100">
+          <Topbar user={user} onMenuClick={() => setIsSidebarOpen(true)} />
         </header>
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
