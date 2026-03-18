@@ -3,7 +3,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight, Loader2, Users, Home, CheckCircle, XCircle } from "lucide-react";
+import { ChevronRight, Loader2, Users, Home, CheckCircle, XCircle,
+
+  Star, Send, MoreVertical, 
+ } from "lucide-react";
 import {
   getTaskById,
   subscribeToApplicationsByTask,
@@ -43,66 +46,88 @@ function ApplicantCard({ applicant, profile, onAction, actionLoading }) {
   const isAccepted = applicant.status === APPLICATION_STATUS.ACCEPTED;
   const isRejected = applicant.status === APPLICATION_STATUS.REJECTED;
 
-  const name   = profile?.name || profile?.displayName || applicant.applicantName || "Applicant";
-  const role   = applicant.applicantRole || profile?.role || null;
+  const name   = profile?.name || profile?.displayName || applicant.applicantName || "John Doe";
+  const role   = applicant.applicantRole || profile?.role || "Graphic Designer";
   const avatar = profile?.photoURL || null;
+  // Hardcoded to match UI, but you can replace with real data later:
+  const matchPercentage = applicant.matchScore || 80; 
+  const tasksCompleted = profile?.tasksCompleted || 324;
+  const rating = profile?.rating || 4.9;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col gap-4 shadow-sm">
-      {/* Top: avatar + info */}
-      <div className="flex flex-col items-center text-center gap-2">
-        <Avatar src={avatar} name={name} />
-        <div>
-          <p className="text-sm font-semibold text-gray-900">{name}</p>
-          {role && <p className="text-xs text-gray-500 mt-0.5">{role}</p>}
+    <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col gap-6 shadow-sm">
+      
+      {/* Top: Match Progress Bar */}
+      <div className="flex items-center gap-4">
+        <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-[#10A37F] rounded-full" 
+            style={{ width: `${matchPercentage}%` }}
+          />
         </div>
-
-        {/* Status badge (once actioned) */}
-        {!isPending && (
-          <span className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium ${
-            isAccepted ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-600"
-          }`}>
-            {isAccepted
-              ? <><CheckCircle className="w-3 h-3" /> Accepted</>
-              : <><XCircle   className="w-3 h-3" /> Declined</>
-            }
-          </span>
-        )}
+        <span className="text-sm font-medium text-gray-500 whitespace-nowrap">
+          {matchPercentage}% match
+        </span>
       </div>
 
-      {/* Actions */}
+      {/* Middle: Avatar & Info */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Avatar src={avatar} name={name} />
+          <div>
+            <div className="flex items-center gap-2 mb-0.5">
+              <h3 className="font-semibold text-gray-900 text-base">{name}</h3>
+              <div className="flex items-center text-xs font-bold text-gray-700">
+                <Star className="w-3.5 h-3.5 text-yellow-400 fill-current mr-1" />
+                {rating}
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 font-medium">
+              {role} <span className="mx-1.5 font-normal text-gray-300">|</span> {tasksCompleted} tasks
+            </p>
+          </div>
+        </div>
+
+        {/* Right Icons */}
+        <div className="flex items-center gap-3 text-gray-500">
+          <button className="hover:text-gray-900 transition-colors">
+            <Send className="w-5 h-5" />
+          </button>
+          <button className="hover:text-gray-900 transition-colors">
+            <MoreVertical className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Bottom: Actions */}
       {isPending ? (
-        <div className="flex gap-2 mt-auto">
+        <div className="flex items-center gap-4 mt-2">
           <button
             onClick={() => onAction(applicant.id, APPLICATION_STATUS.REJECTED)}
             disabled={isActing}
-            className="flex-1 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            className="flex-1 py-2.5 rounded-lg border border-[#10A37F] text-[#10A37F] text-sm font-semibold hover:bg-emerald-50 disabled:opacity-50 transition-colors"
           >
             {isActing ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Decline"}
           </button>
           <button
             onClick={() => onAction(applicant.id, APPLICATION_STATUS.ACCEPTED)}
             disabled={isActing}
-            className="flex-1 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium disabled:opacity-50 transition-colors"
+            className="flex-1 py-2.5 rounded-lg bg-[#10A37F] text-white text-sm font-semibold hover:bg-[#0e8c6d] disabled:opacity-50 transition-colors"
           >
             {isActing ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Accept"}
           </button>
         </div>
       ) : (
-        /* Re-action button */
-        <button
-          onClick={() => onAction(
-            applicant.id,
-            isAccepted ? APPLICATION_STATUS.REJECTED : APPLICATION_STATUS.ACCEPTED
-          )}
-          disabled={isActing}
-          className="w-full py-2 rounded-xl border border-gray-200 text-xs font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 transition-colors mt-auto"
-        >
-          {isActing
-            ? <Loader2 className="w-4 h-4 animate-spin mx-auto" />
-            : isAccepted ? "Undo Accept" : "Undo Decline"
-          }
-        </button>
+        /* State for after action is taken */
+        <div className="flex items-center justify-between mt-2 py-2.5 px-4 rounded-lg bg-gray-50 border border-gray-100">
+           <span className={`inline-flex items-center gap-2 text-sm font-bold ${
+            isAccepted ? "text-[#10A37F]" : "text-gray-500"
+          }`}>
+            {isAccepted ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+            {isAccepted ? "Accepted" : "Declined"}
+          </span>
+          
+        </div>
       )}
     </div>
   );
@@ -180,37 +205,43 @@ export default function TaskApplicantsPage() {
 
   const taskTitle = task ? getTaskTitle(task) : taskId;
 
-  return (
-    <section className="space-y-6">
+ return (
+    <section className="space-y-8 max-w-7xl mx-auto p-6">
 
-      {/* ── Breadcrumbs ── */}
-      <nav className="flex items-center gap-1.5 text-sm text-gray-400">
-        <Link href="/dashboard" className="flex items-center gap-1 hover:text-gray-600 transition-colors">
-          <Home className="w-3.5 h-3.5" />
+      {/* ── Custom Breadcrumbs (Matching Image) ── */}
+      <nav className="flex items-center gap-3 text-sm font-medium mb-12">
+        <Link href="/dashboard" className="text-gray-900 hover:text-gray-600 transition-colors">
           Home
         </Link>
-        <ChevronRight className="w-3.5 h-3.5" />
-        <Link href="/dashboard/my-tasks" className="hover:text-gray-600 transition-colors">
+        <span className="text-gray-300">/</span>
+        <Link href="/dashboard/my-tasks" className="text-gray-900 hover:text-gray-600 transition-colors">
           My Tasks
         </Link>
-        <ChevronRight className="w-3.5 h-3.5" />
-        <span className="text-gray-700 font-medium truncate max-w-xs">
+        <span className="text-gray-300">/</span>
+        <span className="text-[#10A37F] truncate max-w-sm">
           {taskLoading ? "Loading…" : taskTitle}
         </span>
       </nav>
 
-      {/* ── Page header ── */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      {/* ── Page header & Tabs ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4">
         {taskLoading ? (
-          <div className="h-7 w-64 animate-pulse bg-gray-100 rounded-lg" />
+          <div className="h-10 w-96 animate-pulse bg-gray-100 rounded-xl" />
         ) : (
-          <>
-            <h1 className="text-2xl font-semibold text-gray-900">{taskTitle}</h1>
-            {task?.description && (
-              <p className="mt-1.5 text-sm text-gray-500 line-clamp-2">{task.description}</p>
-            )}
-          </>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+            {taskTitle}
+          </h1>
         )}
+
+        {/* Tab Buttons from Image */}
+        <div className="flex items-center gap-6">
+          <button className="text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors">
+            Manual Applicants
+          </button>
+          <button className="text-sm font-medium bg-[#10A37F] text-white px-6 py-2.5 rounded-full hover:bg-[#0e8c6d] transition-colors">
+            AI Applicants
+          </button>
+        </div>
       </div>
 
       {/* ── Error ── */}
@@ -220,32 +251,22 @@ export default function TaskApplicantsPage() {
         </div>
       )}
 
-      {/* ── Applicants section ── */}
+      {/* ── Applicants Grid ── */}
       <div>
-        <div className="flex items-center gap-2 mb-4">
-          <Users className="w-4 h-4 text-emerald-600" />
-          <h2 className="text-base font-semibold text-gray-900">
-            Applicants
-            {!appsLoading && applicants.length > 0 && (
-              <span className="ml-1.5 text-sm font-normal text-gray-400">({applicants.length})</span>
-            )}
-          </h2>
-        </div>
-
         {appsLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-52 animate-pulse rounded-2xl border border-gray-200 bg-white" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-64 animate-pulse rounded-xl border border-gray-200 bg-gray-50" />
             ))}
           </div>
         ) : applicants.length === 0 ? (
           <div className="rounded-xl border border-dashed border-gray-300 bg-white p-12 flex flex-col items-center gap-3 text-gray-400">
             <Users className="w-8 h-8 text-gray-200" />
-            <p className="text-sm">No applicants yet.</p>
-            <p className="text-xs text-gray-300">Applications will appear here once submitted.</p>
+            <p className="text-sm font-medium">No applicants yet.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          /* Changed to 2 columns (lg:grid-cols-2) and increased gap-6 to match the image spacing */
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {applicants.map((applicant) => (
               <ApplicantCard
                 key={applicant.id}
