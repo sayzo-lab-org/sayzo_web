@@ -1,179 +1,113 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import Link from "next/link";
-import { subscribeToUserProfile ,subscribeToTasksByGiver} from "@/lib/firebase";
-import { Briefcase, CheckCircle, Users, Activity, ClipboardList, Plus, TrendingUp } from "lucide-react";
+import { useMemo, useState } from "react";
+import Image from "next/image";
+import Maskgroup from "../../public/assets/Maskgroup.svg";
+import { Image as ImageIcon, Code, Mic, ArrowUp } from "lucide-react";
+import { BriefcaseBusiness, PlayCircle, CheckCircle2, ClipboardCheck } from "lucide-react";
+import MetricsCard from "@/components/dashboard/MetricsCard";
+import useDashboardData from "@/hooks/useDashboardData";
 
-export default function DashboardHome() {
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [stats, setStats] = useState({
-    totalTasks: 0,
-    activeTasks: 0,
-    totalApplicants: 0,
-    completedTasks: 0,
+const QUICK_ACTIONS = [
+  "Post an Online Task",
+  "Post an Offline Task",
+  "Understand the App Better",
+  "Other Queries",
+];
+
+export default function DashboardHomePage() {
+  const { user, profile, metrics, loading, error } = useDashboardData({
+    includeProfile: true,
   });
-  const [loading, setLoading] = useState(true);
+  const [prompt, setPrompt] = useState("");
 
-  useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    });
-    return () => unsubscribeAuth();
-  }, []);
-
-  useEffect(() => {
-    if (!user) return;
-
-    // Real-time profile subscription
-    const unsubscribeProfile = subscribeToUserProfile(user.uid, (profileData) => {
-      setProfile(profileData);
-    });
-
-    // Real-time tasks subscription for live stats
-    const unsubscribeTasks = subscribeToTasksByGiver(user.uid, (tasks) => {
-      let active = 0;
-      let completed = 0;
-      let applicantsCount = 0;
-
-      tasks.forEach((t) => {
-        const status = t.status?.toLowerCase() || "pending_approval";
-        if (status === "active" || status === "approved") active++;
-        if (status === "completed") completed++;
-        applicantsCount += t.applicantsCount || 0;
-      });
-
-      setStats({
-        totalTasks: tasks.length,
-        activeTasks: active,
-        totalApplicants: applicantsCount,
-        completedTasks: completed,
-      });
-    });
-
-    return () => {
-      unsubscribeProfile();
-      unsubscribeTasks();
-    };
-  }, [user]);
-
-  const displayName =
-    profile?.name?.split(" ")[0] ||
-    user?.displayName?.split(" ")[0] ||
-    "there";
-
-  const profileComplete = profile?.profileCompleted === true;
+  const userName = useMemo(() => {
+    const source = profile?.name || user?.displayName || user?.email || "User";
+    return source.split("@")[0].trim();
+  }, [profile?.name, user?.displayName, user?.email]);
 
   return (
-    <div className="space-y-6">
-      {/* Welcome Banner */}
-      <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/60 to-transparent pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              Welcome back, {loading ? "..." : displayName}! 👋
-            </h1>
-            <p className="text-gray-500 max-w-lg text-sm">
-              Here&apos;s an overview of your posted tasks and overall activity on Sayzo.
-            </p>
-            {!loading && profile && !profileComplete && (
-              <Link
-                href="/onboarding"
-                className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg text-sm font-medium hover:bg-amber-100 transition-colors"
-              >
-                ⚠️ Complete your profile to unlock all features
-              </Link>
-            )}
-          </div>
-          <Link
-            href="/dashboard/tasks/new"
-            className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors shadow-sm text-sm shrink-0"
-          >
-            <Plus className="w-4 h-4" />
-            Post a New Task
-          </Link>
-        </div>
-      </div>
+    <div className="flex flex-col items-center min-h-[calc(100vh-128px)] py-35 gap-10">
 
-      {/* Stats Cards */}
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white p-6 rounded-xl border border-gray-100 h-28 animate-pulse shadow-sm">
-              <div className="w-1/2 h-4 bg-gray-200 rounded mb-2" />
-              <div className="w-1/4 h-8 bg-gray-300 rounded" />
+      {/* Metrics Row
+      <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3">
+        <MetricsCard
+          title="Total Posted"
+          value={loading ? "..." : metrics.totalTasksPosted}
+          icon={BriefcaseBusiness}
+        />
+        <MetricsCard
+          title="Active"
+          value={loading ? "..." : metrics.activeTasks}
+          icon={PlayCircle}
+        />
+        <MetricsCard
+          title="Completed"
+          value={loading ? "..." : metrics.completedTasks}
+          icon={CheckCircle2}
+        />
+        <MetricsCard
+          title="Applied"
+          value={loading ? "..." : metrics.appliedTasks}
+          icon={ClipboardCheck}
+        />
+      </div> */}
+
+      {/* Help Center */}
+      <div className="w-full max-w-2xl flex flex-col items-center gap-6">
+        <Image src={Maskgroup} alt="Sayzo" width={140} />
+
+        <h2 className="text-3xl font-bold text-gray-900 text-center">
+          What can I help you with?
+        </h2>
+
+        {/* Input Box */}
+        <div className="w-full rounded-2xl border border-gray-200 bg-white shadow-sm p-4">
+          <textarea
+            rows={2}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="What would you like to know?"
+            className="w-full resize-none bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none"
+          />
+          <div className="flex items-center justify-between mt-3">
+            <div className="flex items-center gap-1 text-gray-400">
+              <button className="p-1.5 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                <ImageIcon className="w-5 h-5" />
+              </button>
+              <button className="p-1.5 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                <Code className="w-5 h-5" />
+              </button>
+              <button className="p-1.5 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                <Mic className="w-5 h-5" />
+              </button>
             </div>
+            <button
+              disabled={!prompt.trim()}
+              className="p-2 bg-gray-900 text-white rounded-full hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ArrowUp className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="flex flex-wrap justify-center gap-2">
+          {QUICK_ACTIONS.map((action) => (
+            <button
+              key={action}
+              className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors"
+            >
+              {action}
+            </button>
           ))}
         </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard title="Total Tasks Posted" value={stats.totalTasks} icon={Briefcase} color="emerald" />
-          <StatCard title="Active Tasks" value={stats.activeTasks} icon={Activity} color="blue" />
-          <StatCard title="Total Applicants" value={stats.totalApplicants} icon={Users} color="purple" />
-          <StatCard title="Completed Tasks" value={stats.completedTasks} icon={CheckCircle} color="teal" />
-        </div>
-      )}
 
-      {/* Quick Links */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link
-          href="/dashboard/tasks"
-          className="flex items-center gap-4 bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:border-emerald-300 hover:shadow transition-all group"
-        >
-          <div className="p-3 bg-emerald-50 rounded-xl text-emerald-600 group-hover:bg-emerald-100 transition-colors">
-            <Briefcase className="w-5 h-5" />
+        {error && (
+          <div className="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
           </div>
-          <div>
-            <p className="font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors">My Posted Tasks</p>
-            <p className="text-sm text-gray-500">Manage and track tasks you&apos;ve posted</p>
-          </div>
-          <TrendingUp className="w-4 h-4 ml-auto text-gray-300 group-hover:text-emerald-400 transition-colors" />
-        </Link>
-        <Link
-          href="/dashboard/applied-tasks"
-          className="flex items-center gap-4 bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:border-blue-300 hover:shadow transition-all group"
-        >
-          <div className="p-3 bg-blue-50 rounded-xl text-blue-600 group-hover:bg-blue-100 transition-colors">
-            <ClipboardList className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">Applied Tasks</p>
-            <p className="text-sm text-gray-500">Track applications you have submitted</p>
-          </div>
-          <TrendingUp className="w-4 h-4 ml-auto text-gray-300 group-hover:text-blue-400 transition-colors" />
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-function StatCard({ title, value, icon: Icon, color }) {
-  const colorMaps = {
-    emerald: "bg-emerald-50 text-emerald-600",
-    blue: "bg-blue-50 text-blue-600",
-    purple: "bg-purple-50 text-purple-600",
-    teal: "bg-teal-50 text-teal-600",
-  };
-
-  return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow transition-shadow group">
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{value}</p>
-        </div>
-        <div className={`p-3 rounded-xl ${colorMaps[color]}`}>
-          <Icon className="w-5 h-5" />
-        </div>
+        )}
       </div>
     </div>
   );
