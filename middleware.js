@@ -70,7 +70,10 @@ export function middleware(request) {
     return res;
   }
 
-  if (profileCompleted !== "true" && url.pathname.startsWith("/dashboard") && !) {
+  if (profileCompleted !== "true" && url.pathname.startsWith("/dashboard")
+       && !isDev
+       && !isPreview
+  ) {
     const res = NextResponse.redirect(new URL("/onboarding", request.url));
     res.headers.set("Content-Security-Policy", buildCSP(nonce));
     return res;
