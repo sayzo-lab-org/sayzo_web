@@ -264,7 +264,7 @@ const UserPage = ({ mode = "live" }) => {
                 <div
                   key={job.id}
                   onClick={() => {
-                    console.log("Job clicked:", job);
+                    // console.log("Job clicked:", job);
                     setSelectedJob(job);
                     router.push(`${pathname}?task=${job.id}`, { scroll: false });
                   }}
@@ -334,7 +334,7 @@ const UserPage = ({ mode = "live" }) => {
             <div
               key={job.id}
               onClick={() => {
-                console.log("Job clicked:", job);
+                // console.log("Job clicked:", job);
                 setSelectedJob(job);
                 router.push(`${pathname}?task=${job.id}`, { scroll: false });
               }}

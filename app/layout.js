@@ -1,6 +1,7 @@
 import { Inter,Instrument_Serif } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import Script from "next/script";
+import { headers } from "next/headers";
 
 import "./globals.css";
 import Footer from "@/components/Footer";
@@ -84,20 +85,24 @@ export const metadata = {
 };
 
 
-export default function RootLayout({ children }) {
-  
+export default async function RootLayout({ children }) {
+  const headersList = await headers();
+  const nonce = headersList.get("x-nonce") ?? "";
+
   return (
     <html lang="en"  className={`${inter.variable} ${instrumentSerif.variable}`}>
       <head>
         <script
+          nonce={nonce}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Script
+          nonce={nonce}
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
           strategy="afterInteractive"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script nonce={nonce} id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

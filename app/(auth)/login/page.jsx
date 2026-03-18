@@ -57,7 +57,7 @@ export default function LoginPage() {
 
     router.replace("/");
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   setError(err.message);
   } finally {
     setLoading(false);

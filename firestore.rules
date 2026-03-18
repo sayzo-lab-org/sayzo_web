@@ -2,40 +2,63 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── In-app notifications (users/{userId}/notifications) ──────────────────
-    // Users can read and update (mark as read) their own notifications.
-    // Only authenticated users can create notifications for others (via firebase.js).
+    // ── In-app notifications ─────────────────────────────────────────────────
+    // Users can only read / update their own notifications.
+    // Any authenticated user can push a notification to someone else (client lib).
     match /users/{userId}/notifications/{notifId} {
       allow read, update: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null;
+      allow create:       if request.auth != null;
     }
 
     // ── Notification queue ───────────────────────────────────────────────────
-    // Only authenticated users can create queue jobs (from firebase.js).
-    // Queue jobs are processed by the server-side worker ONLY (no client reads/updates).
+    // Client may enqueue a job; only the server worker (Admin SDK) processes it.
     match /notification_queue/{jobId} {
-      allow create: if request.auth != null;
-      // NO client-side read or update — the worker uses Firebase Admin SDK
-      allow read, update: if false;
+      allow create:       if request.auth != null;
+      allow read, update: if false;  // Admin SDK only – no client access ever
     }
 
     // ── Tasks ────────────────────────────────────────────────────────────────
+    // Public read  : approved / active / completed tasks (browse page).
+    // Private read : the giver can always read their own tasks (any status).
+    // Create       : authenticated; caller must declare themselves as giverId.
+    // Update/delete: only the owning giver.
     match /tasks/{taskId} {
-      allow read: if true;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null;
+      allow read: if resource.data.status in ['approved', 'active', 'completed']
+                  || (request.auth != null
+                      && request.auth.uid == resource.data.giverId);
+
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.giverId;
+
+      allow update: if request.auth != null
+                    && request.auth.uid == resource.data.giverId;
+
+      allow delete: if request.auth != null
+                    && request.auth.uid == resource.data.giverId;
     }
 
     // ── Applications ─────────────────────────────────────────────────────────
+    // Read  : only the applicant or the task giver.
+    // Create: authenticated; caller must declare themselves as applicantId.
+    // Update: giver (accept/reject) or applicant (withdraw).
     match /applications/{appId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null;
+      allow read: if request.auth != null
+                  && (request.auth.uid == resource.data.applicantId
+                      || request.auth.uid == resource.data.giverId);
+
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.applicantId;
+
+      allow update: if request.auth != null
+                    && (request.auth.uid == resource.data.giverId
+                        || request.auth.uid == resource.data.applicantId);
     }
 
     // ── Users ────────────────────────────────────────────────────────────────
+    // Any authenticated user can read public profiles (needed for task cards).
+    // Users can only write their own profile document.
     match /users/{userId} {
-      allow read: if request.auth != null;
+      allow read:  if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == userId;
     }
   }
