@@ -125,7 +125,7 @@ const HomeMap = () => {
     return (
         <div
             ref={mapWrapperRef}
-            className={`flex flex-col bg-white border border-gray-300 shadow-sm overflow-hidden font-sans transition-all duration-300 ${
+            className={`flex flex-col bg-white border border-gray-300 shadow-sm font-sans transition-all duration-300 ${
                 isFullscreen
                     ? 'fixed inset-0 z-[9999] h-screen w-screen rounded-none'
                     : 'rounded-lg h-[380px] w-full'
@@ -158,8 +158,8 @@ const HomeMap = () => {
             </div>
 
             {/* Map Area */}
-            <div className="flex-grow relative w-full bg-gray-50">
-                <MapContainer center={defaultCenter} zoom={25} className="h-full w-full z-0" scrollWheelZoom={false}>
+            <div className="flex-grow relative w-full min-h-0 bg-gray-50">
+                <MapContainer center={defaultCenter} zoom={13} className="h-full w-full z-0" scrollWheelZoom={false}>
                     <TileLayer
                         attribution='&copy; Esri'
                         url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
@@ -177,7 +177,7 @@ const HomeMap = () => {
                         >
                             <Popup className="custom-popup">
                                 {/* Reduced min-width from 120px to 110px for a slimmer look */}
-                                <div className="min-w-[110px]"> 
+                                <div className="min-w-[110px]">
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                                         <span className="text-[10px] uppercase tracking-wider text-gray-400">Available</span>
