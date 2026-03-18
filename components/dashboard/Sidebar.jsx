@@ -22,7 +22,8 @@ import {
   Settings,
   HelpCircle,
   LogOut,
-  Bell
+  Bell,
+ 
 } from "lucide-react";
 import { logoutUser, subscribeToUserProfile } from "@/lib/firebase";
 
@@ -56,6 +57,7 @@ function Avatar({ user, photoURL, size = "sm" }) {
   );
 }
 
+//avataar dropdown 
 function AvatarDropdown({ user, profile, onLogout, direction }) {
   const src = profile?.photoURL || user?.photoURL;
   const name = profile?.name || user?.displayName || "User";
@@ -124,6 +126,7 @@ function AvatarDropdown({ user, profile, onLogout, direction }) {
   );
 }
 
+
 export default function Sidebar({ user, collapsed, onToggle }) {
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -169,6 +172,14 @@ export default function Sidebar({ user, collapsed, onToggle }) {
           <Image src={sayzoLogo} alt="Sayzo" width={32} height={32} className="rounded-lg" />
         </Link>
 
+        {/* Search icon — mirrors search bar position in expanded mode */}
+        <button
+          title="Search"
+          className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+        >
+          <Search className="w-4.5 h-4.5" />
+        </button>
+
         {/* Nav icons */}
         <nav className="flex flex-col items-center gap-0.5 flex-1 w-full">
           {menuItems.map((item) => {
@@ -199,9 +210,26 @@ export default function Sidebar({ user, collapsed, onToggle }) {
         <button
           onClick={onToggle}
           aria-label="Expand sidebar"
-          className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors mb-1"
+          className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
         >
           <ChevronRight className="w-4 h-4" />
+        </button>
+
+        {/* Settings */}
+        <Link
+          href="/dashboard/settings"
+          title="Settings"
+          className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+        >
+          <Settings className="w-4.5 h-4.5" />
+        </Link>
+
+        {/* Help / Support */}
+        <button
+          title="Support"
+          className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+        >
+          <HelpCircle className="w-4.5 h-4.5" />
         </button>
 
         {/* Avatar + dropdown */}
@@ -217,9 +245,8 @@ export default function Sidebar({ user, collapsed, onToggle }) {
             aria-label="Open profile menu"
           >
             <Avatar user={user} photoURL={
-            
            user?.photoURL ||
-          user?.providerData?.[0]?.photoURL
+           user?.providerData?.[0]?.photoURL
             } />
           </button>
 
@@ -255,7 +282,7 @@ export default function Sidebar({ user, collapsed, onToggle }) {
       </div>
 
       {/* Search */}
-      <div className="mb-4 px-1">
+      <div className="mb-4 px-1 animate-in fade-in duration-200">
         <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
           <Search className="w-4 h-4 text-gray-400 shrink-0" />
           <input
