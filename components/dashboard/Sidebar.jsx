@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Maskgroup from "../../public/assets/Maskgroup.svg";
-import sayzoLogo from "../../public/sayzoLogo.png";
+import sayzoLogo from "../../public/assets/SAYZO_LOGO.png";
 
 ;
 import { usePathname } from "next/navigation";
@@ -38,7 +38,10 @@ const menuItems = [
 
 function Avatar({ user, photoURL, size = "sm" }) {
   const dim = size === "sm" ? "w-8 h-8 text-xs" : "w-9 h-9 text-sm";
-  const src =  user?.photoURL || photoURL;
+  const src = 
+    photoURL ||
+    user?.photoURL ||
+    user?.providerData?.[0]?.photoURL;
   return (
     <div
       className={`${dim} rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold uppercase overflow-hidden shrink-0`}
@@ -54,7 +57,7 @@ function Avatar({ user, photoURL, size = "sm" }) {
 }
 
 function AvatarDropdown({ user, profile, onLogout, direction }) {
-  const src =  user?.photoURL ||  photoURL;
+  const src = profile?.photoURL || user?.photoURL;
   const name = profile?.name || user?.displayName || "User";
   const email = user?.email || "";
 
@@ -130,7 +133,11 @@ export default function Sidebar({ user, collapsed, onToggle }) {
 
   useEffect(() => {
     if (!user?.uid) return;
-    const unsub = subscribeToUserProfile(user.uid, setProfile);
+    const unsub = subscribeToUserProfile(user.uid,(data)=>{
+         console.log("PROFILE DATA:", data);
+           setProfile(data);
+    });
+ 
     return () => unsub();
   }, [user?.uid]);
 
@@ -159,7 +166,7 @@ export default function Sidebar({ user, collapsed, onToggle }) {
 
         {/* Logo icon */}
         <Link href="/" className=" mt-1">
-          <Image src={sayzoLogo} alt="Sayzo" width={62} height={52} className="rounded-lg" />
+          <Image src={sayzoLogo} alt="Sayzo" width={32} height={32} className="rounded-lg" />
         </Link>
 
         {/* Nav icons */}
@@ -209,7 +216,11 @@ export default function Sidebar({ user, collapsed, onToggle }) {
             className="focus:outline-none rounded-full"
             aria-label="Open profile menu"
           >
-            <Avatar user={user} photoURL={profile?.photoURL} />
+            <Avatar user={user} photoURL={
+            
+           user?.photoURL ||
+          user?.providerData?.[0]?.photoURL
+            } />
           </button>
 
           {dropdownOpen && (
@@ -295,17 +306,39 @@ export default function Sidebar({ user, collapsed, onToggle }) {
         </div> */}
 
         {/* User row + dropdown */}
+
+         <div className="py-1">
+        <Link
+          href="/dashboard/settings"
+          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          <Settings className="w-4 h-4 text-gray-400 shrink-0" />
+          Settings
+        </Link>
+
+        <button
+          className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          <HelpCircle className="w-4 h-4 text-gray-400 shrink-0" />
+          Support
+        </button>
+      </div>
         <div
           className="relative"
-          ref={dropdownRef}
-          onMouseEnter={openDropdown}
-          onMouseLeave={scheduleClose}
+          // ref={dropdownRef}
+          // onMouseEnter={openDropdown}
+          // onMouseLeave={scheduleClose}
         >
+          
           <button
             onClick={() => setDropdownOpen((v) => !v)}
             className="flex items-center gap-2.5 w-full px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors text-left min-w-0"
           >
-            <Avatar user={user} photoURL={profile?.photoURL} />
+            <Avatar user={user} photoURL={
+             
+              user?.photoURL ||
+              user?.providerData?.[0]?.photoURL
+            } />
             <div className="flex flex-col min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">
                 {profile?.name || user?.displayName || "User"}
