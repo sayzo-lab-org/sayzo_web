@@ -5,8 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import Maskgroup from "../../public/assets/Maskgroup.svg";
 import sayzoLogo from "../../public/assets/SAYZO_LOGO.png";
-
-;
 import { usePathname } from "next/navigation";
 import {
   Home,
@@ -23,7 +21,6 @@ import {
   HelpCircle,
   LogOut,
   Bell,
- 
 } from "lucide-react";
 import { logoutUser, subscribeToUserProfile } from "@/lib/firebase";
 
@@ -33,55 +30,28 @@ const menuItems = [
   { name: "Applied Tasks", href: "/dashboard/applied-tasks", icon: ClipboardList },
   { name: "Earnings",      href: "/dashboard/earnings",      icon: TrendingUp    },
   { name: "Chat",          href: "/dashboard/chat",          icon: MessageSquare },
-  { name: "Notifications",        href: "/dashboard/notifications",        icon: Bell        },
+  { name: "Notifications", href: "/dashboard/notifications", icon: Bell          },
   { name: "Profile",       href: "/dashboard/profile",       icon: User          },
 ];
 
-function Avatar({ user, photoURL, size = "sm" }) {
-  const dim = size === "sm" ? "w-8 h-8 text-xs" : "w-9 h-9 text-sm";
-  const src = 
-    photoURL ||
-    user?.photoURL ||
-    user?.providerData?.[0]?.photoURL;
-  return (
-    <div
-      className={`${dim} rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold uppercase overflow-hidden shrink-0`}
-    >
-      {src ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt="Avatar" className="w-full h-full object-cover" />
-      ) : (
-        user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"
-      )}
-    </div>
-  );
-}
-
-//avataar dropdown 
 function AvatarDropdown({ user, profile, onLogout, direction }) {
-  const src = profile?.photoURL || user?.photoURL;
+  const src  = profile?.photoURL || user?.photoURL || user?.providerData?.[0]?.photoURL;
   const name = profile?.name || user?.displayName || "User";
   const email = user?.email || "";
 
-  // direction: "right" (collapsed → open to the right) | "up" (expanded → open upward)
   const posClass =
     direction === "right"
       ? "left-full ml-3 bottom-0"
       : "bottom-full mb-2 left-0 right-0";
 
   return (
-    <div
-      className={`absolute z-50 bg-white rounded-2xl shadow-xl border border-gray-100 w-56 overflow-hidden ${posClass}`}
-    >
-      {/* Header — signed in as */}
+    <div className={`absolute z-50 bg-white rounded-2xl shadow-xl border border-gray-100 w-56 overflow-hidden ${posClass}`}>
+      {/* Header */}
       <div className="px-4 pt-4 pb-3 flex items-center gap-3">
         <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-sm uppercase overflow-hidden shrink-0">
-          {src ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={src} alt="Avatar" className="w-full h-full object-cover" />
-          ) : (
-            name.charAt(0)
-          )}
+          {src
+            ? <img src={src} alt="Avatar" className="w-full h-full object-cover" /> // eslint-disable-line @next/next/no-img-element
+            : name.charAt(0)}
         </div>
         <div className="min-w-0">
           <p className="text-xs text-gray-400 leading-none mb-0.5">Signed in as</p>
@@ -92,7 +62,6 @@ function AvatarDropdown({ user, profile, onLogout, direction }) {
 
       <div className="border-t border-gray-100" />
 
-      {/* Menu items */}
       <div className="py-1">
         <Link
           href="/dashboard/settings"
@@ -101,10 +70,7 @@ function AvatarDropdown({ user, profile, onLogout, direction }) {
           <Settings className="w-4 h-4 text-gray-400 shrink-0" />
           Settings
         </Link>
-
-        <button
-          className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-        >
+        <button className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
           <HelpCircle className="w-4 h-4 text-gray-400 shrink-0" />
           Support
         </button>
@@ -112,7 +78,6 @@ function AvatarDropdown({ user, profile, onLogout, direction }) {
 
       <div className="border-t border-gray-100" />
 
-      {/* Sign out */}
       <div className="py-1">
         <button
           onClick={onLogout}
@@ -126,175 +91,102 @@ function AvatarDropdown({ user, profile, onLogout, direction }) {
   );
 }
 
-
 export default function Sidebar({ user, collapsed, onToggle }) {
-  const pathname = usePathname();
+  const pathname     = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [profile, setProfile] = useState(null);
-  const dropdownRef = useRef(null);
-  const closeTimer = useRef(null);
+  const [profile, setProfile]           = useState(null);
+  const dropdownRef  = useRef(null);
+  const closeTimer   = useRef(null);
 
   useEffect(() => {
     if (!user?.uid) return;
-    const unsub = subscribeToUserProfile(user.uid,(data)=>{
-         console.log("PROFILE DATA:", data);
-           setProfile(data);
-    });
- 
+    const unsub = subscribeToUserProfile(user.uid, setProfile);
     return () => unsub();
   }, [user?.uid]);
 
   const handleLogout = async () => {
-    try {
-      await logoutUser();
-      window.location.href = "/";
-    } catch (e) {
-      console.error("Logout failed", e);
-    }
+    try { await logoutUser(); window.location.href = "/"; }
+    catch (e) { console.error("Logout failed", e); }
   };
 
-  const openDropdown = () => {
-    clearTimeout(closeTimer.current);
-    setDropdownOpen(true);
-  };
+  const openDropdown   = () => { clearTimeout(closeTimer.current); setDropdownOpen(true); };
+  const scheduleClose  = () => { closeTimer.current = setTimeout(() => setDropdownOpen(false), 150); };
 
-  const scheduleClose = () => {
-    closeTimer.current = setTimeout(() => setDropdownOpen(false), 150);
-  };
+  const avatarSrc = profile?.photoURL || user?.photoURL || user?.providerData?.[0]?.photoURL;
+  const displayName = profile?.name || user?.displayName || "User";
 
-  // ─── Collapsed Layout ───────────────────────────────────────────────────────
-  if (collapsed) {
-    return (
-      <div className="flex flex-col items-center h-full py-4 px-2 gap-1">
-
-        {/* Logo icon */}
-        <Link href="/" className=" mt-1">
-          <Image src={sayzoLogo} alt="Sayzo" width={32} height={32} className="rounded-lg" />
-        </Link>
-
-        {/* Search icon — mirrors search bar position in expanded mode */}
-        <button
-          title="Search"
-          className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-        >
-          <Search className="w-4.5 h-4.5" />
-        </button>
-
-        {/* Nav icons */}
-        <nav className="flex flex-col items-center gap-0.5 flex-1 w-full">
-          {menuItems.map((item) => {
-            const isActive =
-              item.href === "/dashboard"
-                ? pathname === "/dashboard"
-                : pathname.startsWith(item.href);
-            const Icon = item.icon;
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                title={item.name}
-                className={`flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-150 ${
-                  isActive
-                    ? "bg-emerald-50 text-emerald-600"
-                    : "text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-                }`}
-              >
-                <Icon className="w-4.5 h-4.5" />
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Chevron toggle */}
-        <button
-          onClick={onToggle}
-          aria-label="Expand sidebar"
-          className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-
-        {/* Settings */}
-        <Link
-          href="/dashboard/settings"
-          title="Settings"
-          className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-        >
-          <Settings className="w-4.5 h-4.5" />
-        </Link>
-
-        {/* Help / Support */}
-        <button
-          title="Support"
-          className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-        >
-          <HelpCircle className="w-4.5 h-4.5" />
-        </button>
-
-        {/* Avatar + dropdown */}
-        <div
-          className="relative"
-          ref={dropdownRef}
-          onMouseEnter={openDropdown}
-          onMouseLeave={scheduleClose}
-        >
-          <button
-            onClick={() => setDropdownOpen((v) => !v)}
-            className="focus:outline-none rounded-full"
-            aria-label="Open profile menu"
-          >
-            <Avatar user={user} photoURL={
-           user?.photoURL ||
-           user?.providerData?.[0]?.photoURL
-            } />
-          </button>
-
-          {dropdownOpen && (
-            <AvatarDropdown
-              user={user}
-              profile={profile}
-              onLogout={handleLogout}
-              direction="right"
-            />
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // ─── Expanded Layout ────────────────────────────────────────────────────────
+  // ── single unified layout — CSS transitions only, no DOM swap ──────────────
   return (
-    <div className="flex flex-col h-full py-5 px-3">
+    <div className="flex flex-col h-full overflow-hidden">
 
-      {/* Brand + Collapse Toggle */}
-      <div className="mb-5 flex items-center justify-between px-2">
-        <Link href="/" className="flex items-center">
-          <Image src={Maskgroup} alt="Sayzo" width={110} />
+      {/* ── Header ─────────────────────────────────────────────────── */}
+      <div className={`flex items-center shrink-0 py-4 transition-all duration-300 ${
+        collapsed ? "justify-center px-2" : "justify-between px-4"
+      }`}>
+
+        {/* Collapsed logo icon */}
+        <Link
+          href="/"
+          className={`transition-all duration-300 overflow-hidden ${
+            collapsed ? "opacity-100 w-8" : "opacity-0 w-0 pointer-events-none"
+          }`}
+        >
+          <Image src={sayzoLogo} alt="Sayzo" width={32} height={32} className="rounded-lg shrink-0" />
         </Link>
+
+        {/* Expanded full logo */}
+        <Link
+          href="/"
+          className={`transition-all duration-300 overflow-hidden ${
+            collapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto"
+          }`}
+        >
+          <Image src={Maskgroup} alt="Sayzo" width={110} className="shrink-0" />
+        </Link>
+
+        {/* Toggle chevron */}
         <button
           onClick={onToggle}
-          aria-label="Collapse sidebar"
-          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className={`p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0 ${
+            collapsed ? "mt-0" : ""
+          }`}
         >
-          <ChevronLeft className="w-4 h-4" />
+          {collapsed
+            ? <ChevronRight className="w-4 h-4" />
+            : <ChevronLeft  className="w-4 h-4" />}
         </button>
       </div>
 
-      {/* Search */}
-      <div className="mb-4 px-1 animate-in fade-in duration-200">
+      {/* ── Search ─────────────────────────────────────────────────── */}
+      <div className={`shrink-0 px-2 transition-all duration-300 overflow-hidden ${
+        collapsed ? "py-0 opacity-0 max-h-0" : "pb-3 opacity-100 max-h-12"
+      }`}>
         <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
           <Search className="w-4 h-4 text-gray-400 shrink-0" />
           <input
             type="text"
             placeholder="Search"
             className="bg-transparent text-sm text-gray-600 placeholder-gray-400 outline-none w-full"
+            tabIndex={collapsed ? -1 : 0}
           />
         </div>
       </div>
 
-      {/* Nav */}
-      <nav className="space-y-0.5 flex-1">
+      {/* Search icon (collapsed only) */}
+      <div className={`shrink-0 flex justify-center mb-1 transition-all duration-300 overflow-hidden ${
+        collapsed ? "opacity-100 max-h-10" : "opacity-0 max-h-0"
+      }`}>
+        <button
+          title="Search"
+          className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+        >
+          <Search className="w-4.5 h-4.5" />
+        </button>
+      </div>
+
+      {/* ── Nav ────────────────────────────────────────────────────── */}
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2 space-y-0.5">
         {menuItems.map((item) => {
           const isActive =
             item.href === "/dashboard"
@@ -306,71 +198,89 @@ export default function Sidebar({ user, collapsed, onToggle }) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-150 group ${
+              title={collapsed ? item.name : undefined}
+              className={`flex items-center py-2.5 rounded-lg transition-all duration-150 group ${
+                collapsed ? "justify-center px-2" : "gap-3 px-3"
+              } ${
                 isActive
                   ? "bg-emerald-50 text-emerald-700"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               }`}
             >
-              <Icon
-                className={`w-4.5 h-4.5 shrink-0 transition-colors ${
-                  isActive ? "text-emerald-600" : "text-gray-400 group-hover:text-gray-500"
-                }`}
-              />
-              <span>{item.name}</span>
+              <Icon className={`w-4.5 h-4.5 shrink-0 transition-colors ${
+                isActive ? "text-emerald-600" : "text-gray-400 group-hover:text-gray-500"
+              }`} />
+              <span className={`whitespace-nowrap text-sm font-medium overflow-hidden transition-all duration-300 ${
+                collapsed ? "max-w-0 opacity-0" : "max-w-50 opacity-100"
+              }`}>
+                {item.name}
+              </span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="mt-auto pt-4 border-t border-gray-100 space-y-1">
+      {/* ── Footer ─────────────────────────────────────────────────── */}
+      <div className={`shrink-0 pt-3 border-t border-gray-100 pb-3 px-2 space-y-0.5`}>
 
-        {/* Help & Support */}
-        {/* <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 cursor-pointer transition-colors">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
-          <span className="font-medium">Help & Support</span>
-        </div> */}
-
-        {/* User row + dropdown */}
-
-         <div className="py-1">
+        {/* Settings */}
         <Link
           href="/dashboard/settings"
-          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          title={collapsed ? "Settings" : undefined}
+          className={`flex items-center py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors group ${
+            collapsed ? "justify-center px-2" : "gap-3 px-3"
+          }`}
         >
-          <Settings className="w-4 h-4 text-gray-400 shrink-0" />
-          Settings
+          <Settings className="w-4.5 h-4.5 shrink-0 text-gray-400 group-hover:text-gray-500 transition-colors" />
+          <span className={`whitespace-nowrap text-sm font-medium overflow-hidden transition-all duration-300 ${
+            collapsed ? "max-w-0 opacity-0" : "max-w-50 opacity-100"
+          }`}>
+            Settings
+          </span>
         </Link>
 
+        {/* Support */}
         <button
-          className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          title={collapsed ? "Support" : undefined}
+          className={`flex items-center w-full py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors group ${
+            collapsed ? "justify-center px-2" : "gap-3 px-3"
+          }`}
         >
-          <HelpCircle className="w-4 h-4 text-gray-400 shrink-0" />
-          Support
+          <HelpCircle className="w-4.5 h-4.5 shrink-0 text-gray-400 group-hover:text-gray-500 transition-colors" />
+          <span className={`whitespace-nowrap text-sm font-medium overflow-hidden transition-all duration-300 ${
+            collapsed ? "max-w-0 opacity-0" : "max-w-50 opacity-100"
+          }`}>
+            Support
+          </span>
         </button>
-      </div>
+
+        {/* Avatar row / dropdown */}
         <div
           className="relative"
-          // ref={dropdownRef}
-          // onMouseEnter={openDropdown}
-          // onMouseLeave={scheduleClose}
+          ref={dropdownRef}
+          onMouseEnter={openDropdown}
+          onMouseLeave={scheduleClose}
         >
-          
           <button
             onClick={() => setDropdownOpen((v) => !v)}
-            className="flex items-center gap-2.5 w-full px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors text-left min-w-0"
+            className={`flex items-center w-full py-1.5 rounded-lg hover:bg-gray-50 transition-colors text-left ${
+              collapsed ? "justify-center px-2" : "gap-2.5 px-2"
+            }`}
+            aria-label="Open profile menu"
           >
-            <Avatar user={user} photoURL={
-             
-              user?.photoURL ||
-              user?.providerData?.[0]?.photoURL
-            } />
-            <div className="flex flex-col min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
-                {profile?.name || user?.displayName || "User"}
-              </p>
-              <p className="text-xs text-gray-400 truncate">{user?.email || ""}</p>
+            {/* Avatar circle */}
+            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs uppercase overflow-hidden shrink-0">
+              {avatarSrc
+                ? <img src={avatarSrc} alt="Avatar" className="w-full h-full object-cover" /> // eslint-disable-line @next/next/no-img-element
+                : (displayName.charAt(0) || "U")}
+            </div>
+
+            {/* Name + email (expanded only) */}
+            <div className={`flex flex-col min-w-0 overflow-hidden transition-all duration-300 ${
+              collapsed ? "max-w-0 opacity-0" : "max-w-40 opacity-100"
+            }`}>
+              <p className="text-sm font-medium text-gray-900 truncate whitespace-nowrap">{displayName}</p>
+              <p className="text-xs text-gray-400 truncate whitespace-nowrap">{user?.email || ""}</p>
             </div>
           </button>
 
@@ -379,7 +289,7 @@ export default function Sidebar({ user, collapsed, onToggle }) {
               user={user}
               profile={profile}
               onLogout={handleLogout}
-              direction="up"
+              direction={collapsed ? "right" : "up"}
             />
           )}
         </div>
