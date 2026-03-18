@@ -26,7 +26,7 @@ import { logoutUser, subscribeToUserProfile } from "@/lib/firebase";
 
 const menuItems = [
   { name: "Home",          href: "/dashboard",               icon: Home          },
-  { name: "My Tasks",      href: "/dashboard/tasks",         icon: Briefcase     },
+  { name: "My Tasks",      href: "/dashboard/my-tasks",         icon: Briefcase     },
   { name: "Applied Tasks", href: "/dashboard/applied-tasks", icon: ClipboardList },
   { name: "Earnings",      href: "/dashboard/earnings",      icon: TrendingUp    },
   { name: "Chat",          href: "/dashboard/chat",          icon: MessageSquare },
