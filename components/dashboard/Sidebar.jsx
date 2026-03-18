@@ -24,15 +24,17 @@ import {
   X,
 } from "lucide-react";
 import { logoutUser, subscribeToUserProfile } from "@/lib/firebase";
+import { useRole } from "@/context/RoleContext";
 
+// role: null = always visible | "giver" = Giver only | "doer" = Doer only
 const menuItems = [
-  { name: "Home",          href: "/dashboard",               icon: Home          },
-  { name: "My Tasks",      href: "/dashboard/my-tasks",         icon: Briefcase     },
-  { name: "Applied Tasks", href: "/dashboard/applied-tasks", icon: ClipboardList },
-  { name: "Earnings",      href: "/dashboard/earnings",      icon: TrendingUp    },
-  { name: "Chat",          href: "/dashboard/chat",          icon: MessageSquare },
-  { name: "Notifications", href: "/dashboard/notifications", icon: Bell          },
-  { name: "Profile",       href: "/dashboard/profile",       icon: User          },
+  { name: "Home",          href: "/dashboard",               icon: Home,          role: null    },
+  { name: "My Tasks",      href: "/dashboard/my-tasks",      icon: Briefcase,     role: "giver" },
+  { name: "Applied Tasks", href: "/dashboard/applied-tasks", icon: ClipboardList, role: "doer"  },
+  { name: "Earnings",      href: "/dashboard/earnings",      icon: TrendingUp,    role: null    },
+  { name: "Chat",          href: "/dashboard/chat",          icon: MessageSquare, role: null    },
+  { name: "Notifications", href: "/dashboard/notifications", icon: Bell,          role: null    },
+  { name: "Profile",       href: "/dashboard/profile",       icon: User,          role: null    },
 ];
 
 function AvatarDropdown({ user, profile, onLogout, direction }) {
@@ -94,6 +96,7 @@ function AvatarDropdown({ user, profile, onLogout, direction }) {
 
 export default function Sidebar({ user, collapsed, onToggle, onClose }) {
   const pathname     = usePathname();
+  const { role }     = useRole();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profile, setProfile]           = useState(null);
   const dropdownRef  = useRef(null);
@@ -199,7 +202,7 @@ export default function Sidebar({ user, collapsed, onToggle, onClose }) {
 
       {/* ── Nav ────────────────────────────────────────────────────── */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2 space-y-0.5">
-        {menuItems.map((item) => {
+        {menuItems.filter((item) => !item.role || item.role === role).map((item) => {
           const isActive =
             item.href === "/dashboard"
               ? pathname === "/dashboard"
