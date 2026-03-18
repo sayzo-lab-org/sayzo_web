@@ -19,9 +19,10 @@
     .info-row:last-child { margin-bottom: 0; }
     .info-label { color: #6b7280; min-width: 90px; }
     .info-value { color: #111827; font-weight: 600; }
-    .cta-btn { display: block; width: fit-content; background: #0f0f0f; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 15px; }
+    
     .footer { border-top: 1px solid #e5e7eb; padding: 24px 40px; color: #9ca3af; font-size: 13px; }
     .footer a { color: #6b7280; text-decoration: none; }
+    
   </style>
 </head>
 <body>
@@ -45,7 +46,19 @@
         Don't be discouraged — there are more tasks waiting for you. Keep applying!
       </p>
 
-      <a href="{{appLink}}" class="cta-btn">Browse More Tasks →</a>
+      
+  <a href="{{appLink}}"
+   style="
+     display: inline-block;
+     background: #0f0f0f;
+     color: #ffffff !important;
+     text-decoration: none !important;
+     padding: 14px 32px;
+     border-radius: 8px;
+     font-weight: 600;
+     font-size: 15px;
+   ">
+      >Browse More Tasks →</a>
     </div>
     <div class="footer">
       You applied for a task on <a href="{{appLink}}">Sayzo</a>.<br/>
