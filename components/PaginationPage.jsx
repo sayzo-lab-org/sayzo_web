@@ -9,10 +9,10 @@ const PaginationPage = ({ currentPage, totalPages, onPageChange }) => {
         <button
           key={i}
           onClick={() => onPageChange(i + 1)}
-          className={`px-3 py-1 rounded-md text-sm transition ${
+          className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
             currentPage === i + 1
-              ? "bg-primary-btn text-black"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              ? "bg-emerald-600 text-white shadow-sm"
+              : "bg-white text-gray-600 border border-gray-200 hover:bg-emerald-50 hover:text-emerald-700"
           }`}
         >
           {i + 1}

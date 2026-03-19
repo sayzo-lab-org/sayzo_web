@@ -14,7 +14,7 @@ const CustomIcons = ({ page, count, onChange }) => {
       <Pagination
         page={page}
         count={count}
-        onChange={(e, value) => onChange(value)}
+        onChange={(_, value) => onChange(value)}
         shape="rounded"
         renderItem={(item) => (
           <PaginationItem
@@ -28,17 +28,18 @@ const CustomIcons = ({ page, count, onChange }) => {
               borderRadius: "8px",
 
               "&:hover": {
-                backgroundColor: "#E5E7EB", // gray-200
+                backgroundColor: "#d1fae5", // emerald-100
+                color: "#047857", // emerald-700
               },
 
               "&.Mui-selected": {
-                backgroundColor: "#16A34A", // green-600
+                backgroundColor: "#059669", // emerald-600
                 color: "#ffffff",
                 fontWeight: 600,
               },
 
               "&.Mui-selected:hover": {
-                backgroundColor: "#15803D", // darker green
+                backgroundColor: "#047857", // emerald-700
               },
             }}
           />
