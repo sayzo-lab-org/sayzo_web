@@ -23,7 +23,7 @@ import {
   Bell,
   X,
 } from "lucide-react";
-import { logoutUser, subscribeToUserProfile } from "@/lib/firebase";
+import { logoutUser, subscribeToUserProfile, subscribeToNotifications } from "@/lib/firebase";
 import { useRole } from "@/context/RoleContext";
 
 // role: null = always visible | "giver" = Giver only | "doer" = Doer only
@@ -97,14 +97,23 @@ function AvatarDropdown({ user, profile, onLogout, direction }) {
 export default function Sidebar({ user, collapsed, onToggle, onClose }) {
   const pathname     = usePathname();
   const { role }     = useRole();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [profile, setProfile]           = useState(null);
+  const [dropdownOpen, setDropdownOpen]   = useState(false);
+  const [profile, setProfile]             = useState(null);
+  const [unreadCount, setUnreadCount]     = useState(0);
   const dropdownRef  = useRef(null);
   const closeTimer   = useRef(null);
 
   useEffect(() => {
     if (!user?.uid) return;
     const unsub = subscribeToUserProfile(user.uid, setProfile);
+    return () => unsub();
+  }, [user?.uid]);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+    const unsub = subscribeToNotifications(user.uid, (notifs) => {
+      setUnreadCount(notifs.filter((n) => !n.read).length);
+    });
     return () => unsub();
   }, [user?.uid]);
 
@@ -209,6 +218,9 @@ export default function Sidebar({ user, collapsed, onToggle, onClose }) {
               : pathname.startsWith(item.href);
           const Icon = item.icon;
 
+          const isNotifications = item.href === "/dashboard/notifications";
+          const badge = isNotifications && unreadCount > 0 ? unreadCount : 0;
+
           return (
             <Link
               key={item.href}
@@ -223,9 +235,16 @@ export default function Sidebar({ user, collapsed, onToggle, onClose }) {
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               }`}
             >
-              <Icon className={`w-4.5 h-4.5 shrink-0 transition-colors ${
-                isActive ? "text-emerald-600" : "text-gray-400 group-hover:text-gray-500"
-              }`} />
+              <div className="relative shrink-0">
+                <Icon className={`w-4.5 h-4.5 transition-colors ${
+                  isActive ? "text-emerald-600" : "text-gray-400 group-hover:text-gray-500"
+                }`} />
+                {badge > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center leading-none">
+                    {badge > 99 ? "99+" : badge}
+                  </span>
+                )}
+              </div>
               <span className={`whitespace-nowrap text-sm font-medium overflow-hidden transition-all duration-300 ${
                 collapsed ? "max-w-0 opacity-0" : "max-w-50 opacity-100"
               }`}>
