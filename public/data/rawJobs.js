@@ -3408,6 +3408,115 @@ export const rawJobs = [
       "amount": "₹1,500",
       "type": "Fixed"
     }
+  },
+  {
+    "id": 156,
+    "type": "offline",
+    "title": "Vehicle Re-Inspection Before Delivery",
+    "deadline": "4–6 hours",
+    "price": "700",
+    "work_mode": "Offline",
+    "skills": [
+      "Vehicle Inspection",
+      "Attention to Detail",
+      "Photo Documentation"
+    ],
+    "description": "Perform a last-mile inspection of a vehicle before delivery to the buyer. This includes checking for any new damages, verifying cleanliness, confirming accessories, and capturing fresh photos/videos to ensure the vehicle matches platform listing standards.",
+    "company": {
+      "name": "Rahul Verma",
+      "about": "Verified task giver on the platform"
+    },
+    "budget": {
+      "amount": "₹700",
+      "type": "Fixed"
+    }
+  },
+  {
+    "id": 157,
+    "type": "offline",
+    "title": "RC Transfer Physical Follow-up",
+    "deadline": "1–2 days",
+    "price": "1,200",
+    "work_mode": "Offline",
+    "skills": [
+      "Field Operations",
+      "Documentation",
+      "Local Coordination"
+    ],
+    "description": "Visit local RTO offices to follow up on RC transfer processes, collect status updates, submit pending documents, and coordinate between buyer, seller, and RTO agents to avoid delays.",
+    "company": {
+      "name": "Amit Sharma",
+      "about": "Verified task giver on the platform"
+    },
+    "budget": {
+      "amount": "₹1,200",
+      "type": "Fixed"
+    }
+  },
+  {
+    "id": 158,
+    "type": "offline",
+    "title": "Parking Yard Audit & Inventory Check",
+    "deadline": "1 day",
+    "price": "900",
+    "work_mode": "Offline",
+    "skills": [
+      "Inventory Management",
+      "Verification",
+      "Reporting"
+    ],
+    "description": "Visit the vehicle yard and audit inventory. This includes counting vehicles, verifying VIN numbers, checking condition discrepancies, and uploading a structured report with images.",
+    "company": {
+      "name": "Neha Kapoor",
+      "about": "Verified task giver on the platform"
+    },
+    "budget": {
+      "amount": "₹900",
+      "type": "Fixed"
+    }
+  },
+  {
+    "id": 159,
+    "type": "offline",
+    "title": "Seller Home Pickup Coordination",
+    "deadline": "3–5 hours",
+    "price": "800",
+    "work_mode": "Offline",
+    "skills": [
+      "Communication",
+      "Field Coordination",
+      "Basic Verification"
+    ],
+    "description": "Visit a seller’s location to coordinate vehicle pickup. This includes ensuring the car is ready, verifying documents, assisting the logistics team, and handling basic seller queries during handover.",
+    "company": {
+      "name": "Siddharth Jain",
+      "about": "Verified task giver on the platform"
+    },
+    "budget": {
+      "amount": "₹800",
+      "type": "Fixed"
+    }
+  },
+  {
+    "id": 160,
+    "type": "offline",
+    "title": "Test Drive Experience Auditor (Mystery User)",
+    "deadline": "1 day",
+    "price": "1,500",
+    "work_mode": "Offline",
+    "skills": [
+      "Observation",
+      "Reporting",
+      "Communication"
+    ],
+    "description": "Act as a buyer and go through the test drive experience. Evaluate punctuality, vehicle condition, staff behavior, and overall experience, then submit a detailed feedback report.",
+    "company": {
+      "name": "Priya Nair",
+      "about": "Verified task giver on the platform"
+    },
+    "budget": {
+      "amount": "₹1,500",
+      "type": "Fixed"
+    }
   }
-
 ];
