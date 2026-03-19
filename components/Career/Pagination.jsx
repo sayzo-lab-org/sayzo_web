@@ -10,9 +10,9 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           key={p}
           onClick={() => onPageChange(p)}
           className={`w-10 h-10 flex items-center justify-center rounded-full text-[16px] font-medium transition-all ${
-            p === currentPage 
-              ? 'bg-[#13a884] text-white' 
-              : 'text-[#9ca3af] hover:text-[#13a884]'
+            p === currentPage
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'text-gray-400 hover:bg-emerald-50 hover:text-emerald-700'
           }`}
         >
           {p}
