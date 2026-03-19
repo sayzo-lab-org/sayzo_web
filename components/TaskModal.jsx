@@ -229,9 +229,9 @@ const TaskModal = ({ isOpen, onClose }) => {
   const checkUserProfileAndSetup = async (user) => {
     if (!user) return;
     try {
-      const complete = await isProfileComplete(user.uid);
+      const profile = contextProfile || await getUserProfile(user.uid);
+      const complete = profile?.profileCompleted === true;
       if (complete) {
-        const profile = await getUserProfile(user.uid);
         setUserProfile(profile);
         setIsVerified(true);
         setEmail(user.email || "");
@@ -252,7 +252,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const { user: contextUser, userProfile: contextProfile, isLoading: authContextLoading } = useAuth();
+  const { user: contextUser, userProfile: contextProfile, isLoading: authContextLoading, refreshProfile } = useAuth();
 
   useEffect(() => {
     if (!isOpen || authContextLoading) return;
@@ -326,6 +326,7 @@ const TaskModal = ({ isOpen, onClose }) => {
       phone: profileData.phone || "",
       customerName: profileData.fullName || "",
     }));
+    refreshProfile().catch(() => {});
   };
 
   // ── Validation ─────────────────────────────────────────────────────────────

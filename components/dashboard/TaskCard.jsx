@@ -27,6 +27,7 @@ export default function TaskCard({
   href,
   actionLabel,
   taskId,
+  onView,
 }) {
   return (
     <article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -36,6 +37,8 @@ export default function TaskCard({
           <span className={`rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ${
             status.toLowerCase().includes("reject")
               ? "bg-red-50 text-red-600"
+              : status.toLowerCase().includes("pending")
+              ? "bg-yellow-50 text-yellow-600"
               : "bg-emerald-50 text-emerald-700"
           }`}>
             {status}
@@ -44,7 +47,7 @@ export default function TaskCard({
       </div>
 
       <div className="mt-4 space-y-2 text-sm text-gray-600">
-        {variant === "posted" && description ? (
+        {description ? (
           <p className="line-clamp-2 text-sm text-gray-600">{description}</p>
         ) : null}
 
@@ -53,25 +56,34 @@ export default function TaskCard({
           <span>{formatBudget(budget)}</span>
         </div> */}
 
-        {variant === "posted" ? (
-          <div className="flex items-center gap-2">
-          </div>
-        ) : (
+        {variant === "applied" && (
           <>
-            <div className="flex items-center gap-2">
-              <User2 className="h-4 w-4 text-gray-400" />
-              <span>{taskGiver || "Task Giver"}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ClipboardCheck className="h-4 w-4 text-gray-400" />
-              <span>{status || "Pending"}</span>
-            </div>
+            {/* {taskGiver && (
+              <div className="flex items-center gap-2">
+                <User2 className="h-4 w-4 text-gray-400 shrink-0" />
+                <span className="truncate">{taskGiver}</span>
+              </div>
+            )} */}
+            {budget ? (
+              <div className="flex items-center gap-2">
+                <Banknote className="h-4 w-4 text-gray-400 shrink-0" />
+                <span>{formatBudget(budget)}</span>
+              </div>
+            ) : null}
           </>
         )}
       </div>
 
       <div className="mt-5 flex items-center gap-2 flex-wrap">
-        {href ? (
+        {onView ? (
+          <button
+            type="button"
+            onClick={onView}
+            className="inline-flex items-center justify-center rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            {actionLabel || "View"}
+          </button>
+        ) : href ? (
           <Link
             href={href}
             className="inline-flex items-center justify-center rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
