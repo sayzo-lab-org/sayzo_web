@@ -456,7 +456,7 @@ export default function TaskApplicantsPage() {
           <p className="mt-1 text-xs text-gray-400">Applications will appear here automatically.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 items-start">
           {visibleApplicants.map((applicant) => (
             <ApplicantCard
               key={applicant.id}
