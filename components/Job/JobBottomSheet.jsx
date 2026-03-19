@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronDown, CheckCircle, User, ArrowUpRight } from "lucide-react";
+import { CheckCircle, User, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ApplicationModal from "../ApplicationModal";
@@ -10,8 +10,6 @@ import WaitlistModal from "../JoinWaitList/WaitlistModal";
 import { useRouter } from "next/navigation";
 
 const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onApplicationSuccess, mode = "live" }) => {
-  const [showSkills, setShowSkills] = useState(false);
-  const [showClient, setShowClient] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
@@ -137,48 +135,26 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
           </div>
 
           {/* SKILLS */}
-          <div className="mt-5">
-            <button
-              onClick={() => setShowSkills(!showSkills)}
-              className="w-full flex items-center justify-between font-medium"
-            >
-              Skills Required
-              <ChevronDown
-                className={`transition ${showSkills ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {showSkills && (
-              <div className="flex flex-wrap gap-2 mt-3">
-                {job.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs px-2 py-1 rounded-md bg-gray-100"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
+          <div className="mt-6">
+            <p className="font-medium text-gray-800 mb-3">Skills Required</p>
+            <div className="flex flex-wrap gap-2">
+              {job.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs px-2 py-1 rounded-md bg-gray-100"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* CLIENT */}
-          <div className="mt-5">
-            <button
-              onClick={() => setShowClient(!showClient)}
-              className="w-full flex items-center justify-between font-medium"
-            >
-              About the Client
-              <ChevronDown
-                className={`transition ${showClient ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {showClient && (
-              <p className="text-sm text-gray-600 mt-3">
-                {job.company?.name} is looking for skilled professionals.
-              </p>
-            )}
+          <div className="mt-6">
+            <p className="font-medium text-gray-800 mb-3">About the Client</p>
+            <p className="text-sm text-gray-600">
+              {job.company?.name} is looking for skilled professionals.
+            </p>
           </div>
         </div>
 
