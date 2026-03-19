@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Bell, Menu, Search, Send } from "lucide-react";
 import { subscribeToUserProfile } from "@/lib/firebase";
 import Toggle from "../Toggle";
+import TaskModal from "../TaskModal";
 
 function getInitials(nameOrEmail) {
   const source = String(nameOrEmail || "").trim();
@@ -25,7 +26,8 @@ function getInitials(nameOrEmail) {
 export default function Topbar({ user, onMenuClick }) {
   const pathname = usePathname();
   const [profile, setProfile] = useState(null);
-  
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+
 
   useEffect(() => {
     if (!user?.uid) return;
@@ -89,15 +91,21 @@ export default function Topbar({ user, onMenuClick }) {
       </button>
 
       {/* 3. Send / Message Button */}
-      <button 
+      <button
         aria-label="Send Message"
+        onClick={() => setIsTaskModalOpen(true)}
         className="relative p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-gray-400"
       >
         <Send className="w-5 h-5" />
       </button>
+
+       <TaskModal isOpen={isTaskModalOpen} onClose={() => setIsTaskModalOpen(false)} />
+
+
     </div>
     </div>
-  );
+
+  )
 }
 
 
