@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { CheckCircle, User, ArrowUpRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ApplicationModal from "../ApplicationModal";
@@ -76,6 +77,20 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
             pb-5
           "
         >
+          {/* CLIENT INFO */}
+          <div className="flex items-center gap-2 mb-3">
+            <Image
+              src={job.giver?.photo || "https://github.com/shadcn.png"}
+              alt="Task giver"
+              width={24}
+              height={24}
+              className="rounded-full"
+            />
+            <p className="text-sm text-gray-500">
+              {job.company?.name || "Independent Task Giver"}
+            </p>
+          </div>
+
           <h2 className="text-xl font-medium">
             {job.title}
           </h2>
@@ -88,19 +103,9 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
             </div>
           )}
 
-          {/* COMPANY */}
-          <div className="flex items-center gap-2 mt-3">
-            <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-semibold">
-              {job.company?.name?.[0]}
-            </div>
-            <p className="text-sm text-gray-500">
-              {job.company?.name}
-            </p>
-          </div>
-
-          {/* SUMMARY */}
+          {/* TASK DESCRIPTION */}
           <div className="mt-4">
-            <p className="text-sm text-gray-400 mb-1">Summary</p>
+            <p className="text-sm text-gray-400 mb-1">Task Description</p>
             <p className="text-sm text-gray-800 leading-relaxed">
               {job.description}
             </p>
@@ -149,11 +154,11 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
             </div>
           </div>
 
-          {/* CLIENT */}
+          {/* ABOUT TASK GIVER */}
           <div className="mt-6">
-            <p className="font-medium text-gray-800 mb-3">About the Client</p>
+            <p className="font-medium text-gray-800 mb-3">About the Task Giver</p>
             <p className="text-sm text-gray-600">
-              {job.company?.name} is looking for skilled professionals.
+              {job.company?.about || "Verified SAYZO task giver"}
             </p>
           </div>
         </div>
