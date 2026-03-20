@@ -60,6 +60,10 @@ function CategoryCombobox({ value, onChange, onBlur, hasError }) {
   const [open, setOpen]     = useState(false);
   const containerRef        = useRef(null);
   const inputRef            = useRef(null);
+  const openRef             = useRef(false);
+
+  // Keep ref in sync with state to avoid stale closure in mousedown listener
+  useEffect(() => { openRef.current = open; }, [open]);
 
   const filtered = query.trim()
     ? CATEGORIES.filter((c) =>
@@ -69,13 +73,15 @@ function CategoryCombobox({ value, onChange, onBlur, hasError }) {
 
   const selected = CATEGORIES.find((c) => c.value === value);
 
-  // Close on outside click
+  // Close on outside click — only fire onBlur if the dropdown was open
   useEffect(() => {
     function onMouseDown(e) {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setOpen(false);
-        setQuery("");
-        onBlur?.();
+        if (openRef.current) {
+          setOpen(false);
+          setQuery("");
+          onBlur?.();
+        }
       }
     }
     document.addEventListener("mousedown", onMouseDown);
@@ -159,10 +165,10 @@ function CategoryCombobox({ value, onChange, onBlur, hasError }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-const TaskModal = ({ isOpen, onClose }) => {
+const TaskModal = ({ isOpen, onClose, defaultTaskType = "online" }) => {
   const [loading, setLoading]               = useState(false);
   const [success, setSuccess]               = useState(false);
-  const [taskType, setTaskType]             = useState("online");
+  const [taskType, setTaskType]             = useState(defaultTaskType);
   const [error, setError]                   = useState("");
   const [formPhase, setFormPhase]           = useState("edit");
 
@@ -254,6 +260,10 @@ const TaskModal = ({ isOpen, onClose }) => {
   };
 
   const { user: contextUser, userProfile: contextProfile, isLoading: authContextLoading, refreshProfile } = useAuth();
+
+  useEffect(() => {
+    if (isOpen) setTaskType(defaultTaskType);
+  }, [isOpen, defaultTaskType]);
 
   useEffect(() => {
     if (!isOpen || authContextLoading) return;
