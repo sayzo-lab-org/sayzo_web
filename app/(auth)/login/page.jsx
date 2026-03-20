@@ -12,7 +12,7 @@ import { useAuth } from "@/app/Context/AuthContext";
 import { isAdminEmail } from "@/lib/adminConfig";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,6 +23,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   // FIXED: Check for user existence before accessing properties
   useEffect(() => {
@@ -133,14 +134,24 @@ export default function LoginPage() {
                 Forgot?
               </button>
             </div>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              className="w-full bg-[#F8F9FB] border-none rounded-xl md:rounded-2xl py-2.5 md:py-3.5 px-4 text-gray-600 text-xs md:text-base focus:ring-1 focus:ring-[#0ca37f] outline-none transition-all"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                className="w-full bg-[#F8F9FB] border-none rounded-xl md:rounded-2xl py-2.5 md:py-3.5 pl-4 pr-10 text-gray-600 text-xs md:text-base focus:ring-1 focus:ring-[#0ca37f] outline-none transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label="Toggle password visibility"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#0ca37f] transition-colors"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
           </div>
 
           <button 
