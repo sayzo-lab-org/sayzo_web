@@ -83,7 +83,7 @@ export default function Topbar({ user, onMenuClick }) {
       {/* 2. Notification Bell */}
       <button 
         aria-label="Notifications"
-        className="relative p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-gray-400"
+        className="relative p-2 text-gray-500 hover:scale-105 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-gray-400"
       >
         <Bell className="w-5 h-5" />
         {/* Slightly larger dot so the red is more visible inside the border */}
@@ -94,7 +94,7 @@ export default function Topbar({ user, onMenuClick }) {
       <button
         aria-label="Send Message"
         onClick={() => setIsTaskModalOpen(true)}
-        className="relative p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-gray-400"
+        className="relative p-2 text-white bg-black  rounded-full transition-colors focus:outline-none focus-visible:ring-2 hover:scale-105"
       >
         <Send className="w-5 h-5" />
       </button>

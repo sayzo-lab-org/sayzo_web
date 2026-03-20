@@ -44,7 +44,7 @@ export default function DashboardLayout({ children }) {
 
       {/* ── Desktop Sidebar (md+) ─────────────────────────────────── */}
       <aside
-        className={`hidden md:block shrink-0 border-r bg-white h-full overflow-y-auto transition-all duration-300 ${
+        className={`hidden md:block shrink-0 border-r border-gray-200 bg-white h-full overflow-y-auto transition-all duration-300 ${
           sidebarCollapsed ? "w-15" : "w-64"
         }`}
       >
@@ -83,7 +83,7 @@ export default function DashboardLayout({ children }) {
 
       {/* ── Main Content ──────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col h-full min-w-0">
-        <header className="h-16 shrink-0 bg-white border-b border-gray-100">
+        <header className="h-16 shrink-0 bg-white ">
           <Topbar user={user} onMenuClick={() => setIsSidebarOpen(true)} />
         </header>
 

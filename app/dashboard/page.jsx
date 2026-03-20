@@ -29,35 +29,12 @@ export default function DashboardHomePage() {
   return (
     <div className="flex flex-col items-center min-h-[calc(100vh-128px)] py-35 gap-10">
 
-      {/* Metrics Row
-      <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3">
-        <MetricsCard
-          title="Total Posted"
-          value={loading ? "..." : metrics.totalTasksPosted}
-          icon={BriefcaseBusiness}
-        />
-        <MetricsCard
-          title="Active"
-          value={loading ? "..." : metrics.activeTasks}
-          icon={PlayCircle}
-        />
-        <MetricsCard
-          title="Completed"
-          value={loading ? "..." : metrics.completedTasks}
-          icon={CheckCircle2}
-        />
-        <MetricsCard
-          title="Applied"
-          value={loading ? "..." : metrics.appliedTasks}
-          icon={ClipboardCheck}
-        />
-      </div> */}
-
+    
       {/* Help Center */}
       <div className="w-full max-w-2xl flex flex-col items-center gap-6">
         <Image src={Maskgroup} alt="Sayzo" width={140} />
 
-        <h2 className="text-3xl font-bold text-gray-900 text-center">
+        <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 text-center">
           What can I help you with?
         </h2>
 
