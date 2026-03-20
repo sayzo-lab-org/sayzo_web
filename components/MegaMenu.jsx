@@ -11,6 +11,7 @@ const MegaMenu = () => {
   const [showRight, setShowRight] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  const containerRef = useRef(null);
   const navRef = useRef(null);
   const scrollRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -37,10 +38,16 @@ const MegaMenu = () => {
     if (item && nav) {
       const itemRect = item.getBoundingClientRect();
       const navRect = nav.getBoundingClientRect();
+      const containerRect = containerRef.current?.getBoundingClientRect();
 
-      setDropdownStyle({
-        left: itemRect.left - navRect.left,
-      });
+      const DROPDOWN_WIDTH = 600;
+      const isOverflowingRight = itemRect.left + DROPDOWN_WIDTH > window.innerWidth;
+
+      if (isOverflowingRight && containerRect) {
+        setDropdownStyle({ right: containerRect.right - itemRect.right });
+      } else {
+        setDropdownStyle({ left: itemRect.left - navRect.left });
+      }
     }
 
     setActiveCategory(slug);
@@ -111,7 +118,7 @@ const MegaMenu = () => {
 
   /* ==================================================== */
   return (
-    <div className="relative border-b border-border">
+    <div ref={containerRef} className="relative border-b border-border">
       <nav ref={navRef} className="max-w-350 mx-auto relative">
         {/* LEFT CHEVRON */}
         {showLeft && (
@@ -177,7 +184,7 @@ const MegaMenu = () => {
         <div
           ref={dropdownRef}
           className={`absolute top-full z-50 ${isMobile ? "left-0 right-0 px-4" : ""}`}
-          style={!isMobile ? { left: dropdownStyle.left } : undefined}
+          style={!isMobile ? dropdownStyle : undefined}
           onMouseEnter={() => handleMouseEnter(activeCategory)}
           onMouseLeave={handleMouseLeave}
         >
