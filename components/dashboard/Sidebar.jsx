@@ -134,7 +134,7 @@ export default function Sidebar({ user, collapsed, onToggle, onClose }) {
 
       {/* ── Header ─────────────────────────────────────────────────── */}
       <div className={`flex items-center shrink-0 py-4 transition-all duration-300 ${
-        collapsed ? "justify-center px-2" : "justify-between px-4"
+        collapsed ? "justify-center px-2" : "justify-start px-4"
       }`}>
 
         {/* Collapsed logo icon */}
@@ -161,7 +161,7 @@ export default function Sidebar({ user, collapsed, onToggle, onClose }) {
         <button
           onClick={onToggle}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className={`hidden md:flex p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0 ${
+          className={`hidden md:flex p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0 ml-auto ${
             collapsed ? "mt-0" : ""
           }`}
         >
@@ -293,9 +293,9 @@ export default function Sidebar({ user, collapsed, onToggle, onClose }) {
         {/* Avatar row / dropdown */}
         <div
           className="relative"
-          ref={dropdownRef}
-          onMouseEnter={openDropdown}
-          onMouseLeave={scheduleClose}
+          // ref={dropdownRef}
+          // onMouseEnter={openDropdown}
+          // onMouseLeave={scheduleClose}
         >
           <button
             onClick={() => setDropdownOpen((v) => !v)}
