@@ -37,13 +37,14 @@ const baseInput = (hasError) =>
    ${hasError ? "border-red-400 focus:ring-red-300" : "border-gray-300 focus:ring-emerald-500"}`;
 
 /** Native <select> with aligned custom arrow — fixes the browser misalignment */
-function SelectField({ name, value, onChange, hasError, children }) {
+function SelectField({ name, value, onChange, onBlur, hasError, children }) {
   return (
     <div className="relative">
       <select
         name={name}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
         className={`${baseInput(hasError)} appearance-none pr-10 cursor-pointer`}
       >
         {children}
@@ -54,7 +55,7 @@ function SelectField({ name, value, onChange, hasError, children }) {
 }
 
 /** Searchable / fuzzy-search combobox for the category field */
-function CategoryCombobox({ value, onChange, hasError }) {
+function CategoryCombobox({ value, onChange, onBlur, hasError }) {
   const [query, setQuery]   = useState("");
   const [open, setOpen]     = useState(false);
   const containerRef        = useRef(null);
@@ -74,11 +75,12 @@ function CategoryCombobox({ value, onChange, hasError }) {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
         setOpen(false);
         setQuery("");
+        onBlur?.();
       }
     }
     document.addEventListener("mousedown", onMouseDown);
     return () => document.removeEventListener("mousedown", onMouseDown);
-  }, []);
+  }, [onBlur]);
 
   const handleToggle = () => {
     setOpen((o) => {
@@ -165,7 +167,6 @@ const TaskModal = ({ isOpen, onClose }) => {
   const [formPhase, setFormPhase]           = useState("edit");
 
   const [fieldErrors, setFieldErrors]       = useState({});
-  const [hasSubmitted, setHasSubmitted]     = useState(false);
 
   // Scope of Work step
   const [agreedToScope, setAgreedToScope]   = useState(false);
@@ -197,7 +198,7 @@ const TaskModal = ({ isOpen, onClose }) => {
   });
 
   // Helper: field class (text inputs)
-  const fc = (field) => baseInput(hasSubmitted && !!fieldErrors[field]);
+  const fc = (field) => baseInput(!!fieldErrors[field]);
 
   // ── Draft restore ──────────────────────────────────────────────────────────
   const restoreFormDraft = () => {
@@ -265,11 +266,44 @@ const TaskModal = ({ isOpen, onClose }) => {
   // ── Form handlers ──────────────────────────────────────────────────────────
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // Clear error immediately when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({ ...prev, [name]: "" }));
+    }
     if (name === "budgetType") {
       setForm((p) => ({ ...p, budgetType: value, amount: "" }));
       return;
     }
     setForm((p) => ({ ...p, [name]: value }));
+  };
+
+  // ── Per-field validation (used by handleBlur) ──────────────────────────────
+  const validateField = (name, value) => {
+    switch (name) {
+      case "customerName":  return value.trim() ? "" : "Your name is required";
+      case "taskName":      return value.trim() ? "" : "Task name is required";
+      case "category":      return value ? "" : "Please select a category";
+      case "description":
+        return value.trim().length >= DESCRIPTION_MIN
+          ? ""
+          : `Description must be at least ${DESCRIPTION_MIN} characters`;
+      case "amount":
+        if (!String(value).trim()) return "Amount is required";
+        if (isNaN(value))          return "Amount must be a number";
+        return "";
+      case "projectType":   return value ? "" : "Select project type";
+      case "projectLength": return value.trim() ? "" : "Project length is required";
+      case "experience":    return value ? "" : "Select experience level";
+      case "location":
+        return taskType === "offline" && !value.trim() ? "Location is required" : "";
+      default: return "";
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    if (error) setFieldErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const validateEmail = (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
@@ -280,6 +314,7 @@ const TaskModal = ({ isOpen, onClose }) => {
     if (skill && !form.skills.includes(skill)) {
       setForm((prev) => ({ ...prev, skills: [...prev.skills, skill] }));
       setSkillInput("");
+      if (fieldErrors.skills) setFieldErrors((prev) => ({ ...prev, skills: "" }));
     }
   };
 
@@ -353,7 +388,6 @@ const TaskModal = ({ isOpen, onClose }) => {
   };
 
   const handleNextToScope = () => {
-    setHasSubmitted(true);
     if (validate()) {
       setScopeError("");
       setFormPhase("scope");
@@ -375,7 +409,6 @@ const TaskModal = ({ isOpen, onClose }) => {
 
   // ── Submit ─────────────────────────────────────────────────────────────────
   const submitTask = async () => {
-    setHasSubmitted(true);
     if (!validate()) return;
     setError("");
     setLoading(true);
@@ -563,8 +596,9 @@ const TaskModal = ({ isOpen, onClose }) => {
                         name="taskName"
                         value={form.taskName}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                       />
-                      {hasSubmitted && fieldErrors.taskName && (
+                      {fieldErrors.taskName && (
                         <p className="text-xs text-red-500">{fieldErrors.taskName}</p>
                       )}
                     </div>
@@ -579,8 +613,9 @@ const TaskModal = ({ isOpen, onClose }) => {
                           name="location"
                           value={form.location}
                           onChange={handleChange}
+                          onBlur={handleBlur}
                         />
-                        {hasSubmitted && fieldErrors.location && (
+                        {fieldErrors.location && (
                           <p className="text-xs text-red-500">{fieldErrors.location}</p>
                         )}
                       </div>
@@ -592,9 +627,12 @@ const TaskModal = ({ isOpen, onClose }) => {
                       <CategoryCombobox
                         value={form.category}
                         onChange={handleChange}
-                        hasError={hasSubmitted && !!fieldErrors.category}
+                        onBlur={() => {
+                          if (!form.category) setFieldErrors((prev) => ({ ...prev, category: "Please select a category" }));
+                        }}
+                        hasError={!!fieldErrors.category}
                       />
-                      {hasSubmitted && fieldErrors.category && (
+                      {fieldErrors.category && (
                         <p className="text-xs text-red-500">{fieldErrors.category}</p>
                       )}
                     </div>
@@ -613,13 +651,14 @@ const TaskModal = ({ isOpen, onClose }) => {
                         name="description"
                         value={form.description}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         onInput={(e) => {
                           e.target.style.height = "auto";
                           e.target.style.height = e.target.scrollHeight + "px";
                         }}
                         rows={3}
                       />
-                      {hasSubmitted && fieldErrors.description && (
+                      {fieldErrors.description && (
                         <p className="text-xs text-red-500">{fieldErrors.description}</p>
                       )}
                     </div>
@@ -642,8 +681,9 @@ const TaskModal = ({ isOpen, onClose }) => {
                           name="amount"
                           value={form.amount}
                           onChange={handleChange}
+                          onBlur={handleBlur}
                         />
-                        {hasSubmitted && fieldErrors.amount && (
+                        {fieldErrors.amount && (
                           <p className="text-xs text-red-500">{fieldErrors.amount}</p>
                         )}
                       </div>
@@ -657,13 +697,14 @@ const TaskModal = ({ isOpen, onClose }) => {
                           name="projectType"
                           value={form.projectType}
                           onChange={handleChange}
-                          hasError={hasSubmitted && !!fieldErrors.projectType}
+                          onBlur={handleBlur}
+                          hasError={!!fieldErrors.projectType}
                         >
                           <option value="">Select type</option>
                           <option value="one-time">One Time</option>
                           <option value="ongoing">Ongoing</option>
                         </SelectField>
-                        {hasSubmitted && fieldErrors.projectType && (
+                        {fieldErrors.projectType && (
                           <p className="text-xs text-red-500">{fieldErrors.projectType}</p>
                         )}
                       </div>
@@ -677,6 +718,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                             className={`${fc("projectLength")} pr-10`}
                             value={form.projectLength || ""}
                             onChange={handleChange}
+                            onBlur={handleBlur}
                             placeholder="Select or type"
                           />
                           <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -687,7 +729,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                             <option value="1–3 months" />
                           </datalist>
                         </div>
-                        {hasSubmitted && fieldErrors.projectLength && (
+                        {fieldErrors.projectLength && (
                           <p className="text-xs text-red-500">{fieldErrors.projectLength}</p>
                         )}
                       </div>
@@ -702,7 +744,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                           onChange={(e) => setSkillInput(e.target.value)}
                           onKeyDown={handleSkillKeyDown}
                           placeholder="React, Node.js…"
-                          className={`flex-1 ${baseInput(hasSubmitted && !!fieldErrors.skills)}`}
+                          className={`flex-1 ${baseInput(!!fieldErrors.skills)}`}
                         />
                         <button
                           type="button"
@@ -727,7 +769,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                           ))}
                         </div>
                       )}
-                      {hasSubmitted && fieldErrors.skills && (
+                      {fieldErrors.skills && (
                         <p className="text-xs text-red-500">{fieldErrors.skills}</p>
                       )}
                     </div>
@@ -739,14 +781,15 @@ const TaskModal = ({ isOpen, onClose }) => {
                         name="experience"
                         value={form.experience}
                         onChange={handleChange}
-                        hasError={hasSubmitted && !!fieldErrors.experience}
+                        onBlur={handleBlur}
+                        hasError={!!fieldErrors.experience}
                       >
                         <option value="">Select level</option>
                         <option value="beginner">Beginner</option>
                         <option value="intermediate">Intermediate</option>
                         <option value="expert">Expert</option>
                       </SelectField>
-                      {hasSubmitted && fieldErrors.experience && (
+                      {fieldErrors.experience && (
                         <p className="text-xs text-red-500">{fieldErrors.experience}</p>
                       )}
                     </div>
@@ -825,7 +868,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                         onClick={() => { setScopeError(""); setFormPhase("edit"); }}
                         className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 py-3 rounded-lg text-sm font-medium transition-colors"
                       >
-                        Make Changes
+                        Go Back
                       </button>
                       <button
                         onClick={handleScopeNext}
@@ -926,7 +969,7 @@ const TaskModal = ({ isOpen, onClose }) => {
                         onClick={() => setFormPhase("scope")}
                         className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 py-3 rounded-lg text-sm font-medium transition-colors"
                       >
-                        Make Changes
+                        Go Back
                       </button>
                       <button
                         onClick={() => setFormPhase("confirm")}
