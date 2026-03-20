@@ -235,8 +235,8 @@ export default function Sidebar({ user, collapsed, onToggle, onClose }) {
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               }`}
             >
-              <div className="relative shrink-0">
-                <Icon className={`w-4.5 h-4.5 transition-colors ${
+              <div className={`relative overflow-hidden transition-all duration-300 ${collapsed ? "w-5 opacity-100" : "w-0 opacity-0"}`}>
+                <Icon className={`w-4.5 h-4.5 transition-colors shrink-0 ${
                   isActive ? "text-emerald-600" : "text-gray-400 group-hover:text-gray-500"
                 }`} />
                 {badge > 0 && (
@@ -267,7 +267,9 @@ export default function Sidebar({ user, collapsed, onToggle, onClose }) {
             collapsed ? "justify-center px-2" : "gap-3 px-3"
           }`}
         >
-          <Settings className="w-4.5 h-4.5 shrink-0 text-gray-400 group-hover:text-gray-500 transition-colors" />
+          <div className={`overflow-hidden transition-all duration-300 ${collapsed ? "w-5 opacity-100" : "w-0 opacity-0"}`}>
+            <Settings className="w-4.5 h-4.5 shrink-0 text-gray-400 group-hover:text-gray-500 transition-colors" />
+          </div>
           <span className={`whitespace-nowrap text-sm font-medium overflow-hidden transition-all duration-300 ${
             collapsed ? "max-w-0 opacity-0" : "max-w-50 opacity-100"
           }`}>
@@ -282,7 +284,9 @@ export default function Sidebar({ user, collapsed, onToggle, onClose }) {
             collapsed ? "justify-center px-2" : "gap-3 px-3"
           }`}
         >
-          <HelpCircle className="w-4.5 h-4.5 shrink-0 text-gray-400 group-hover:text-gray-500 transition-colors" />
+          <div className={`overflow-hidden transition-all duration-300 ${collapsed ? "w-5 opacity-100" : "w-0 opacity-0"}`}>
+            <HelpCircle className="w-4.5 h-4.5 shrink-0 text-gray-400 group-hover:text-gray-500 transition-colors" />
+          </div>
           <span className={`whitespace-nowrap text-sm font-medium overflow-hidden transition-all duration-300 ${
             collapsed ? "max-w-0 opacity-0" : "max-w-50 opacity-100"
           }`}>
