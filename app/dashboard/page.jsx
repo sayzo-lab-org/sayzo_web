@@ -7,6 +7,7 @@ import { Image as ImageIcon, Code, Mic, ArrowUp } from "lucide-react";
 import { BriefcaseBusiness, PlayCircle, CheckCircle2, ClipboardCheck } from "lucide-react";
 import MetricsCard from "@/components/dashboard/MetricsCard";
 import useDashboardData from "@/hooks/useDashboardData";
+import TaskModal from "@/components/TaskModal";
 
 const QUICK_ACTIONS = [
   "Post an Online Task",
@@ -20,6 +21,18 @@ export default function DashboardHomePage() {
     includeProfile: true,
   });
   const [prompt, setPrompt] = useState("");
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [defaultTaskType, setDefaultTaskType] = useState("online");
+
+  const handleQuickAction = (action) => {
+    if (action === "Post an Online Task") {
+      setDefaultTaskType("online");
+      setIsTaskModalOpen(true);
+    } else if (action === "Post an Offline Task") {
+      setDefaultTaskType("offline");
+      setIsTaskModalOpen(true);
+    }
+  };
 
   const userName = useMemo(() => {
     const source = profile?.name || user?.displayName || user?.email || "User";
@@ -69,16 +82,19 @@ export default function DashboardHomePage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="flex flex-wrap justify-center gap-2">
+        <div className="flex flex-nowrap overflow-x-auto gap-2 w-screen max-w-3xl px-6 justify-center [&::-webkit-scrollbar]:hidden">
           {QUICK_ACTIONS.map((action) => (
             <button
               key={action}
-              className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors"
+              onClick={() => handleQuickAction(action)}
+              className="shrink-0 px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors whitespace-nowrap"
             >
               {action}
             </button>
           ))}
         </div>
+
+        <TaskModal isOpen={isTaskModalOpen} onClose={() => setIsTaskModalOpen(false)} defaultTaskType={defaultTaskType} />
 
         {error && (
           <div className="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
