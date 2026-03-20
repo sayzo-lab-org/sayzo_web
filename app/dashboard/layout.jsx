@@ -1,5 +1,3 @@
-// /Users/mayanksaini/Desktop/GitHub/sayzo_web/app/dashboard/layout.jsx
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,16 +6,19 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Topbar from "@/components/dashboard/Topbar";
+import { RoleProvider } from "@/context/RoleContext";
 
 export default function DashboardLayout({ children }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
-        router.push("/login"); // Redirect to login page
+        router.push("/login");
       } else {
         setUser(currentUser);
       }
@@ -30,29 +31,62 @@ export default function DashboardLayout({ children }) {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
       </div>
     );
   }
 
-  // Prevent rendering protected content if not signed in
   if (!user) return null;
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar - Fixed width */}
-      <aside className="hidden md:block w-64 flex-shrink-0 border-r bg-white h-full overflow-y-auto">
-        <Sidebar user={user} />
+    <RoleProvider>
+    <div className="flex h-screen overflow-hidden">
+
+      {/* ── Desktop Sidebar (md+) ─────────────────────────────────── */}
+      <aside
+        className={`hidden md:block shrink-0 border-r border-gray-200 bg-white h-full overflow-y-auto transition-all duration-300 ${
+          sidebarCollapsed ? "w-15" : "w-64"
+        }`}
+      >
+        <Sidebar
+          user={user}
+          collapsed={sidebarCollapsed}
+          onToggle={() => setSidebarCollapsed((v) => !v)}
+        />
       </aside>
 
-      {/* Main Content Area */}
+      {/* ── Mobile Sidebar Drawer (< md) ──────────────────────────── */}
+      <div className="md:hidden">
+        {/* Overlay */}
+        <div
+          className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
+            isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        />
+
+        {/* Drawer */}
+        <div
+          className={`fixed top-0 left-0 z-50 h-full w-64 overflow-y-auto border-r bg-white transition-transform duration-300 ease-in-out ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <Sidebar
+            user={user}
+            collapsed={false}
+            onToggle={() => {}}
+            onClose={() => setIsSidebarOpen(false)}
+          />
+        </div>
+      </div>
+
+      {/* ── Main Content ──────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col h-full min-w-0">
-        {/* Topbar - Fixed height */}
-        <header className="h-16 flex-shrink-0 bg-white border-b">
-          <Topbar user={user} />
+        <header className="h-16 shrink-0 bg-white ">
+          <Topbar user={user} onMenuClick={() => setIsSidebarOpen(true)} />
         </header>
 
-        {/* Page Content - Scrollable */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <div className="max-w-6xl mx-auto">
             {children}
@@ -60,5 +94,6 @@ export default function DashboardLayout({ children }) {
         </main>
       </div>
     </div>
+    </RoleProvider>
   );
 }

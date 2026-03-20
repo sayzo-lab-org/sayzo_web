@@ -61,6 +61,8 @@ export function middleware(request) {
 
   // ── Routing rules ──────────────────────────────────────────────────────────
   const profileCompleted = request.cookies.get("profileCompleted")?.value;
+  const isDev = process.env.NODE_ENV === "development";
+  const isPreview = process.env.VERCEL_ENV === "preview";
 
   if (profileCompleted === "true" && url.pathname.startsWith("/onboarding")) {
     const res = NextResponse.redirect(new URL("/dashboard", request.url));
@@ -68,7 +70,10 @@ export function middleware(request) {
     return res;
   }
 
-  if (profileCompleted !== "true" && url.pathname.startsWith("/dashboard")) {
+  if (profileCompleted !== "true" && url.pathname.startsWith("/dashboard")
+       && !isDev
+       && !isPreview
+  ) {
     const res = NextResponse.redirect(new URL("/onboarding", request.url));
     res.headers.set("Content-Security-Policy", buildCSP(nonce));
     return res;

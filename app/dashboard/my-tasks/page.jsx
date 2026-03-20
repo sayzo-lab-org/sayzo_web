@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Banknote,
-  Briefcase,
-  Clock,
-  MapPin,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { X } from "lucide-react";
 import TaskCard from "@/components/dashboard/TaskCard";
 import useDashboardData from "@/hooks/useDashboardData";
 
@@ -16,15 +9,19 @@ import useDashboardData from "@/hooks/useDashboardData";
 
 function formatStatus(status) {
   const value = String(status || "pending").toLowerCase();
-  return value.charAt(0).toUpperCase() + value.slice(1);
+  return value.charAt(0).toUpperCase() + value.slice(1).replace(/_/g, " ");
 }
 
-function getTaskTitle(task, application) {
-  return task?.title || task?.taskTitle || task?.taskName || application?.taskTitle || "Untitled Task";
+function getTaskTitle(task) {
+  return task?.title || task?.taskTitle || task?.taskName || "Untitled Task";
 }
 
-function getTaskBudget(task, application) {
-  return task?.budget ?? task?.amount ?? application?.taskBudget ?? null;
+function getTaskDescription(task) {
+  return task?.description || task?.taskDescription || task?.details || "";
+}
+
+function getTaskBudget(task) {
+  return task?.budget ?? task?.amount ?? task?.taskBudget ?? null;
 }
 
 function formatBudget(value) {
@@ -42,42 +39,38 @@ function getSkillsArray(skills) {
 
 // ─── TaskDetailModal ──────────────────────────────────────────────────────────
 
-function TaskDetailModal({ task, application, onClose }) {
+function TaskDetailModal({ task, onClose }) {
   const overlayRef = useRef(null);
 
-  // Close on Escape
   useEffect(() => {
     const handler = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  // Prevent body scroll while open
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  const title    = task?.title    || task?.taskTitle    || task?.taskName    || "Untitled Task";
-  const desc     = task?.description || task?.taskDescription || "";
-  const budget   = formatBudget(getTaskBudget(task, application));
+  const title      = getTaskTitle(task);
+  const desc       = getTaskDescription(task);
+  const budget     = formatBudget(getTaskBudget(task));
   const budgetType = task?.budgetType ?? null;
-  const duration = task?.duration ?? null;
+  const duration   = task?.duration   ?? null;
   const experience = task?.experience ?? null;
-  const taskType = task?.taskType ?? null;
-  const location = task?.location ?? task?.taskLocation ?? null;
-  const skills   = getSkillsArray(task?.skills);
-  const status   = application?.status ? formatStatus(application.status) : null;
+  const taskType   = task?.taskType   ?? null;
+  const location   = task?.location   ?? task?.taskLocation ?? null;
+  const skills     = getSkillsArray(task?.skills);
+  const status     = task?.status ? formatStatus(task.status) : null;
   const isRejected = status?.toLowerCase().includes("reject");
 
   return (
-    /* Backdrop */
     <div
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
-      {/* Panel */}
       <div className="relative w-full max-w-lg rounded-2xl bg-white shadow-xl flex flex-col max-h-[90vh] animate-modal-in">
 
         {/* Header */}
@@ -176,10 +169,7 @@ function TaskDetailModal({ task, application, onClose }) {
               <p className="text-xs font-medium uppercase tracking-wide text-gray-400 mb-2">Skills Required</p>
               <div className="flex flex-wrap gap-2">
                 {skills.map((skill, i) => (
-                  <span
-                    key={i}
-                    className="rounded-full border border-gray-200 px-3 py-1 text-xs text-gray-600"
-                  >
+                  <span key={i} className="rounded-full border border-gray-200 px-3 py-1 text-xs text-gray-600">
                     {skill}
                   </span>
                 ))}
@@ -206,78 +196,95 @@ function TaskDetailModal({ task, application, onClose }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default function AppliedTasksPage() {
-  const { appliedTaskItems, applicationsLoading, appliedTasksLoading, error } = useDashboardData({
-    includeAppliedTaskDetails: true,
-  });
+const TABS = ["offline", "online"];
 
+export default function MyTasksPage() {
+  const { postedTasks, postedLoading, error } = useDashboardData();
+  const [activeTab, setActiveTab] = useState("offline");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null); // { task, application }
+  const [selectedTask, setSelectedTask] = useState(null);
 
-  const loading = applicationsLoading || appliedTasksLoading;
-
-  const countLabel = useMemo(
-    () => `${appliedTaskItems.length} application${appliedTaskItems.length === 1 ? "" : "s"}`,
-    [appliedTaskItems.length]
+  const filteredTasks = useMemo(
+    () => postedTasks.filter((t) => (t.taskType ?? "offline") === activeTab),
+    [postedTasks, activeTab]
   );
 
-  function openModal(task, application) {
-    setSelectedItem({ task, application });
+  const taskCountLabel = useMemo(
+    () => `${filteredTasks.length} task${filteredTasks.length === 1 ? "" : "s"}`,
+    [filteredTasks.length]
+  );
+
+  function openModal(task) {
+    setSelectedTask(task);
     setIsModalOpen(true);
   }
 
   function closeModal() {
     setIsModalOpen(false);
-    setSelectedItem(null);
+    setSelectedTask(null);
   }
 
   return (
     <section className="space-y-6">
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold text-gray-900">Applied Tasks</h1>
-        <p className="mt-2 text-sm text-gray-600">Tasks where you have applied as a task doer.</p>
-        {!loading ? <p className="mt-1 text-xs text-gray-500">{countLabel}</p> : null}
+        <h1 className="text-2xl font-semibold text-gray-900">My Tasks</h1>
+        <p className="mt-2 text-sm text-gray-600">Tasks posted by you.</p>
+        {!postedLoading ? <p className="mt-1 text-xs text-gray-500">{taskCountLabel}</p> : null}
       </div>
 
       {error ? (
         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
       ) : null}
 
-      {loading ? (
+      {/* Offline / Online toggle */}
+      <div className="flex bg-gray-100 rounded-xl p-1 w-fit">
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold capitalize transition-colors ${
+              activeTab === tab
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {postedLoading ? (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {[1, 2, 3].map((index) => (
             <div key={index} className="h-40 animate-pulse rounded-xl border border-gray-200 bg-white" />
           ))}
         </div>
-      ) : appliedTaskItems.length === 0 ? (
+      ) : filteredTasks.length === 0 ? (
         <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center text-sm text-gray-500">
-          No task applications found.
+          No {activeTab} tasks posted yet.
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {appliedTaskItems.map(({ application, task, taskGiverName }) => (
+          {filteredTasks.map((task) => (
             <TaskCard
-              key={application.id}
-              variant="applied"
-              title={getTaskTitle(task, application)}
-              description={task?.description || task?.taskDescription || ""}
-              taskGiver={taskGiverName}
-              budget={getTaskBudget(task, application)}
-              status={formatStatus(application.status)}
-              actionLabel="View Task"
-              onView={() => openModal(task, application)}
+              key={task.id}
+              variant="posted"
+              title={getTaskTitle(task)}
+              description={getTaskDescription(task)}
+              status={formatStatus(task.status)}
+              budget={getTaskBudget(task)}
+              postedDate={task.createdAt}
+              actionLabel="View Details"
+              onView={() => openModal(task)}
+              taskId={task.id}
             />
           ))}
         </div>
       )}
 
       {/* Task Detail Modal */}
-      {isModalOpen && selectedItem && (
-        <TaskDetailModal
-          task={selectedItem.task}
-          application={selectedItem.application}
-          onClose={closeModal}
-        />
+      {isModalOpen && selectedTask && (
+        <TaskDetailModal task={selectedTask} onClose={closeModal} />
       )}
     </section>
   );
