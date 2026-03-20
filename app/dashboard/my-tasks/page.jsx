@@ -226,10 +226,10 @@ export default function MyTasksPage() {
 
   return (
     <section className="space-y-6">
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl  text-3xl bg-white">
         <h1 className="text-2xl font-semibold text-gray-900">My Tasks</h1>
-        <p className="mt-2 text-sm text-gray-600">Tasks posted by you.</p>
-        {!postedLoading ? <p className="mt-1 text-xs text-gray-500">{taskCountLabel}</p> : null}
+        {/* <p className="mt-2 text-sm text-gray-600">Tasks posted by you.</p> */}
+        {/* {!postedLoading ? <p className="mt-1 text-xs text-gray-500">{taskCountLabel}</p> : null} */}
       </div>
 
       {error ? (
@@ -244,7 +244,7 @@ export default function MyTasksPage() {
             onClick={() => setActiveTab(tab)}
             className={`px-5 py-2 rounded-lg text-sm font-semibold capitalize transition-colors ${
               activeTab === tab
-                ? "bg-white text-gray-900 shadow-sm"
+                ? "bg-[#10A37F] text-white shadow-sm"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
