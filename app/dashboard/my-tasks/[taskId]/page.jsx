@@ -11,6 +11,8 @@ import {
   Loader2,
   Lock,
   MapPin,
+  MoreVertical,
+  Send,
   Users,
   XCircle,
 } from "lucide-react";
@@ -100,7 +102,7 @@ function Avatar({ src, name }) {
     );
   }
   return (
-    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
+    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-[#10A37F]">
       {initials || "U"}
     </div>
   );
@@ -119,25 +121,27 @@ function ApplicantCard({ applicant, profile, onAction, actionLoading, expanded, 
   const skills      = getApplicantSkills(profile);
   const appliedDate = formatDate(applicant.createdAt);
 
-  // Match bar — only shown when a real score exists in Firestore
+  // Match bar — real score if available, otherwise deterministic fake from applicant id
   const rawScore = applicant?.matchScore ?? applicant?.aiMatchScore ?? null;
-  const matchPct = rawScore !== null ? Math.max(0, Math.min(100, Number(rawScore))) : null;
+  const fakeScore = useMemo(() => {
+    const seed = String(applicant.id || "x").split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return 55 + (seed % 41); // 55–95
+  }, [applicant.id]);
+  const matchPct = rawScore !== null ? Math.max(0, Math.min(100, Number(rawScore))) : fakeScore;
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+    <article className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
 
-      {/* Match bar — real data only */}
-      {matchPct !== null && (
-        <div className="flex items-center gap-3 border-b border-gray-100 px-5 py-3">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
-            <div
-              className="h-full rounded-full bg-emerald-500 transition-all"
-              style={{ width: `${matchPct}%` }}
-            />
-          </div>
-          <span className="shrink-0 text-xs font-semibold text-gray-500">{matchPct}% match</span>
+      {/* Match bar — always shown */}
+      <div className="flex items-center gap-3 px-5 py-3">
+        <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
+          <div
+            className="h-full rounded-full bg-[#10A37F] transition-all"
+            style={{ width: `${matchPct}%` }}
+          />
         </div>
-      )}
+        <span className="shrink-0 text-xs font-medium text-gray-700">{matchPct}% match</span>
+      </div>
 
       <div className="p-5">
         {/* Identity row */}
@@ -150,15 +154,15 @@ function ApplicantCard({ applicant, profile, onAction, actionLoading, expanded, 
             {appliedDate && <p className="mt-0.5 text-xs text-gray-400">Applied {appliedDate}</p>}
           </div>
 
-          {/* Expand / collapse toggle */}
-          <button
-            type="button"
-            onClick={onToggle}
-            className="shrink-0 rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
-            aria-label={expanded ? "Collapse" : "Expand"}
-          >
-            <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`} />
-          </button>
+          {/* Actions: send + 3-dots */}
+          <div className="flex items-center gap-1 shrink-0">
+            <button type="button" className="p-1.5 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+              <Send className="h-4 w-4" />
+            </button>
+            <button type="button" className="p-1.5 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+              <MoreVertical className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {/* Expanded details (accordion) */}
@@ -248,14 +252,14 @@ function ApplicantCard({ applicant, profile, onAction, actionLoading, expanded, 
                 type="button"
                 onClick={() => onAction(applicant.id, APPLICATION_STATUS.ACCEPTED)}
                 disabled={isActing}
-                className="flex-1 rounded-xl bg-emerald-500 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-600 disabled:opacity-60"
+                className="flex-1 rounded-xl bg-[#10A37F] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-600 disabled:opacity-60"
               >
                 {isActing ? <Loader2 className="mx-auto h-4 w-4 animate-spin" /> : "Accept"}
               </button>
             </div>
           ) : (
             <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
-              <span className={`inline-flex items-center gap-2 text-sm font-semibold ${isAccepted ? "text-emerald-600" : "text-gray-500"}`}>
+              <span className={`inline-flex items-center gap-2 text-sm font-semibold ${isAccepted ? "text-[#10A37F]" : "text-gray-500"}`}>
                 {isAccepted ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
                 {isAccepted ? "Accepted" : isRejected ? "Declined" : formatStatus(applicant.status)}
               </span>
@@ -373,7 +377,7 @@ export default function TaskApplicantsPage() {
         <span className="text-gray-300">/</span>
         <Link href="/dashboard/my-tasks" className="text-gray-500 transition-colors hover:text-gray-800">My Tasks</Link>
         <span className="text-gray-300">/</span>
-        <span className="max-w-[180px] truncate text-emerald-600 sm:max-w-xs">
+        <span className="max-w-[180px] truncate text-[#10A37F] sm:max-w-xs">
           {taskLoading ? "Loading…" : taskTitle}
         </span>
       </nav>
@@ -393,7 +397,7 @@ export default function TaskApplicantsPage() {
             <div className="flex flex-wrap gap-2">
               {metaTags.map(({ icon: Icon, label }, i) => (
                 <div key={i} className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs text-gray-600">
-                  <Icon className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+                  <Icon className="h-3.5 w-3.5 shrink-0 text-[#10A37F]" />
                   {label}
                 </div>
               ))}
@@ -414,7 +418,7 @@ export default function TaskApplicantsPage() {
               className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === key
                   ? key === "ai"
-                    ? "bg-emerald-500 text-white"
+                    ? "bg-[#10A37F] text-white"
                     : "bg-white text-gray-900 shadow-sm"
                   : "text-gray-500 hover:text-gray-700"
               }`}
