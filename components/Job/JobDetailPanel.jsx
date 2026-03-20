@@ -70,6 +70,20 @@ const router = useRouter();
         </button>
       )}
 
+      {/* CLIENT INFO */}
+      <div className="flex items-center gap-2 mb-3">
+        <Image
+          src={job.giver?.photo || "https://github.com/shadcn.png"}
+          alt="Task giver"
+          width={28}
+          height={28}
+          className="rounded-full"
+        />
+        <p className="text-sm text-gray-700">
+          {job.company?.name || "Independent Task Giver"}
+        </p>
+      </div>
+
       {/* TITLE */}
       <h2 className="text-2xl font-medium leading-snug">
         {job.title}
@@ -82,20 +96,6 @@ const router = useRouter();
           <span className="text-sm font-medium text-blue-700">Your Task</span>
         </div>
       )}
-
-      {/* COMPANY */}
-      <div className="flex items-center gap-2 mt-3">
-       <Image
-  src={job.giver?.photo || "https://github.com/shadcn.png"}
-  alt="User profile"
-  width={28}
-  height={28}
-  className="rounded-full"
-/>
-        <p className="text-sm text-gray-700">
-          {job.company?.name || "Independent Task Giver"}
-        </p>
-      </div>
 
       {/* TASK DESCRIPTION */}
       <div className="mt-7">

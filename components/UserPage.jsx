@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import {
   subscribeToApprovedTasks,
-  subscribeToApplicationsByApplicant
+  subscribeToApplicationsByApplicant,
+  getUserProfile,
 } from "@/lib/firebase";
 import { jobs as dummyJobs } from "@/public/data/job";
 import { useAuth } from "@/app/Context/AuthContext";
@@ -103,9 +104,28 @@ const UserPage = ({ mode = "live" }) => {
 
     // Real-time subscription to approved tasks
     const unsubscribeTasks = subscribeToApprovedTasks(
-      (tasks) => {
+      async (tasks) => {
         if (!isMounted) return;
-        const mappedJobs = tasks.map(mapTaskToJob);
+
+        // Batch-fetch unique giver profiles to get their Google avatars
+        const uniqueGiverIds = [...new Set(tasks.map((t) => t.giverId).filter(Boolean))];
+        const profileMap = {};
+        await Promise.all(
+          uniqueGiverIds.map(async (uid) => {
+            try {
+              const profile = await getUserProfile(uid);
+              profileMap[uid] = profile;
+            } catch {
+              // ignore — avatar will fall back to default
+            }
+          })
+        );
+
+        if (!isMounted) return;
+        const mappedJobs = tasks.map((task) => ({
+          ...mapTaskToJob(task),
+          giver: { photo: profileMap[task.giverId]?.photoURL || null },
+        }));
         setJobs(mappedJobs);
         setLoading(false);
         setError("");

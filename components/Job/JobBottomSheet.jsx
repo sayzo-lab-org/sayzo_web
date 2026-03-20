@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronDown, CheckCircle, User, ArrowUpRight } from "lucide-react";
+import { CheckCircle, User, ArrowUpRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ApplicationModal from "../ApplicationModal";
@@ -10,8 +11,6 @@ import WaitlistModal from "../JoinWaitList/WaitlistModal";
 import { useRouter } from "next/navigation";
 
 const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onApplicationSuccess, mode = "live" }) => {
-  const [showSkills, setShowSkills] = useState(false);
-  const [showClient, setShowClient] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
@@ -78,6 +77,20 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
             pb-5
           "
         >
+          {/* CLIENT INFO */}
+          <div className="flex items-center gap-2 mb-3">
+            <Image
+              src={job.giver?.photo || "https://github.com/shadcn.png"}
+              alt="Task giver"
+              width={24}
+              height={24}
+              className="rounded-full"
+            />
+            <p className="text-sm text-gray-500">
+              {job.company?.name || "Independent Task Giver"}
+            </p>
+          </div>
+
           <h2 className="text-xl font-medium">
             {job.title}
           </h2>
@@ -90,19 +103,9 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
             </div>
           )}
 
-          {/* COMPANY */}
-          <div className="flex items-center gap-2 mt-3">
-            <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-semibold">
-              {job.company?.name?.[0]}
-            </div>
-            <p className="text-sm text-gray-500">
-              {job.company?.name}
-            </p>
-          </div>
-
-          {/* SUMMARY */}
+          {/* TASK DESCRIPTION */}
           <div className="mt-4">
-            <p className="text-sm text-gray-400 mb-1">Summary</p>
+            <p className="text-sm text-gray-400 mb-1">Task Description</p>
             <p className="text-sm text-gray-800 leading-relaxed">
               {job.description}
             </p>
@@ -137,48 +140,26 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
           </div>
 
           {/* SKILLS */}
-          <div className="mt-5">
-            <button
-              onClick={() => setShowSkills(!showSkills)}
-              className="w-full flex items-center justify-between font-medium"
-            >
-              Skills Required
-              <ChevronDown
-                className={`transition ${showSkills ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {showSkills && (
-              <div className="flex flex-wrap gap-2 mt-3">
-                {job.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs px-2 py-1 rounded-md bg-gray-100"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
+          <div className="mt-6">
+            <p className="font-medium text-gray-800 mb-3">Skills Required</p>
+            <div className="flex flex-wrap gap-2">
+              {job.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs px-2 py-1 rounded-md bg-gray-100"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
 
-          {/* CLIENT */}
-          <div className="mt-5">
-            <button
-              onClick={() => setShowClient(!showClient)}
-              className="w-full flex items-center justify-between font-medium"
-            >
-              About the Client
-              <ChevronDown
-                className={`transition ${showClient ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {showClient && (
-              <p className="text-sm text-gray-600 mt-3">
-                {job.company?.name} is looking for skilled professionals.
-              </p>
-            )}
+          {/* ABOUT TASK GIVER */}
+          <div className="mt-6">
+            <p className="font-medium text-gray-800 mb-3">About the Task Giver</p>
+            <p className="text-sm text-gray-600">
+              {job.company?.about || "Verified SAYZO task giver"}
+            </p>
           </div>
         </div>
 
