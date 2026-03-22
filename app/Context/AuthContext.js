@@ -61,6 +61,9 @@ export function AuthProvider({ children }) {
   const logout = useCallback(async () => {
     try {
       await auth.signOut();
+      // Clear the profileCompleted cookie so middleware blocks access immediately
+      document.cookie =
+        "profileCompleted=; path=/; max-age=0; SameSite=Lax";
       // State will be updated by onAuthStateChanged listener
     } catch (error) {
       console.error("Logout error:", error);
@@ -111,6 +114,13 @@ export function AuthProvider({ children }) {
           }
 
           setUserProfile(profile);
+
+          // Sync profileCompleted cookie with Firestore state so middleware
+          // lets returning users through without requiring a fresh onboarding run
+          if (profile?.profileCompleted === true) {
+            document.cookie =
+              "profileCompleted=true; path=/; max-age=31536000; SameSite=Lax";
+          }
         } catch (error) {
           console.error("Error fetching user profile:", error);
           setUserProfile(null);
