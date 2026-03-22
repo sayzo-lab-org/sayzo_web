@@ -61,9 +61,9 @@ export function AuthProvider({ children }) {
   const logout = useCallback(async () => {
     try {
       await auth.signOut();
-      // Clear the profileCompleted cookie so middleware blocks access immediately
-      document.cookie =
-        "profileCompleted=; path=/; max-age=0; SameSite=Lax";
+      // Clear auth cookies so middleware blocks access immediately
+      document.cookie = "profileCompleted=; path=/; max-age=0; SameSite=Lax";
+      document.cookie = "isAdmin=; path=/; max-age=0; SameSite=Lax";
       // State will be updated by onAuthStateChanged listener
     } catch (error) {
       console.error("Logout error:", error);
