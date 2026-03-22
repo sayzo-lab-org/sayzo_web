@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   loginWithEmail,
   loginWithGoogle,
@@ -14,9 +14,16 @@ import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 
+function getSafeCallbackUrl(raw) {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return "/";
+  return raw;
+}
+
 export default function LoginPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const searchParams = useSearchParams();
+  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"));
+  const { user, isLoading: authLoading } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,13 +32,12 @@ export default function LoginPage() {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  // FIXED: Check for user existence before accessing properties
   useEffect(() => {
     if (authLoading) return;
     if (user && user.emailVerified) {
-    router.replace("/");
+      router.replace(callbackUrl);
     }
-}, [user, authLoading, router]);
+  }, [user, authLoading, router, callbackUrl]);
 
   if (authLoading) {
     return (
@@ -42,43 +48,60 @@ export default function LoginPage() {
   }
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setError(null);
-  setLoading(true);
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-  try {
-    const loggedUser = await loginWithEmail(email, password);
+    try {
+      const loggedUser = await loginWithEmail(email, password);
+      await loggedUser.reload();
 
-    await loggedUser.reload();
+      if (!loggedUser.emailVerified) {
+        setError("Please verify your email before logging in.");
+        return;
+      }
 
-    if (!loggedUser.emailVerified) {
-      setError("Please verify your email before logging in.");
-      return;
+      // Sync cookies before navigating so middleware sees them on the very next request
+      const profile = await getUserProfile(loggedUser.uid);
+      if (profile?.profileCompleted) {
+        document.cookie = "profileCompleted=true; path=/; max-age=31536000; SameSite=Lax";
+      }
+      if (isAdminEmail(loggedUser.email)) {
+        document.cookie = "isAdmin=true; path=/; max-age=31536000; SameSite=Lax";
+      }
+
+      router.replace(callbackUrl);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    router.replace("/");
-  } catch (err) {
-    // console.log(err);
-  setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleGoogleLogin = async () => {
     setError(null);
     setGoogleLoading(true);
     try {
       const userRes = await loginWithGoogle();
-      const profile = await getUserProfile(userRes.uid);
+      let profile = await getUserProfile(userRes.uid);
       if (!profile) {
         await saveUserProfile(userRes.uid, {
           email: userRes.email,
           role: "task_doer",
           profileCompleted: true,
         });
+        profile = { profileCompleted: true };
       }
-      router.replace("/");
+
+      // Sync cookies before navigating so middleware sees them on the very next request
+      if (profile?.profileCompleted) {
+        document.cookie = "profileCompleted=true; path=/; max-age=31536000; SameSite=Lax";
+      }
+      if (isAdminEmail(userRes.email)) {
+        document.cookie = "isAdmin=true; path=/; max-age=31536000; SameSite=Lax";
+      }
+
+      router.replace(callbackUrl);
     } catch (err) {
       setError(err.message || "Google sign-in failed.");
     } finally {

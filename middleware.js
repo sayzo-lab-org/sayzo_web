@@ -65,9 +65,12 @@ export function middleware(request) {
   const isPreview = process.env.VERCEL_ENV === "preview";
 
   // Redirect unauthenticated users away from protected admin routes
+  const isAdminCookie = request.cookies.get("isAdmin")?.value;
   if (url.pathname.startsWith("/website-aaadminpanel") && !isDev && !isPreview) {
-    if (profileCompleted !== "true") {
-      const res = NextResponse.redirect(new URL("/login", request.url));
+    if (isAdminCookie !== "true") {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", url.pathname);
+      const res = NextResponse.redirect(loginUrl);
       res.headers.set("Content-Security-Policy", buildCSP(nonce));
       return res;
     }
@@ -83,7 +86,9 @@ export function middleware(request) {
        && !isDev
        && !isPreview
   ) {
-    const res = NextResponse.redirect(new URL("/login", request.url));
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", url.pathname);
+    const res = NextResponse.redirect(loginUrl);
     res.headers.set("Content-Security-Policy", buildCSP(nonce));
     return res;
   }
