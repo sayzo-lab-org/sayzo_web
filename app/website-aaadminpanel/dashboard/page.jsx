@@ -28,7 +28,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
-  const [statusFilter, setStatusFilter] = useState("pending");
+  const [statusFilter, setStatusFilter] = useState("approved");
   const [selectedTask, setSelectedTask] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
