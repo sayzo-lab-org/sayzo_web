@@ -64,6 +64,15 @@ export function middleware(request) {
   const isDev = process.env.NODE_ENV === "development";
   const isPreview = process.env.VERCEL_ENV === "preview";
 
+  // Redirect unauthenticated users away from protected admin routes
+  if (url.pathname.startsWith("/website-aaadminpanel") && !isDev && !isPreview) {
+    if (profileCompleted !== "true") {
+      const res = NextResponse.redirect(new URL("/login", request.url));
+      res.headers.set("Content-Security-Policy", buildCSP(nonce));
+      return res;
+    }
+  }
+
   if (profileCompleted === "true" && url.pathname.startsWith("/onboarding")) {
     const res = NextResponse.redirect(new URL("/dashboard", request.url));
     res.headers.set("Content-Security-Policy", buildCSP(nonce));
@@ -74,7 +83,7 @@ export function middleware(request) {
        && !isDev
        && !isPreview
   ) {
-    const res = NextResponse.redirect(new URL("/onboarding", request.url));
+    const res = NextResponse.redirect(new URL("/login", request.url));
     res.headers.set("Content-Security-Policy", buildCSP(nonce));
     return res;
   }

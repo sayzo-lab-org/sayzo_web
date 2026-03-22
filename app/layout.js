@@ -10,7 +10,6 @@ import { PolicyProvider } from "@/app/Context/PolicyContext";
 import { AuthProvider } from "@/app/Context/AuthContext";
 import AllLinks from "@/components/AllLinks";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import MagicLinkHandler from "@/components/MagicLinkHandler";
 import ClientLayout from "@/components/ClientLayout";
 
 const inter = Inter({
@@ -120,11 +119,9 @@ export default async function RootLayout({ children }) {
         <div >
           <main>
             <ErrorBoundary>
-              <MagicLinkHandler>
-               <ClientLayout>
-              {children}
-            </ClientLayout>
-              </MagicLinkHandler>
+              <ClientLayout>
+                {children}
+              </ClientLayout>
             </ErrorBoundary>
           </main>
         </div>

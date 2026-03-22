@@ -1,21 +1,20 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { Loader2, ShieldCheck, Mail, CheckCircle } from "lucide-react";
-import { sendMagicLink } from "@/lib/firebase";
+import { useState, useEffect, useRef } from "react";
+import { Loader2, ShieldCheck, Eye, EyeOff } from "lucide-react";
+import { loginWithEmail } from "@/lib/firebase";
 import { isAdminEmail } from "@/lib/adminConfig";
 import { useAuth } from "@/app/Context/AuthContext";
 
 const AdminAuthModal = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [linkSent, setLinkSent] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Use centralized auth context instead of own listener
   const { user: authUser, isLoading: authLoading, logout } = useAuth();
 
-  // Use ref to store latest onSuccess callback to avoid stale closures
   const onSuccessRef = useRef(onSuccess);
   useEffect(() => {
     onSuccessRef.current = onSuccess;
@@ -24,17 +23,7 @@ const AdminAuthModal = ({ onSuccess }) => {
   const input =
     "w-full bg-[#18181B] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border border-zinc-800 focus:outline-none focus:border-zinc-600";
 
-  // Safe localStorage helper
-  const safeSetLocalStorage = useCallback((key, value) => {
-    try {
-      localStorage.setItem(key, value);
-    } catch (err) {
-      console.warn("localStorage not available:", err);
-    }
-  }, []);
-
-  // Watch AuthContext for user changes (when user clicks magic link)
-  // This replaces the direct onAuthStateChanged listener to avoid racing with AuthContext
+  // If user is already authenticated, verify admin and call onSuccess
   useEffect(() => {
     if (authLoading) return;
 
@@ -44,17 +33,14 @@ const AdminAuthModal = ({ onSuccess }) => {
       if (!authUser) return;
 
       try {
-        // Double-check admin email after sign-in
         if (!isAdminEmail(authUser.email)) {
           await logout();
           if (isMounted) {
             setError("Unauthorized: This email is not authorized for admin access");
-            setLinkSent(false);
           }
           return;
         }
 
-        // Admin verified, trigger success
         onSuccessRef.current?.({
           uid: authUser.uid,
           email: authUser.email,
@@ -74,27 +60,23 @@ const AdminAuthModal = ({ onSuccess }) => {
     };
   }, [authUser, authLoading, logout]);
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    if (linkSent) {
-      setLinkSent(false);
-    }
-    setError("");
-  };
-
   const validateEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleSendLink = async () => {
+  const handleLogin = async () => {
     if (!validateEmail(email)) {
       setError("Please enter a valid email address");
       return;
     }
 
-    // Check if this is admin email before sending link
     if (!isAdminEmail(email)) {
       setError("This email is not authorized for admin access");
+      return;
+    }
+
+    if (!password) {
+      setError("Please enter your password");
       return;
     }
 
@@ -102,19 +84,19 @@ const AdminAuthModal = ({ onSuccess }) => {
     setLoading(true);
 
     try {
-      // Store return URL for after magic link sign-in
-      safeSetLocalStorage("sayzo_auth_return", "/website-aaadminpanel/dashboard");
-      await sendMagicLink(email);
-      setLinkSent(true);
+      await loginWithEmail(email, password);
+      // onSuccess will be triggered by the useEffect above when authUser updates
     } catch (err) {
-      console.error("Magic Link Error:", err);
-      // Map Firebase error codes to user-friendly messages
+      console.error("Admin Login Error:", err);
       const errorMessages = {
         "auth/invalid-email": "Invalid email address",
-        "auth/too-many-requests": "Too many requests. Please try again later.",
+        "auth/wrong-password": "Incorrect password. Please try again.",
+        "auth/user-not-found": "No account found with this email.",
+        "auth/too-many-requests": "Too many attempts. Please try again later.",
         "auth/network-request-failed": "Network error. Please check your connection.",
+        "auth/invalid-credential": "Incorrect email or password.",
       };
-      setError(errorMessages[err.code] || "Failed to send magic link. Please try again.");
+      setError(errorMessages[err.code] || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -129,77 +111,61 @@ const AdminAuthModal = ({ onSuccess }) => {
           </div>
           <h1 className="text-2xl text-white font-bold">Admin Login</h1>
           <p className="text-zinc-400 text-sm mt-2">
-            Enter your admin email to continue
+            Enter your admin credentials to continue
           </p>
         </div>
 
-        {/* Link Sent Success State */}
-        {linkSent ? (
-          <div className="text-center">
-            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-8 h-8 text-green-500" />
-            </div>
-            <h2 className="text-xl text-white font-semibold mb-2">
-              Check Your Email
-            </h2>
-            <p className="text-zinc-400 text-sm mb-6">
-              We've sent a magic link to <span className="text-white">{email}</span>. Click the link in your email to sign in. If you don't see it, please check your spam folder.
-            </p>
-            <button
-              onClick={handleSendLink}
-              disabled={loading}
-              className="text-green-500 hover:text-green-400 text-sm font-medium flex items-center justify-center gap-2 mx-auto"
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <Mail className="w-4 h-4" />
-                  Resend Link
-                </>
-              )}
-            </button>
-          </div>
-        ) : (
-          <>
-            {/* Email Input */}
-            <div className="relative">
-              <input
-                className={input}
-                type="email"
-                placeholder="Admin Email Address *"
-                value={email}
-                onChange={handleEmailChange}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && validateEmail(email)) {
-                    handleSendLink();
-                  }
-                }}
-              />
-            </div>
+        <div className="relative">
+          <input
+            className={input}
+            type="email"
+            placeholder="Admin Email Address *"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError("");
+            }}
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+          />
+        </div>
 
-            {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+        <div className="relative">
+          <input
+            className={`${input} pr-12`}
+            type={showPassword ? "text" : "password"}
+            placeholder="Password *"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError("");
+            }}
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
 
-            {/* Send Link Button */}
-            <button
-              disabled={loading || !validateEmail(email)}
-              onClick={handleSendLink}
-              className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-4 rounded-full font-semibold disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <Mail className="w-5 h-5" />
-                  Send Magic Link
-                </>
-              )}
-            </button>
-          </>
-        )}
+        {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+
+        <button
+          disabled={loading || !validateEmail(email) || !password}
+          onClick={handleLogin}
+          className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-4 rounded-full font-semibold disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Signing In...
+            </>
+          ) : (
+            "Sign In"
+          )}
+        </button>
       </div>
     </div>
   );

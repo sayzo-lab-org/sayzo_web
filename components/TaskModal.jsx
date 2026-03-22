@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { X, CheckCircle, Loader2, Plus, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  sendMagicLink,
   addTask,
   auth,
   getUserProfile,
