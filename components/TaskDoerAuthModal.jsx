@@ -1,16 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { X, Loader2, Mail } from "lucide-react";
+import { X, Loader2, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  sendMagicLink,
-  getUserProfile,
-  isProfileComplete,
-} from "@/lib/firebase";
+import { getUserProfile, isProfileComplete } from "@/lib/firebase";
 import ProfileCompletionModal from "./ProfileCompletionModal";
 import { useAuth } from "@/app/Context/AuthContext";
+import { useRouter } from "next/navigation";
 
 // Error boundary wrapper for modal content
 class ModalErrorBoundary extends React.Component {
@@ -45,22 +42,14 @@ class ModalErrorBoundary extends React.Component {
   }
 }
 
-// Need to import React for class component
-import React from "react";
-
 const TaskDoerAuthModal = ({ isOpen, onClose, onSuccess }) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [emailSent, setEmailSent] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [email, setEmail] = useState("");
   const [showProfileCompletion, setShowProfileCompletion] = useState(false);
   const [userEmail, setUserEmail] = useState("");
 
-  // Use centralized auth context instead of own listener
   const { user: authUser, isLoading: authLoading } = useAuth();
+  const router = useRouter();
 
-  // Use ref to store latest onSuccess callback to avoid stale closures
   const onSuccessRef = useRef(onSuccess);
   useEffect(() => {
     onSuccessRef.current = onSuccess;
@@ -70,8 +59,7 @@ const TaskDoerAuthModal = ({ isOpen, onClose, onSuccess }) => {
     setMounted(true);
   }, []);
 
-  // Watch AuthContext for user changes (user returning from magic link)
-  // This replaces the direct onAuthStateChanged listener to avoid racing with AuthContext
+  // When user becomes authenticated while modal is open, check profile and call onSuccess
   useEffect(() => {
     if (!isOpen || authLoading) return;
 
@@ -82,7 +70,6 @@ const TaskDoerAuthModal = ({ isOpen, onClose, onSuccess }) => {
 
       setUserEmail(authUser.email);
       try {
-        // User signed in - check profile completion
         const complete = await isProfileComplete(authUser.uid);
         if (!isMounted) return;
 
@@ -101,9 +88,6 @@ const TaskDoerAuthModal = ({ isOpen, onClose, onSuccess }) => {
         }
       } catch (err) {
         console.error("Auth state change error:", err);
-        if (isMounted) {
-          setError("Failed to verify profile. Please try again.");
-        }
       }
     };
 
@@ -114,52 +98,6 @@ const TaskDoerAuthModal = ({ isOpen, onClose, onSuccess }) => {
     };
   }, [isOpen, authUser, authLoading]);
 
-  const input =
-    "w-full bg-[#18181B] text-white placeholder:text-zinc-500 px-4 py-4 my-2 rounded-xl border border-zinc-800 focus:outline-none focus:border-zinc-600";
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  // Safe localStorage helper
-  const safeSetLocalStorage = useCallback((key, value) => {
-    try {
-      localStorage.setItem(key, value);
-    } catch (err) {
-      console.warn("localStorage not available:", err);
-    }
-  }, []);
-
-  const handleSendLink = async () => {
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email address");
-      return;
-    }
-
-    setError("");
-    setLoading(true);
-
-    try {
-      // Store return URL for after auth
-      safeSetLocalStorage("sayzo_auth_return", window.location.pathname);
-      await sendMagicLink(email);
-      setEmailSent(true);
-    } catch (err) {
-      console.error("Magic Link Error:", err);
-      // Map Firebase error codes to user-friendly messages
-      const errorMessages = {
-        "auth/invalid-email": "Invalid email address",
-        "auth/too-many-requests": "Too many requests. Please try again later.",
-        "auth/network-request-failed": "Network error. Please check your connection.",
-        "auth/user-disabled": "This account has been disabled.",
-      };
-      setError(errorMessages[err.code] || "Failed to send email. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleProfileComplete = useCallback((profileData) => {
     setShowProfileCompletion(false);
     onSuccessRef.current?.(profileData);
@@ -167,14 +105,15 @@ const TaskDoerAuthModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleProfileClose = useCallback(() => {
     setShowProfileCompletion(false);
-    setError("Profile completion is required to continue.");
   }, []);
 
   const resetAndClose = () => {
-    setError("");
-    setEmailSent(false);
-    setEmail("");
     onClose();
+  };
+
+  const handleGoToLogin = () => {
+    resetAndClose();
+    router.push("/login");
   };
 
   if (!mounted) return null;
@@ -204,87 +143,39 @@ const TaskDoerAuthModal = ({ isOpen, onClose, onSuccess }) => {
                 </button>
               </div>
 
-              <div className="px-6 py-6">
-                {emailSent ? (
-                  <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mb-4">
-                      <Mail className="w-8 h-8 text-green-500" />
-                    </div>
-                    <h3 className="text-white text-xl font-semibold mb-2">
-                      Check Your Email
-                    </h3>
-                    <p className="text-zinc-400 mb-4">
-                      We've sent a sign-in link to
-                    </p>
-                    <p className="text-white font-medium mb-6">{email}</p>
-                    <p className="text-zinc-500 text-sm">
-                      Click the link in the email to sign in
-                    </p>
-                    <p className="text-zinc-500 text-sm mt-2">
-                      If you don't see it, please check your spam folder
-                    </p>
-                    <button
-                      onClick={() => setEmailSent(false)}
-                      className="mt-6 text-zinc-400 hover:text-white text-sm underline"
-                    >
-                      Use a different email
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-zinc-400 text-sm mb-4">
-                      Enter your email to apply for this task
-                    </p>
+              <div className="px-6 py-8 flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center mb-4">
+                  <LogIn className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-white text-lg font-semibold mb-2">
+                  Login Required
+                </h3>
+                <p className="text-zinc-400 text-sm mb-6">
+                  You need to be logged in to apply for this task.
+                </p>
 
-                    <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
-                      <input
-                        type="email"
-                        className={`${input} pl-12`}
-                        placeholder="Enter your email *"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && handleSendLink()}
-                      />
-                    </div>
+                <button
+                  onClick={handleGoToLogin}
+                  className="w-full bg-white text-black py-4 rounded-full font-semibold flex items-center justify-center gap-2"
+                >
+                  <LogIn className="w-5 h-5" />
+                  Go to Login
+                </button>
 
-                    {error && (
-                      <p className="text-red-400 text-sm mt-2">{error}</p>
-                    )}
-
-                    <button
-                      disabled={loading || !email}
-                      onClick={handleSendLink}
-                      className="w-full mt-4 bg-white text-black py-4 rounded-full font-semibold disabled:opacity-50 flex items-center justify-center gap-2"
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        "Send Sign-In Link"
-                      )}
-                    </button>
-
-                    <p className="text-zinc-500 text-xs text-center mt-4">
-                      By continuing, you agree to our Terms of Service and
-                      Privacy Policy
-                    </p>
-                  </>
-                )}
+                <p className="text-zinc-500 text-xs text-center mt-4">
+                  By continuing, you agree to our Terms of Service and Privacy Policy
+                </p>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Profile Completion Modal */}
       <ProfileCompletionModal
         isOpen={showProfileCompletion}
         onClose={handleProfileClose}
         onSuccess={handleProfileComplete}
-        userEmail={userEmail || email}
+        userEmail={userEmail}
       />
     </ModalErrorBoundary>,
     document.body

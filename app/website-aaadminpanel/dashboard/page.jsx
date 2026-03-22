@@ -170,7 +170,7 @@ export default function AdminDashboard() {
       description: task.description || "",
       budgetType: task.budgetType || "fixed",
       amount: task.amount || "",
-      duration: task.duration || "",
+      duration: task.duration || task.projectLength || "",
       skills: task.skills || "",
       experience: task.experience || "",
     });
@@ -339,7 +339,7 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-between pt-2 border-t border-gray-100">
         <div className="flex gap-4 text-sm text-gray-600">
           <span className="font-medium">₹{task.amount}</span>
-          <span>{task.duration}</span>
+          <span>{task.duration || task.projectLength}</span>
         </div>
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusBadge(task.status)}`}>
           {task.status?.replace("_", " ")}
@@ -433,7 +433,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-2 gap-4 mt-6">
           <div>
             <p className="text-sm text-gray-400">Duration</p>
-            <p className="text-sm font-semibold text-gray-700">{task.duration}</p>
+            <p className="text-sm font-semibold text-gray-700">{task.duration || task.projectLength}</p>
           </div>
           <div>
             <p className="text-sm text-gray-400">Experience</p>
@@ -620,7 +620,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <p className="text-gray-400">Duration</p>
-                <p className="text-gray-700 font-medium">{task.duration}</p>
+                <p className="text-gray-700 font-medium">{task.duration || task.projectLength}</p>
               </div>
             </div>
 
@@ -659,12 +659,12 @@ export default function AdminDashboard() {
             <div className="flex flex-col gap-3 mt-6 pt-4 border-t border-gray-200">
               {/* Analytics Route Button */}
               <button
-                onClick={() => router.push(`/website-aaadminpanel/dashboard/metrics/${task.id}`)}
-                className="w-full flex items-center justify-center gap-2 bg-indigo-50 text-indigo-700 py-3 rounded-lg font-medium"
-              >
-                <BarChart3 className="w-5 h-5" />
-                View Analytics
-              </button>
+            onClick={() => router.push(`/website-aaadminpanel/dashboard/metrics/${task.id}`)}
+            className="w-full flex items-center justify-center gap-2 bg-emerald-700 text-white py-3 rounded-lg font-bold transition"
+          >
+            <BarChart3 className="w-5 h-5" />
+            View Task Analytics
+          </button>
 
               <div className="flex gap-3">
                 {isPending && (
@@ -698,6 +698,7 @@ export default function AdminDashboard() {
                     }`}
                 >
                   <Trash2 className="w-5 h-5" />
+                   Delete
                 </button>
               </div>
             </div>
