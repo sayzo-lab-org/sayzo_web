@@ -53,6 +53,9 @@ export async function POST(req) {
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[waitlist] POST error:', err);
-    return NextResponse.json({ message: 'Server error. Please try again.' }, { status: 500 });
+    return NextResponse.json(
+      { message: err.message || 'Server error. Please try again.' },
+      { status: 500 }
+    );
   }
 }
