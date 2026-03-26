@@ -22,9 +22,11 @@ const https  = require("https");
 const http   = require("http");
 const path   = require("path");
 
-// Load .env in local dev (not needed when deployed with env vars)
+// Load .env — override: true ensures .env wins over stale shell vars in dev.
+// In real production deployments (Render, Railway, etc.) env vars are injected
+// at the process level and dotenv simply won't find a .env file, so this is safe.
 try {
-  require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+  require("dotenv").config({ path: path.resolve(__dirname, "../.env"), override: true });
 } catch {
   // dotenv not installed or not needed — silently continue
 }
