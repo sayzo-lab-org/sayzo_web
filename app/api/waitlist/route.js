@@ -13,6 +13,12 @@ function getAdminDb() {
     const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
     let privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY || '';
 
+    if (!projectId || !clientEmail || !privateKey) {
+      throw new Error(
+        `Missing Firebase Admin env vars — projectId:${!!projectId} clientEmail:${!!clientEmail} privateKey:${!!privateKey}`
+      );
+    }
+
     if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
       privateKey = privateKey.substring(1, privateKey.length - 1);
     }
