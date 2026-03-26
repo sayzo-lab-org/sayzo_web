@@ -264,7 +264,7 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
                       <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Applying for</p>
                       <p className="text-sm font-semibold text-gray-900">{task?.taskName}</p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Budget: ₹{task?.amount}
+                        Budget: {task?.amount}
                         {task?.budgetType && (
                           <span className="ml-1 capitalize">({task.budgetType})</span>
                         )}

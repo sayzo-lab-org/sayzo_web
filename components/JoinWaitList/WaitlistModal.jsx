@@ -15,8 +15,6 @@ import { motion, AnimatePresence } from "framer-motion";
 //   SUMMARY: 4,
 // };
 
-const WAITLIST_SHEET_URL =
-  "https://script.google.com/macros/s/AKfycbzYdGLHwF19bgMLs0RU6R_pSXzT1Vq933CErzbTKC7pOXZvGrHlZDRq8VKOKebVFLoTFg/exec";
 
 const WaitlistModal = ({ isOpen, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,38 +59,22 @@ const WaitlistModal = ({ isOpen, onClose }) => {
   
     try {
       setIsSubmitting(true);
-  
-      // ===============================
-      // ❌ SUPABASE (KEEP COMMENTED)
-      // ===============================
-      /*
-      await fetch("/api/waitlist", {
+
+      const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      */
-  
-      // ===============================
-      // ✅ GOOGLE SHEET (WAITLIST)
-      // ===============================
-      await fetch(WAITLIST_SHEET_URL, {
-        method: "POST",
-        mode: "no-cors", // 🔥 REQUIRED
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName: formData.fullName,
-          email: formData.email,
-          phone: formData.phoneNumber,
-        }),
-      });
-  
-      setSuccessMessage("You're officially on the waitlist 🚀");
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || `Server error (${res.status})`);
+      }
+
+      setSuccessMessage("You're officially on the waitlist ");
     } catch (err) {
-      console.error(err);
-      alert("Failed to submit waitlist");
+      console.error("[waitlist] submit error:", err);
+      alert(err.message || "Failed to submit. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -139,7 +121,7 @@ const WaitlistModal = ({ isOpen, onClose }) => {
             {/* SUCCESS STATE */}
             {successMessage ? (
               <div className="text-center space-y-4 py-10">
-                <h2 className="text-3xl font-bold text-white">Welcome 🎉</h2>
+                <h2 className="text-3xl font-bold text-white">Welcome </h2>
                 <p className="text-zinc-400">{successMessage}</p>
                 <button onClick={resetForm} className={primaryBtnClasses}>
                   Done
