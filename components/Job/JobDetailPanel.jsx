@@ -102,9 +102,9 @@ const router = useRouter();
         <p className="text-lg text-gray-400 mb-1">
           Task Description
         </p>
-        <p className="text-sm text-gray-700 leading-relaxed">
-          {job.description}
-        </p>
+        <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
+  {job.description}
+</p>
       </div>
 
       {/* BUDGET */}

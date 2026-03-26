@@ -106,9 +106,9 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
           {/* TASK DESCRIPTION */}
           <div className="mt-4">
             <p className="text-sm text-gray-400 mb-1">Task Description</p>
-            <p className="text-sm text-gray-800 leading-relaxed">
-              {job.description}
-            </p>
+           <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
+  {job.description}
+</p>
           </div>
 
           {/* DETAILS */}
