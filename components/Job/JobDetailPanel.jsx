@@ -15,6 +15,7 @@ const JobDetailPanel = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
+  const [descExpanded, setDescExpanded] = useState(false);
 
   // Get userProfile
   const { userProfile } = useAuth();
@@ -98,14 +99,28 @@ const router = useRouter();
       )}
 
       {/* TASK DESCRIPTION */}
-      <div className="mt-7">
-        <p className="text-lg text-gray-400 mb-1">
-          Task Description
-        </p>
-        <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
-  {job.description}
-</p>
-      </div>
+      {(() => {
+        const LIMIT = 200;
+        const desc = job.description ?? "";
+        const isLong = desc.length > LIMIT;
+        const displayText = isLong && !descExpanded ? desc.slice(0, LIMIT) + "…" : desc;
+        return (
+          <div className="mt-7">
+            <p className="text-lg text-gray-400 mb-1">Task Description</p>
+            <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
+              {displayText}
+            </p>
+            {isLong && (
+              <button
+                onClick={() => setDescExpanded((prev) => !prev)}
+                className="mt-1.5 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
+              >
+                {descExpanded ? "View less" : "View more"}
+              </button>
+            )}
+          </div>
+        );
+      })()}
 
       {/* BUDGET */}
       <div className="mt-6">
