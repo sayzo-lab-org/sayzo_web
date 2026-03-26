@@ -14,6 +14,7 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
+  const [expandedId, setExpandedId] = useState(null);
 
   const router = useRouter();
 
@@ -104,12 +105,29 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
           )}
 
           {/* TASK DESCRIPTION */}
-          <div className="mt-4">
-            <p className="text-sm text-gray-400 mb-1">Task Description</p>
-            <p className="text-sm text-gray-800 leading-relaxed">
-              {job.description}
-            </p>
-          </div>
+          {(() => {
+            const LIMIT = 200;
+            const desc = job.description ?? "";
+            const isLong = desc.length > LIMIT;
+            const isExpanded = expandedId === job.id;
+            const displayText = isLong && !isExpanded ? desc.slice(0, LIMIT) + "…" : desc;
+            return (
+              <div className="mt-4">
+                <p className="text-sm text-gray-400 mb-1">Task Description</p>
+                <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
+                  {displayText}
+                </p>
+                {isLong && (
+                  <button
+                    onClick={() => setExpandedId((prev) => (prev === job.id ? null : job.id))}
+                    className="mt-1.5 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
+                  >
+                    {isExpanded ? "View less" : "View more"}
+                  </button>
+                )}
+              </div>
+            );
+          })()}
 
           {/* DETAILS */}
           <div className="grid grid-cols-2 gap-4 mt-5 text-sm">
