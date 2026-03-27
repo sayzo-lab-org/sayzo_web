@@ -26,7 +26,7 @@ const BlogSlider = () => {
   const allBlogs = [...firebaseBlogs, ...dummyBlogs];
 
   return (
-    <div className="mt-12 px-4 md:px-0">
+    <div className="mt-12">
       <div
         className="
           grid
