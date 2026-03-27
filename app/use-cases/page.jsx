@@ -30,7 +30,7 @@ export default function Home() {
     <FQR/>
     <Blog/> */}
     {/* <FeaturesSectionDemo/> */}
-   <Suspense fallback={<div className="p-10 text-center">Loading...</div>}>
+   <Suspense fallback={<div className="flex items-center justify-center min-h-screen" />}>
     <UserPage mode="showcase" />
    </Suspense>
      
