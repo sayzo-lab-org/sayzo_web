@@ -63,6 +63,7 @@ export function middleware(request) {
   const profileCompleted = request.cookies.get("profileCompleted")?.value;
   const isDev = process.env.NODE_ENV === "development";
   const isPreview = process.env.VERCEL_ENV === "preview";
+  const isDashboardEnabled = false; 
 
   // Redirect unauthenticated users away from protected admin routes
   const isAdminCookie = request.cookies.get("isAdmin")?.value;
@@ -74,6 +75,12 @@ export function middleware(request) {
       res.headers.set("Content-Security-Policy", buildCSP(nonce));
       return res;
     }
+  }
+
+  if (url.pathname.startsWith("/dashboard") && !isDashboardEnabled) {
+  const res = NextResponse.redirect(new URL("/", request.url));
+  res.headers.set("Content-Security-Policy", buildCSP(nonce));
+  return res;
   }
 
   if (profileCompleted === "true" && url.pathname.startsWith("/onboarding")) {
