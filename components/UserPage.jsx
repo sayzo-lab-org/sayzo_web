@@ -238,7 +238,7 @@ const UserPage = ({ mode = "live" }) => {
   /* ================= ERROR STATE ================= */
   if (error && !loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-center max-w-md mx-auto px-4">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-800 mb-2">Something went wrong</h3>
@@ -258,7 +258,7 @@ const UserPage = ({ mode = "live" }) => {
   /* ================= LOADING STATE ================= */
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <Loader2 className="w-10 h-10 animate-spin text-primary-btn mx-auto mb-4" />
           <p className="text-gray-500">Loading tasks...</p>
