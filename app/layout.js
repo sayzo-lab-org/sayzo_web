@@ -116,15 +116,13 @@ export default async function RootLayout({ children }) {
         <Toaster position="top-right" />
         {/* FULL WIDTH */}
         <HeaderWrapper />
-        <div >
-          <main>
-            <ErrorBoundary>
-              <ClientLayout>
-                {children}
-              </ClientLayout>
-            </ErrorBoundary>
-          </main>
-        </div>
+        <main>
+          <ErrorBoundary>
+            <ClientLayout>
+              {children}
+            </ClientLayout>
+          </ErrorBoundary>
+        </main>
         <AllLinks/>
       </AuthProvider>
       </PolicyProvider>
