@@ -320,7 +320,7 @@ export default function BlogDetails({ slug }) {
         <div ref={articleRef} className="mt-12 flex flex-col lg:flex-row gap-12 xl:gap-24 items-start">
 
           {/* Sticky sidebar — desktop only */}
-          <aside className="hidden lg:flex flex-col gap-8 w-64 shrink-0 sticky top-40 self-start">
+          <aside className="hidden lg:flex flex-col gap-8 w-64 shrink-0 top-40 self-start">
             <div className="group p-5 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-12 w-12 rounded-full bg-linear-to-tr from-[#10A37F] to-[#0d8a6c] flex items-center justify-center text-sm font-bold text-white shrink-0 shadow-inner">
