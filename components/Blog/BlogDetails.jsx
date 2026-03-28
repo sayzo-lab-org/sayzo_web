@@ -16,11 +16,10 @@ function ReadingProgressBar({ articleRef }) {
     const onScroll = () => {
       const el = articleRef?.current;
       if (!el) return;
-      const { top, height } = el.getBoundingClientRect();
+      const articleBottom = el.getBoundingClientRect().bottom + window.scrollY;
       const viewportH = window.innerHeight;
-      const scrolledIn = Math.max(0, -top);
-      const total = Math.max(1, height - viewportH);
-      setProgress(Math.min(100, (scrolledIn / total) * 100));
+      const total = Math.max(1, articleBottom - viewportH);
+      setProgress(Math.min(100, (window.scrollY / total) * 100));
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
