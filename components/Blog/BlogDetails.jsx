@@ -24,9 +24,9 @@ function ReadingProgressBar() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[200] h-0.5 bg-transparent pointer-events-none">
+    <div className="fixed top-36 left-0 right-0 z-[200] h-[3px] bg-gray-100 pointer-events-none">
       <div
-        className="h-full bg-[#10A37F] transition-[width] duration-75 ease-linear"
+        className="h-full bg-[#10A37F] transition-[width] duration-300 ease-out"
         style={{ width: `${progress}%` }}
       />
     </div>
@@ -56,6 +56,36 @@ function InlineImage({ src, alt, sizes = "(max-width: 1280px) 100vw, 500px" }) {
 //   items = paragraphs.slice(1)
 //   [0]=para1  [1|img2 split]  [2]=insight  [img3|3 split]  [4+]=body/quote
 //
+// Injects img2 (float-right) and img3 (float-left) into HTML at paragraph splits
+function injectImagesIntoHtml(html, img2, img3) {
+  if (!img2 && !img3) return html;
+
+  const positions = [...html.matchAll(/<\/p>/g)];
+  const total = positions.length;
+  if (total < 2) return html;
+
+  let result = html;
+
+  if (img2) {
+    const at = positions[Math.max(0, Math.floor(total / 3))].index + 4;
+    const node = `<div style="float:right;width:42%;margin:0.25rem 0 1.25rem 1.75rem;clear:right">` +
+      `<img src="${img2}" alt="Supporting visual" style="width:100%;border-radius:0.75rem;aspect-ratio:4/3;object-fit:cover" /></div>`;
+    result = result.slice(0, at) + node + result.slice(at);
+  }
+
+  if (img3) {
+    // recalculate after img2 was inserted
+    const pos3 = [...result.matchAll(/<\/p>/g)];
+    const t3 = pos3.length;
+    const at3 = pos3[Math.max(0, Math.floor(t3 * 2 / 3))].index + 4;
+    const node = `<div style="float:left;width:42%;margin:0.25rem 1.75rem 1.25rem 0;clear:left">` +
+      `<img src="${img3}" alt="Insight illustration" style="width:100%;border-radius:0.75rem;aspect-ratio:4/3;object-fit:cover" /></div>`;
+    result = result.slice(0, at3) + node + result.slice(at3);
+  }
+
+  return result;
+}
+
 function BlogContent({ paragraphs, blog, from = 0 }) {
   const items = paragraphs.slice(from);
   if (!items.length) return null;
@@ -323,7 +353,7 @@ export default function BlogDetails({ slug }) {
             {hasRichContent ? (
               /* ── Rich HTML content (new blogs) ── */
               <div
-                className="prose prose-lg max-w-none
+                className="prose prose-lg max-w-none overflow-hidden
                   prose-headings:font-bold prose-headings:text-gray-900
                   prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
                   prose-p:text-[17px] prose-p:text-gray-700 prose-p:leading-[1.8]
@@ -336,7 +366,7 @@ export default function BlogDetails({ slug }) {
                   prose-li:text-[17px] prose-li:leading-[1.8]
                   first-letter:text-6xl first-letter:font-bold first-letter:text-[#10A37F]
                   first-letter:mr-3 first-letter:float-left first-letter:mt-1"
-                dangerouslySetInnerHTML={{ __html: blog.content }}
+                dangerouslySetInnerHTML={{ __html: injectImagesIntoHtml(blog.content, blog.img2, blog.img3) }}
               />
             ) : (
               /* ── Legacy desc1-5 layout ── */
@@ -354,32 +384,20 @@ export default function BlogDetails({ slug }) {
               </>
             )}
 
+
             {/* ── Article footer: Share ── */}
-            <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-8 justify-between">
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-400 mb-4">Inside this article</p>
-                <ul className="space-y-3 text-[14px]">
-                  {['Overview', 'Key Analysis', 'Final Verdict'].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-gray-500">
-                      <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${i === 0 ? 'bg-[#10A37F]' : 'bg-gray-300'}`} />
-                      <span className={i === 0 ? 'text-[#10A37F] font-semibold' : ''}>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-400 mb-4">Share Piece</p>
-                <div className="flex gap-2">
-                  <button onClick={() => handleShare('twitter')} className="p-2.5 rounded-xl bg-gray-50 text-gray-600 hover:bg-[#1DA1F2] hover:text-white transition-all">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.745l7.73-8.835L1.254 2.25H8.08l4.713 5.857zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-                  </button>
-                  <button onClick={() => handleShare('linkedin')} className="p-2.5 rounded-xl bg-gray-50 text-gray-600 hover:bg-[#0077b5] hover:text-white transition-all">
-                    <Linkedin size={16} />
-                  </button>
-                  <button onClick={() => handleShare('copy')} className="p-2.5 rounded-xl bg-gray-50 text-gray-600 hover:bg-[#10A37F] hover:text-white transition-all">
-                    {copied ? <Check size={16} /> : <Link2 size={16} />}
-                  </button>
-                </div>
+            <div className="mt-12 pt-8 border-t border-gray-100 flex items-center justify-between">
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-400">Share Piece</p>
+              <div className="flex gap-2">
+                <button onClick={() => handleShare('twitter')} className="p-2.5 rounded-xl bg-gray-50 text-gray-600 hover:bg-[#1DA1F2] hover:text-white transition-all">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.745l7.73-8.835L1.254 2.25H8.08l4.713 5.857zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                </button>
+                <button onClick={() => handleShare('linkedin')} className="p-2.5 rounded-xl bg-gray-50 text-gray-600 hover:bg-[#0077b5] hover:text-white transition-all">
+                  <Linkedin size={16} />
+                </button>
+                <button onClick={() => handleShare('copy')} className="p-2.5 rounded-xl bg-gray-50 text-gray-600 hover:bg-[#10A37F] hover:text-white transition-all">
+                  {copied ? <Check size={16} /> : <Link2 size={16} />}
+                </button>
               </div>
             </div>
 
