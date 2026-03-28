@@ -5,23 +5,26 @@ import Image from 'next/image';
 import { ArrowLeft, Loader2, FileText, Calendar, Clock, Linkedin, Link2, Check } from 'lucide-react';
 import { blogs as dummyBlogs } from '@/public/data/blogs';
 import { getBlogBySlug, getPublishedBlogs } from '@/lib/firebase';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BlogCard from './BlogCard';
 
 // ── Reading progress bar ──────────────────────────────────────────────────────
-function ReadingProgressBar() {
+function ReadingProgressBar({ articleRef }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const onScroll = () => {
-      const el = document.documentElement;
-      const scrolled = el.scrollTop;
-      const total = el.scrollHeight - el.clientHeight;
-      setProgress(total > 0 ? (scrolled / total) * 100 : 0);
+      const el = articleRef?.current;
+      if (!el) return;
+      const { top, height } = el.getBoundingClientRect();
+      const viewportH = window.innerHeight;
+      const scrolledIn = Math.max(0, -top);
+      const total = Math.max(1, height - viewportH);
+      setProgress(Math.min(100, (scrolledIn / total) * 100));
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [articleRef]);
 
   return (
     <div className="fixed top-36 left-0 right-0 z-[200] h-[3px] bg-gray-100 pointer-events-none">
@@ -149,6 +152,7 @@ function BlogContent({ paragraphs, blog, from = 0 }) {
 // ── Main component ────────────────────────────────────────────────────────────
 export default function BlogDetails({ slug }) {
   const router = useRouter();
+  const articleRef = useRef(null);
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [allBlogs, setAllBlogs] = useState([...dummyBlogs]);
@@ -249,7 +253,7 @@ export default function BlogDetails({ slug }) {
   // ── Render ──
   return (
     <div className="min-h-screen bg-white mt-40">
-      <ReadingProgressBar />
+      <ReadingProgressBar articleRef={articleRef} />
 
       {/* Back navigation */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md">
@@ -314,7 +318,7 @@ export default function BlogDetails({ slug }) {
         </div>
 
         {/* ── Author sidebar + content ── */}
-        <div className="mt-12 flex flex-col lg:flex-row gap-12 xl:gap-24 items-start">
+        <div ref={articleRef} className="mt-12 flex flex-col lg:flex-row gap-12 xl:gap-24 items-start">
 
           {/* Sticky sidebar — desktop only */}
           <aside className="hidden lg:flex flex-col gap-8 w-64 shrink-0 sticky top-40 self-start">
