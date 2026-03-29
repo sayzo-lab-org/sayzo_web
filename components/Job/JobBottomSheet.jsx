@@ -15,6 +15,12 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
+  const [bidAmount, setBidAmount] = useState(() => {
+    const parsed = parseInt(String(job?.budget?.amount || "0").replace(/[^\d]/g, ""), 10);
+    return isNaN(parsed) ? 0 : parsed;
+  });
+
+  const isNegotiable = job?.budget?.type?.toLowerCase().includes("negotiat");
 
   const router = useRouter();
 
@@ -156,6 +162,33 @@ const JobBottomSheet = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
               </p>
             </div>
           </div>
+
+          {/* YOUR BID — negotiable tasks only */}
+          {isNegotiable && (
+            <div className="mt-5">
+              <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-2">Your Bid</p>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setBidAmount((v) => Math.max(0, v - 50))}
+                  className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-sm font-semibold transition-all shrink-0"
+                >
+                  −50
+                </button>
+                <div className="flex-1 py-2.5 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-800 text-center">
+                  ₹{bidAmount.toLocaleString("en-IN")}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setBidAmount((v) => v + 50)}
+                  className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-sm font-semibold transition-all shrink-0"
+                >
+                  +50
+                </button>
+              </div>
+              <p className="text-xs text-gray-400 mt-1.5">Adjusts in ₹50 steps</p>
+            </div>
+          )}
 
           {/* SKILLS */}
           <div className="mt-6">
