@@ -133,7 +133,7 @@ const JobDetailPanel = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
       )}
 
       {/* ABOUT CLIENT */}
-      <div className="mt-1 border-t border-gray-100 pt-4">
+      <div className="mt-1 pt-4">
         <p className="text-sm text-gray-500 mb-2">About the Client</p>
         <p className="text-sm text-gray-600 leading-relaxed">
           {job.company?.about || "Verified task giver on the platform"}
