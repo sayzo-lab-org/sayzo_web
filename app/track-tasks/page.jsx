@@ -760,6 +760,19 @@ export default function TrackTasksPage() {
                                       <span className="text-gray-500 capitalize">{applicant.canFinishOnTime}</span>
                                     </p>
                                   </div>
+
+                                  {/* Bid amount — only for negotiable tasks */}
+                                  {applicant.bidAmount != null && (
+                                    <div className="flex items-center justify-between rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2">
+                                      <div>
+                                        <p className="text-xs font-medium text-emerald-600 uppercase tracking-wide">Applicant's Bid</p>
+                                        <p className="text-base font-bold text-emerald-700">
+                                          ₹{Number(applicant.bidAmount).toLocaleString("en-IN")}
+                                        </p>
+                                      </div>
+                                      <span className="text-xs font-medium text-emerald-500 bg-emerald-100 px-2 py-1 rounded-full">Negotiated</span>
+                                    </div>
+                                  )}
                                   {/* Line 2: Mobile, Email, City - stack on mobile */}
                                   <div className="flex flex-col gap-2 text-sm">
                                     {/* Mobile row */}

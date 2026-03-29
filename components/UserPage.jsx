@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   subscribeToApprovedTasks,
   subscribeToApplicationsByApplicant,
@@ -10,7 +10,7 @@ import { jobs as dummyJobs } from "@/public/data/job";
 import { useAuth } from "@/app/Context/AuthContext";
 
 import JobCard from "@/components/Job/JobCard";
-import JobDetailPanel from "@/components/Job/JobDetailPanel";
+import JobModal from "@/components/Job/JobModal";
 import JobBottomSheet from "@/components/Job/JobBottomSheet";
 import SearchWithPagination from "@/components/SearchWithPagination";
 import CustomIcons from "@/components/CustomIcons";
@@ -188,7 +188,7 @@ const UserPage = ({ mode = "live" }) => {
   }, [searchQuery]);
 
   /* ================= PAGINATION ================= */
-  const ITEMS_PER_PAGE = useMemo(() => (isMobile ? 10 : 15), [isMobile]);
+  const ITEMS_PER_PAGE = 15;
 
   /* ================= SEARCH + FILTER ================= */
   const filteredJobs = useMemo(() => {
@@ -267,6 +267,16 @@ const UserPage = ({ mode = "live" }) => {
     );
   }
 
+  const closeModal = () => {
+    setSelectedJob(null);
+    router.push(pathname, { scroll: false });
+  };
+
+  const openJob = (job) => {
+    setSelectedJob(job);
+    router.push(`${pathname}?task=${job.id}`, { scroll: false });
+  };
+
   /* ================================================= */
   return (
     <div className="">
@@ -275,122 +285,60 @@ const UserPage = ({ mode = "live" }) => {
 
       <MegaMenu />
 
-      {/* ================= DESKTOP ================= */}
-      {!isMobile && (
-        <>
-          {!selectedJob && (
-            <section className="max-w-350 mx-auto px-4 py-12 grid grid-cols-2 lg:grid-cols-3 gap-4">
-              {paginatedJobs.map((job) => (
-                <div
-                  key={job.id}
-                  onClick={() => {
-                    // console.log("Job clicked:", job);
-                    setSelectedJob(job);
-                    router.push(`${pathname}?task=${job.id}`, { scroll: false });
-                  }}
-                  className={`cursor-pointer border-2 border-gray-200 rounded-xl p-4 transition ${job.status === 'completed' ? 'hover:border-red-500' : 'hover:border-primary-btn'
-                    }`}
-                >
-                  <JobCard job={job} status={job.status} />
-                </div>
-              ))}
-            </section>
-          )}
+      {/* ================= TASK GRID ================= */}
+      <section className="max-w-350 mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {paginatedJobs.map((job) => (
+          <div
+            key={job.id}
+            onClick={() => openJob(job)}
+            className={`cursor-pointer border-2 border-gray-200 rounded-xl p-4 transition ${
+              job.status === "completed"
+                ? "hover:border-red-500"
+                : "hover:border-primary-btn"
+            }`}
+          >
+            <JobCard job={job} status={job.status} />
+          </div>
+        ))}
+      </section>
 
-          {selectedJob && (
-            <section className="max-w-350 mx-auto relative z-10 px-4 py-12 grid grid-cols-[1.2fr_1fr] gap-6">
-              <div className="space-y-4 overflow-y-auto max-h-[80vh] pr-2">
-                {paginatedJobs.map((job) => (
-                  <div
-                    key={job.id}
-                    onClick={() => {
-                      setSelectedJob(job);
-                      router.push(`${pathname}?task=${job.id}`, { scroll: false });
-                    }}
-                    className={`cursor-pointer rounded-xl border-2 p-4 transition
-                      ${selectedJob.id === job.id
-                        ? "border-primary-btn bg-primary-btn/5"
-                        : `border-gray-200 ${job.status === 'completed' ? 'hover:border-red-500' : 'hover:border-primary-btn'}`
-                      }`}
-                  >
-                    <JobCard job={job} status={job.status} />
-                  </div>
-                ))}
-              </div>
-
-              <JobDetailPanel
-                job={selectedJob}
-                onClose={() => {
-                  setSelectedJob(null);
-                  router.push(pathname, { scroll: false });
-                }}
-                currentUser={currentUser}
-                hasApplied={hasApplied(selectedJob?.id)}
-                isOwnTask={isOwnTask(selectedJob)}
-                onApplicationSuccess={handleApplicationSuccess}
-                mode={mode}
-              />
-            </section>
-          )}
-
-          {filteredJobs.length === 0 && (
-            <div className="text-center py-20 text-gray-400">
-              No tasks match your search
-            </div>
-          )}
-
-          <CustomIcons
-            page={currentPage}
-            count={totalPages}
-            onChange={setCurrentPage}
-          />
-        </>
+      {filteredJobs.length === 0 && (
+        <div className="text-center py-20 text-gray-400">
+          No tasks match your search
+        </div>
       )}
 
-      {/* ================= MOBILE ================= */}
-      {isMobile && (
-        <section className="px-4 py-6 space-y-4">
-          {paginatedJobs.map((job) => (
-            <div
-              key={job.id}
-              onClick={() => {
-                // console.log("Job clicked:", job);
-                setSelectedJob(job);
-                router.push(`${pathname}?task=${job.id}`, { scroll: false });
-              }}
-              className="border-2 border-gray-200 rounded-xl p-4"
-            >
-              <JobCard job={job} status={job.status} />
-            </div>
-          ))}
+      <CustomIcons
+        page={currentPage}
+        count={totalPages}
+        onChange={setCurrentPage}
+      />
 
-          {filteredJobs.length === 0 && (
-            <div className="text-center py-20 text-gray-400">
-              No tasks match your search
-            </div>
-          )}
+      {/* ================= MODAL (desktop) ================= */}
+      {!isMobile && (
+        <JobModal
+          job={selectedJob}
+          isOpen={!!selectedJob}
+          onClose={closeModal}
+          currentUser={currentUser}
+          hasApplied={hasApplied(selectedJob?.id)}
+          isOwnTask={isOwnTask(selectedJob)}
+          onApplicationSuccess={handleApplicationSuccess}
+          mode={mode}
+        />
+      )}
 
-          <CustomIcons
-            page={currentPage}
-            count={totalPages}
-            onChange={setCurrentPage}
-          />
-
-          {selectedJob && (
-            <JobBottomSheet
-              job={selectedJob}
-              onClose={() => {
-                setSelectedJob(null);
-                router.push(pathname, { scroll: false });
-              }}
-              currentUser={currentUser}
-              hasApplied={hasApplied(selectedJob?.id)}
-              isOwnTask={isOwnTask(selectedJob)}
-              onApplicationSuccess={handleApplicationSuccess}
-              mode={mode}
-            />
-          )}
-        </section>
+      {/* ================= BOTTOM SHEET (mobile) ================= */}
+      {isMobile && selectedJob && (
+        <JobBottomSheet
+          job={selectedJob}
+          onClose={closeModal}
+          currentUser={currentUser}
+          hasApplied={hasApplied(selectedJob?.id)}
+          isOwnTask={isOwnTask(selectedJob)}
+          onApplicationSuccess={handleApplicationSuccess}
+          mode={mode}
+        />
       )}
     </div>
   );

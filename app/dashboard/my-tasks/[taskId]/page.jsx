@@ -192,8 +192,19 @@ function ApplicantCard({ applicant, profile, onAction, actionLoading, expanded, 
             )}
 
             {/* Details grid */}
-            {(applicant.experience || applicant.canFinishOnTime != null || applicant.city) && (
+            {(applicant.experience || applicant.canFinishOnTime != null || applicant.city || applicant.bidAmount != null) && (
               <div className="grid grid-cols-2 gap-3 text-sm">
+                {applicant.bidAmount != null && (
+                  <div className="col-span-2 flex items-center justify-between rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2">
+                    <div>
+                      <p className="text-xs text-emerald-600 font-medium uppercase tracking-wide">Applicant's Bid</p>
+                      <p className="mt-0.5 text-base font-bold text-emerald-700">
+                        ₹{Number(applicant.bidAmount).toLocaleString("en-IN")}
+                      </p>
+                    </div>
+                    <span className="text-xs text-emerald-500 bg-emerald-100 px-2 py-1 rounded-full font-medium">Negotiated</span>
+                  </div>
+                )}
                 {applicant.experience && (
                   <div>
                     <p className="text-xs text-gray-400">Experience</p>
