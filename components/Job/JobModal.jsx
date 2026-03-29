@@ -35,7 +35,7 @@ export default function JobModal({ job, isOpen, onClose, ...props }) {
   return createPortal(
     <AnimatePresence>
       {isOpen && job && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 pt-30 pb-6">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 pt-34 pb-6">
 
           {/* Backdrop */}
           <motion.div
