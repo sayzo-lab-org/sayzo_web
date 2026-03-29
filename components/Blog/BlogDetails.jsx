@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ArrowLeft, Loader2, FileText, Calendar, Clock, Linkedin, Link2, Check } from 'lucide-react';
-import { blogs as dummyBlogs } from '@/public/data/blogs';
+
 import { getBlogBySlug, getPublishedBlogs } from '@/lib/firebase';
 import { useEffect, useRef, useState } from 'react';
 import BlogCard from './BlogCard';
@@ -154,7 +154,7 @@ export default function BlogDetails({ slug }) {
   const articleRef = useRef(null);
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [allBlogs, setAllBlogs] = useState([...dummyBlogs]);
+  const [allBlogs, setAllBlogs] = useState([]);
   const [copied, setCopied] = useState(false);
 
   // Fetch current blog
@@ -162,12 +162,6 @@ export default function BlogDetails({ slug }) {
     window.scrollTo(0, 0);
 
     const findBlog = async () => {
-      const dummyBlog = dummyBlogs.find((b) => b.slug === slug);
-      if (dummyBlog) {
-        setBlog(dummyBlog);
-        setLoading(false);
-        return;
-      }
       try {
         const firebaseBlog = await getBlogBySlug(slug);
         if (firebaseBlog) setBlog(firebaseBlog);
@@ -185,9 +179,9 @@ export default function BlogDetails({ slug }) {
     const fetchAll = async () => {
       try {
         const published = await getPublishedBlogs();
-        setAllBlogs([...published, ...dummyBlogs]);
+        setAllBlogs(published);
       } catch {
-        // silently fall back to dummy blogs
+        // silently ignore
       }
     };
     fetchAll();
