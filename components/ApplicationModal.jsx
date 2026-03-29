@@ -74,6 +74,8 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
 
   useEffect(() => { setMounted(true); }, []);
 
+  const [bidAmount, setBidAmount] = useState(0);
+
   const [form, setForm] = useState({
     applicantName:  "",
     applicantRole:  "",
@@ -84,6 +86,15 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
     applicantPhone: "",
     city:           "",
   });
+
+  const isNegotiable = task?.budgetType?.toLowerCase().includes("negotiat");
+
+  // Seed bid from task amount when modal opens
+  useEffect(() => {
+    if (!isOpen || !task?.amount) return;
+    const parsed = parseInt(String(task.amount).replace(/[^\d]/g, ""), 10);
+    setBidAmount(isNaN(parsed) ? 0 : parsed);
+  }, [isOpen, task?.amount]);
 
   // Check for duplicate application and pre-fill form when modal opens
   useEffect(() => {
@@ -165,7 +176,12 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
       const alreadyExists = await hasUserApplied(task.id, currentUser.uid);
       if (alreadyExists) { setAlreadyApplied(true); setLoading(false); return; }
 
-      await addApplication({ taskId: task.id, giverId: task.giverId, ...form });
+      await addApplication({
+        taskId: task.id,
+        giverId: task.giverId,
+        ...form,
+        ...(isNegotiable ? { bidAmount } : {}),
+      });
       setSuccess(true);
       setTimeout(() => { onSuccess?.(); onClose(); }, 2000);
     } catch (err) {
@@ -183,6 +199,7 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
   const resetAndClose = () => {
     setError("");
     setSuccess(false);
+    setBidAmount(0);
     setForm({
       applicantName: "", applicantRole: "", description: "",
       experience: "", canFinishOnTime: "", email: "",
@@ -331,6 +348,33 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
                         </SelectField>
                       </div>
                     </div>
+
+                    {/* Bid stepper — negotiable tasks only */}
+                    {isNegotiable && (
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">Your Bid</label>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setBidAmount((v) => Math.max(0, v - 50))}
+                            className="px-4 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-sm font-semibold transition-all shrink-0"
+                          >
+                            −50
+                          </button>
+                          <div className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-800 text-center">
+                            ₹{bidAmount.toLocaleString("en-IN")}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setBidAmount((v) => v + 50)}
+                            className="px-4 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-sm font-semibold transition-all shrink-0"
+                          >
+                            +50
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-400">Adjusts in ₹50 steps</p>
+                      </div>
+                    )}
 
                     {/* Email */}
                     <div className="space-y-1.5">
