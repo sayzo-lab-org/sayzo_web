@@ -35,7 +35,7 @@ export default function JobModal({ job, isOpen, onClose, ...props }) {
   return createPortal(
     <AnimatePresence>
       {isOpen && job && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-35 pb-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 pt-30 pb-6">
 
           {/* Backdrop */}
           <motion.div
@@ -55,7 +55,7 @@ export default function JobModal({ job, isOpen, onClose, ...props }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 16 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl shadow-2xl"
+            className="relative w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-3xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <JobDetailPanel job={job} onClose={onClose} {...props} />
