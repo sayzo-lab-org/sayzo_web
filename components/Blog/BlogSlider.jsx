@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import BlogCard from './BlogCard';
-import { blogs as dummyBlogs } from '@/public/data/blogs';
+
 import { getPublishedBlogs } from '@/lib/firebase';
 
 const BlogSlider = () => {
@@ -23,7 +23,7 @@ const BlogSlider = () => {
   }, []);
 
   // Combine Firebase blogs (newer, first) with dummy blogs
-  const allBlogs = [...firebaseBlogs, ...dummyBlogs];
+  const allBlogs = [...firebaseBlogs];
 
   return (
     <div className="mt-12">
