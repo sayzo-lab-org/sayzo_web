@@ -1,10 +1,9 @@
-import { blogs } from "@/public/data/blogs";
+import { getPublishedBlogs } from "@/lib/firebase";
 import { categories } from "@/public/data/categories";
 
-export default function sitemap() {
+export default async function sitemap() {
   const baseUrl = "https://sayzo.net";
 
-  // Done Static Routes with Priority
   const staticRoutes = [
     { path: "", priority: 1.0, changefreq: "daily" },
     { path: "/contact", priority: 0.5, changefreq: "monthly" },
@@ -19,15 +18,19 @@ export default function sitemap() {
     priority: route.priority,
   }));
 
-  // Done Blog Routes (Safely parsing dates)
-  const blogRoutes = blogs.map((blog) => ({
-    url: `${baseUrl}/blog/${blog.slug}`,
-    lastModified: new Date(blog.date).toISOString(),
-    changeFrequency: "weekly",
-    priority: 0.6,
-  }));
+  let blogRoutes = [];
+  try {
+    const blogs = await getPublishedBlogs();
+    blogRoutes = blogs.map((blog) => ({
+      url: `${baseUrl}/blog/${blog.slug}`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    }));
+  } catch {
+    // silently skip blog routes if Firebase is unavailable during build
+  }
 
-  // Done Category & Subcategory Routes
   const categoryRoutes = categories.flatMap((category) => {
     const mainCategory = {
       url: `${baseUrl}/category/${category.slug}`,

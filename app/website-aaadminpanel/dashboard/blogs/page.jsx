@@ -5,11 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Loader2, Plus, ChevronDown, X, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/app/Context/AuthContext';
-import { subscribeToBlogsAdmin, addBlog, updateBlog, deleteBlog, toggleBlogPublished } from '@/lib/firebase';
+import { subscribeToBlogsAdmin, deleteBlog, toggleBlogPublished } from '@/lib/firebase';
 import { BLOG_CATEGORIES } from '@/lib/constants';
 import AdminLayout from '@/components/admin/AdminLayout';
 import AdminBlogCard from '@/components/admin/AdminBlogCard';
-import BlogFormModal from '@/components/admin/BlogFormModal';
 
 export default function BlogsManagementPage() {
   const router = useRouter();
@@ -23,11 +22,6 @@ export default function BlogsManagementPage() {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [togglingPublishId, setTogglingPublishId] = useState(null);
-
-  // Modal states
-  const [showFormModal, setShowFormModal] = useState(false);
-  const [editingBlog, setEditingBlog] = useState(null);
-  const [formLoading, setFormLoading] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
   // Subscribe to blogs
@@ -76,38 +70,6 @@ export default function BlogsManagementPage() {
     }
   };
 
-  // Handle create blog
-  const handleCreateBlog = async (formData) => {
-    setFormLoading(true);
-    try {
-      await addBlog(formData);
-      toast.success('Blog created successfully!');
-      setShowFormModal(false);
-    } catch (err) {
-      toast.error(err.message || 'Failed to create blog');
-      throw err;
-    } finally {
-      setFormLoading(false);
-    }
-  };
-
-  // Handle edit blog
-  const handleEditBlog = async (formData) => {
-    if (!editingBlog) return;
-    setFormLoading(true);
-    try {
-      await updateBlog(editingBlog.id, formData);
-      toast.success('Blog updated successfully!');
-      setShowFormModal(false);
-      setEditingBlog(null);
-    } catch (err) {
-      toast.error(err.message || 'Failed to update blog');
-      throw err;
-    } finally {
-      setFormLoading(false);
-    }
-  };
-
   // Handle delete blog
   const handleDeleteBlog = async (blogId) => {
     if (!confirm('Are you sure you want to delete this blog? This action cannot be undone.')) {
@@ -124,17 +86,8 @@ export default function BlogsManagementPage() {
     }
   };
 
-  // Open edit modal
-  const openEditModal = (blog) => {
-    setEditingBlog(blog);
-    setShowFormModal(true);
-  };
-
-  // Open create modal
-  const openCreateModal = () => {
-    setEditingBlog(null);
-    setShowFormModal(true);
-  };
+  const openCreatePage = () => router.push('/website-aaadminpanel/dashboard/blogs/new');
+  const openEditPage = (blog) => router.push(`/website-aaadminpanel/dashboard/blogs/${blog.id}/edit`);
 
   const filterOptions = [
     { id: 'All', label: 'All Blogs' },
@@ -242,7 +195,7 @@ export default function BlogsManagementPage() {
 
               {/* Add Blog Button */}
               <button
-                onClick={openCreateModal}
+                onClick={openCreatePage}
                 className="flex items-center gap-2 px-4 py-2 bg-[#13a884] hover:bg-[#0f8c6e] text-white rounded-lg text-sm font-medium transition"
               >
                 <Plus className="w-4 h-4" />
@@ -284,7 +237,7 @@ export default function BlogsManagementPage() {
                     : `No blogs in ${categoryFilter} category`}
                 </p>
                 <button
-                  onClick={openCreateModal}
+                  onClick={openCreatePage}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-[#13a884] hover:bg-[#0f8c6e] text-white rounded-lg text-sm font-medium transition"
                 >
                   <Plus className="w-4 h-4" />
@@ -297,7 +250,7 @@ export default function BlogsManagementPage() {
                   <AdminBlogCard
                     key={blog.id}
                     blog={blog}
-                    onEdit={openEditModal}
+                    onEdit={openEditPage}
                     onDelete={handleDeleteBlog}
                     onTogglePublish={handleTogglePublish}
                     isDeleting={deletingId === blog.id}
@@ -309,17 +262,6 @@ export default function BlogsManagementPage() {
           </div>
         </div>
 
-        {/* Blog Form Modal */}
-        <BlogFormModal
-          isOpen={showFormModal}
-          onClose={() => {
-            setShowFormModal(false);
-            setEditingBlog(null);
-          }}
-          onSubmit={editingBlog ? handleEditBlog : handleCreateBlog}
-          initialData={editingBlog}
-          isLoading={formLoading}
-        />
       </div>
     </AdminLayout>
   );

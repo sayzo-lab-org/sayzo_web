@@ -66,9 +66,11 @@ const AdminBlogCard = ({ blog, onEdit, onDelete, onTogglePublish, isDeleting = f
         </div>
       )}
 
-      {/* Description Preview (desc1) */}
+      {/* Description Preview */}
       <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mb-4">
-        {blog.desc1}
+        {blog.content
+          ? blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+          : blog.desc1}
       </p>
 
       {/* Footer */}
