@@ -1,23 +1,30 @@
-import BlogDetails from '@/components/Blog/BlogDetails'; 
-import { blogs } from '@/public/data/blogs';
-
+import BlogDetails from '@/components/Blog/BlogDetails';
+import { getBlogBySlug } from '@/lib/firebase';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const blog = blogs.find((b) => b.slug === slug);
 
-  if (!blog) return { title: "Blog Not Found" };
+  try {
+    const blog = await getBlogBySlug(slug);
+    if (!blog) return { title: 'Blog Not Found' };
 
-  return {
-    title: `${blog.title} | SAYZO`,
-    description: blog.desc1.substring(0, 160),
-    openGraph: {
-      title: blog.title,
-      description: blog.desc1.substring(0, 160),
-      images: [{ url: blog.img }],
-      type: "article",
-    },
-  };
+    const description = blog.content
+      ? blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 160)
+      : (blog.desc1 || '').substring(0, 160);
+
+    return {
+      title: `${blog.title} | SAYZO`,
+      description,
+      openGraph: {
+        title: blog.title,
+        description,
+        images: blog.img ? [{ url: blog.img }] : [],
+        type: 'article',
+      },
+    };
+  } catch {
+    return { title: 'Blog Not Found' };
+  }
 }
 
 export default async function Page({ params }) {
