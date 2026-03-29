@@ -59,7 +59,7 @@ const BlogCard = ({ blog }) => {
         </h3>
 
         <p className="mt-2 text-sm sm:text-base text-gray-500 line-clamp-3">
-          {blog.desc1}
+          {blog.desc1 || (blog.content ? blog.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : '')}
         </p>
 
         <div className="mt-3 flex items-center gap-2 text-xs text-gray-400 font-medium">
