@@ -9,13 +9,14 @@ import {
   DollarSign,
   Briefcase,
   Search,
+  ArrowRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getApprovedTasks } from "@/lib/firebase";
 import TaskDoerAuthModal from "@/components/TaskDoerAuthModal";
 import ApplicationModal from "@/components/ApplicationModal";
+import TaskDetailsModal from "@/components/TaskDetailsModal";
 import { useAuth } from "@/app/Context/AuthContext";
-import { Button } from "@/components/ui/button";
 
 
 export default function BrowseTasksPage() {
@@ -34,6 +35,7 @@ export default function BrowseTasksPage() {
 
   // Application state
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
   const [showApplicationModal, setShowApplicationModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [error, setError] = useState("");
@@ -89,13 +91,19 @@ export default function BrowseTasksPage() {
     }
   };
 
-  const handleApplyClick = (task) => {
+  // Open details modal on card click
+  const handleCardClick = (task) => {
     setSelectedTask(task);
+    setShowTaskModal(true);
+  };
+
+  // "Apply Now" inside details modal → open application form
+  const handleApplyClick = () => {
+    setShowTaskModal(false);
     if (isAuthenticated) {
       setShowApplicationModal(true);
     } else {
       routerServerGlobal.push("/login");
-      
     }
   };
 
@@ -121,6 +129,14 @@ export default function BrowseTasksPage() {
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={handleAuthSuccess}
+      />
+
+      {/* Task Details Modal */}
+      <TaskDetailsModal
+        task={selectedTask}
+        isOpen={showTaskModal}
+        onClose={() => { setShowTaskModal(false); setSelectedTask(null); }}
+        onApply={handleApplyClick}
       />
 
       {/* Application Modal */}
@@ -215,7 +231,8 @@ export default function BrowseTasksPage() {
             {filteredTasks.map((task) => (
               <div
                 key={task.id}
-                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+                onClick={() => handleCardClick(task)}
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
               >
                 {/* Card Header */}
                 <div className="p-5 border-b border-gray-100">
@@ -287,22 +304,11 @@ export default function BrowseTasksPage() {
                 </div>
 
                 {/* Card Footer */}
-                <div className="px-5 py-4 bg-gray-50 border-t border-gray-100">
-                  <Button
-
-                   onClick={() => {
-                 
-                    if (!isAuthenticated) {
-                      router.push("/login");
-                    } else {
-                      handleApplyClick(task);
-                    }
-                
-                  }}
-                    className="w-full bg-black hover:bg-gray-800 text-white py-3 rounded-lg font-medium transition-colors"
-                  >
-                    Apply Now
-                  </Button>
+                <div className="px-5 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                  <span className="text-xs text-gray-400">Click to view details</span>
+                  <span className="text-xs font-semibold text-gray-700 flex items-center gap-1">
+                    View & Apply <ArrowRight className="w-3 h-3" />
+                  </span>
                 </div>
               </div>
             ))}
