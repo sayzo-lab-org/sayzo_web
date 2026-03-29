@@ -19,6 +19,8 @@ const JobDetailPanel = ({ job, onClose, currentUser, hasApplied, isOwnTask, onAp
   const { userProfile } = useAuth();
   const router = useRouter();
 
+  console.log("JobDetailPanel Rendered with job:", job);
+
   const handleApplyClick = () => {
     if (mode === "showcase") {
       setShowWaitlistModal(true);
