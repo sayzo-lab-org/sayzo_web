@@ -211,13 +211,13 @@ const Header = () => {
                   </span>
                 </Button>
 
-                <Button
+                {/* <Button
                   size="sayzobtn"
                   onClick={() => setIsWaitlistOpen(true)}
                   className="text-sm hover:bg-zinc-800 transition-all"
                 >
                   Join Waitlist
-                </Button>
+                </Button> */}
               </div>
             )}
 
@@ -540,28 +540,14 @@ const Header = () => {
                 </motion.div>
               ))}
 
-              <div className="h-[1px] bg-gray-100 my-4" />
-
-              {/* ACTION BUTTONS */}
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0, y: 10 },
-                  visible: { opacity: 1, y: 0 }
-                }}
-                className="space-y-4"
-              >
-                <Button
-                  size='sayzobtn'
-                  onClick={() => {
-                    setOpen(false);
-                    setIsWaitlistOpen(true);
+              {!user && (
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 }
                   }}
-                  className="w-full text-white font-bold transition-all hover:scale-102"
                 >
-                  Join Waitlist
-                </Button>
-
-                {!user && (
+                  <div className="h-[1px] bg-gray-100 my-4" />
                   <Link
                     onClick={() => setOpen(false)}
                     href="/login"
@@ -569,8 +555,8 @@ const Header = () => {
                   >
                     Already have an account? <span className="text-black underline underline-offset-4">Login</span>
                   </Link>
-                )}
-              </motion.div>
+                </motion.div>
+              )}
             </motion.nav>
           </motion.div>
         )}
