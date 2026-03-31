@@ -38,7 +38,7 @@ function buildCSP(nonce) {
     `img-src 'self' data: blob: https://images.unsplash.com https://picsum.photos https://lh3.googleusercontent.com https://sayzo.in https://www.sayzo.in https://www.googletagmanager.com https://www.google-analytics.com https://server.arcgisonline.com`,
 
     // XHR / fetch / WebSocket: Firebase SDKs + GA
-    `connect-src 'self' https://*.googleapis.com https://*.firebaseapp.com https://*.firebase.com https://www.google-analytics.com https://analytics.google.com wss://*.firebaseio.com`,
+    `connect-src 'self' https://*.googleapis.com https://*.firebaseapp.com https://*.firebase.com https://www.google-analytics.com https://analytics.google.com wss://*.firebaseio.com https://script.google.com`,
 
     // Frames: reCAPTCHA widget + Google OAuth + Firebase auth domain
     `frame-src 'self' https://www.google.com https://accounts.google.com https://*.firebaseapp.com`,
