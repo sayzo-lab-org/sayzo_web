@@ -6,11 +6,11 @@ import { useAuth } from '@/app/Context/AuthContext';
 const announcements = [
   {
     icon: '✨',
-    text: 'Sayzo is now live — connect with 40,000+ local helpers near you',
+    text: 'Sayzo is now live  connect with 40,000+ local helpers near you',
   },
   {
     icon: '✨',
-    text: 'Post your first task in under 60 seconds — free forever',
+    text: 'Post your first task in under 60 seconds  free forever',
     cta: 'Post Now',
     action: 'postTask',
   },
