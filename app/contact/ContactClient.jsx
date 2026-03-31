@@ -34,8 +34,8 @@ const contactInfo = [
   {
     icon: Phone,
     label: "Call Us",
-    value: "+91 93150 49498",
-    href: "tel:+919315049498",
+    value: "+91 93355 81408",
+    href: "tel:+919335581408",
   },
   // {
   //   icon: MapPin,
