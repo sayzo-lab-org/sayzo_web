@@ -71,6 +71,13 @@ const Header = () => {
     }
   }, [user]);
 
+  // Listen for open-task-modal event dispatched by SmallHeader
+  useEffect(() => {
+    const handler = () => setIsTaskOpen(true);
+    window.addEventListener('sayzo:openTaskModal', handler);
+    return () => window.removeEventListener('sayzo:openTaskModal', handler);
+  }, []);
+
   // Subscribe to user's job applications when profile modal opens
   useEffect(() => {
     if (!isProfileOpen || !user) {
