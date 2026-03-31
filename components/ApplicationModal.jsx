@@ -361,9 +361,25 @@ const ApplicationModal = ({ isOpen, onClose, task, onSuccess, currentUser }) => 
                           >
                             −50
                           </button>
-                          <div className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-800 text-center">
-                            ₹{bidAmount.toLocaleString("en-IN")}
-                          </div>
+                          <div className="relative flex-1">
+
+  <input
+    type="text"
+    value={
+    bidAmount === 0
+      ? ""
+      : `₹${bidAmount.toLocaleString("en-IN")}`
+  }
+    onChange={(e) => {
+      const raw = e.target.value.replace(/,/g, ""); // remove commas
+      const digits = raw.replace(/\D/g, ""); // keep only numbers
+      setBidAmount(digits ? parseInt(digits) : 0);
+    }}
+    className="w-full text-center pl-7 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+    placeholder="Enter bid"
+    inputMode="numeric"
+  />
+</div>
                           <button
                             type="button"
                             onClick={() => setBidAmount((v) => v + 50)}
