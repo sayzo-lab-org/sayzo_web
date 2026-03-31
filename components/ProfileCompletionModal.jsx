@@ -77,8 +77,8 @@ const ProfileCompletionModal = ({
       if (!currentUser) return;
 
       const existingProfile = await getUserProfile(currentUser.uid);
-       if (existingProfile.profileCompleted) {
-        onSuccess?.(existingProfile);
+      if (existingProfile?.profileCompleted) {
+        onClose?.();
         return;
       }
       
