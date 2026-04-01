@@ -6,10 +6,13 @@ export const NAV_ITEMS = [
   { id: 'terms-and-condition', label: 'Terms and Condition' },
   { id: 'privacy-policy', label: 'Privacy Policy' },
   { id: 'usermanual', label: 'User Manual' },
-  { id: 'REFUND-&-CANCELLATION', label: 'REFUND & CANCELLATION' },
+  
   { id: 'faq', label: 'FAQ' },
-  { id: 'PROHIBITED-TASKS-&-BLACKLIST-CATEGORIES', label: 'PROHIBITED ASKS & BLACKLIST CATEGORIES' },
-  { id: 'Trust-&-Safety', label: 'Trust & Safety' },
+ 
+  
+{ id: 'trust-and-safety', label: 'Trust & Safety' },
+{ id: 'refund-and-cancellation', label: 'Refund & Cancellation' },
+{ id: 'blacklist-category', label: 'PROHIBITED TASKS & BLACKLIST CATEGORIES' },
 ];
 
 /* ===========================
@@ -2267,7 +2270,7 @@ export const MOCK_DATA = {
   },
 
   /* ================= TECHNOLOGIES ================= */
- 'REFUND-&-CANCELLATION': {
+ 'refund-and-cancellation': {
     sidebar: [
       { id: 'intro', label: 'Introduction' },
       { id: 'role-sayzo', label: 'Role of SAYZO' },
@@ -3785,9 +3788,8 @@ export const MOCK_DATA = {
       },
     },
   },
-
   
-    'PROHIBITED-TASKS-&-BLACKLIST-CATEGORIES': {
+    'blacklist-category': {
       sidebar: [
         { id: 'pt-intro', label: 'Introduction' },
         { id: 'pt-core', label: 'Core Principle' },
@@ -4103,7 +4105,7 @@ export const MOCK_DATA = {
       },
     
   },
-  'Trust-&-Safety': {
+  'trust-and-safety': {
   sidebar: [
     { id: 'ts-intro', label: 'Overview' },
     { id: 'tg-terms', label: 'Task Giver Terms & Conditions' },
