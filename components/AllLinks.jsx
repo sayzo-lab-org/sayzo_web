@@ -1,7 +1,6 @@
 "use client";
 
 import { Facebook, Linkedin, Twitter, Instagram } from "lucide-react";
-import Link from "next/link";
 import { useRouter  , usePathname} from "next/navigation";
 import WaitlistModal from "./JoinWaitList/WaitlistModal";
 import { useState } from "react";
@@ -38,9 +37,9 @@ const AllLinks = () => {
             >
               User Manual
             </li>
-            <li onClick={() => router.push("/policies?tab=Trust-&-Safety")}  className="cursor-pointer hover:text-primary-btn text-sm">Safety & Trust</li>
-            <li onClick={() => router.push("/policies?tab=REFUND-&-CANCELLATION")} className="cursor-pointer hover:text-primary-btn text-sm">Refund & Cancellation Policy</li>
-            <li onClick={() => router.push("/policies?tab=PROHIBITED-TASKS-&-BLACKLIST-CATEGORIES")} className="cursor-pointer hover:text-primary-btn text-sm">Blacklist Category</li>
+            <li onClick={() => router.push("/policies?tab=trust-and-safety")}  className="cursor-pointer hover:text-primary-btn text-sm">Safety & Trust</li>
+            <li onClick={() => router.push("/policies?tab=refund-and-cancellation")} className="cursor-pointer hover:text-primary-btn text-sm">Refund & Cancellation Policy</li>
+            <li onClick={() => router.push("/policies?tab=blacklist-category")} className="cursor-pointer hover:text-primary-btn text-sm">Blacklist Category</li>
           </ul>
 
           {/* Company & Brand */}
@@ -61,12 +60,10 @@ const AllLinks = () => {
             </li>
             <li onClick={() => router.push("/policies?tab=faq")} className="cursor-pointer hover:text-primary-btn text-sm">FAQs</li>
             <li onClick={() =>
-    router.push(
-      "/policies?tab=Trust-&-Safety&section=task-giver-guidelines"
-    )
+              router.push("/policies?tab=trust-and-safety&section=tg-terms")
   } className="cursor-pointer hover:text-primary-btn text-sm">Become a Task Giver</li>
-            <li onClick={() => router.push("/policies?tab=PROHIBITED-Trust-&-Safety")} className="cursor-pointer hover:text-primary-btn text-sm">Become a Task Doer</li>
-            <li onClick={() => router.push("/policies?tab=PROHIBITED-Trust-&-Safety")} className="cursor-pointer hover:text-primary-btn text-sm">Trust Safety & How it Works</li>
+            <li onClick={() => router.push("/policies?tab=trust-and-safety&section=tg-guidelines")} className="cursor-pointer hover:text-primary-btn text-sm">Become a Task Doer</li>
+            <li onClick={() => router.push("/policies?tab=trust-and-safety&section=trust-safety")} className="cursor-pointer hover:text-primary-btn text-sm">Trust Safety & How it Works</li>
           </ul>
 
           {/* App & Social */}
@@ -74,9 +71,9 @@ const AllLinks = () => {
             <li className="text-gray-400 text-base md:text-2xl">
               Join the Revolution
             </li>
-            <Link href="https://chat.whatsapp.com/LWT16zuqwdxDbBdAxGbLce" target="black"><li className="cursor-pointer hover:text-primary-btn text-sm mb-2">Whatsapp Community</li></Link>
-            <Link href=""><li className="cursor-pointer hover:text-primary-btn text-sm mb-2" onClick={() => setIsModalOpen(true)} >Join Waitlist</li></Link>
-            <Link href="https://chat.whatsapp.com/HEAgmwsxdJC02GqtW7T63j" target="black"><li className="cursor-pointer hover:text-primary-btn text-sm">Early Access (Beta)</li></Link> 
+            <a href="https://chat.whatsapp.com/BtBSYpf0FAV41vTGll7wUY?mode=gi_t" target="_blank" rel="noreferrer" className="block cursor-pointer hover:text-primary-btn text-sm mb-2">Whatsapp Community</a>
+            <button type="button" className="cursor-pointer hover:text-primary-btn text-sm mb-2" onClick={() => setIsModalOpen(true)}>Join Waitlist</button>
+            {/* <Link href="https://chat.whatsapp.com/HEAgmwsxdJC02GqtW7T63j" target="black"><li className="cursor-pointer hover:text-primary-btn text-sm">Early Access (Beta)</li></Link>  */}
           </ul>
         </div>
 
@@ -92,10 +89,10 @@ const AllLinks = () => {
               <p className="text-sm md:text-xl">Follow us</p>
 
               <div className="flex gap-5 text-gray-300">
-             < Link href="https://www.facebook.com/profile.php?id=61587450170775" target="blank">  <Facebook className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></Link>                                                                      
-               <Link href="https://www.linkedin.com/company/sayzoindia/" target="blank" ><Linkedin className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></Link> 
-               <Link href="https://x.com/Sayzoindia" target="black"> <Twitter className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></Link>
-               <Link href="https://www.instagram.com/sayzoindia/" target="blank"><Instagram className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></Link> 
+                <a href="https://www.facebook.com/profile.php?id=61587450170775" target="_blank" rel="noreferrer"><Facebook className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></a>
+                <a href="https://www.linkedin.com/company/sayzoindia/" target="_blank" rel="noreferrer"><Linkedin className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></a>
+                <a href="https://x.com/Sayzoindia" target="_blank" rel="noreferrer"><Twitter className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></a>
+                <a href="https://www.instagram.com/sayzoindia/" target="_blank" rel="noreferrer"><Instagram className="h-6 w-6 md:h-7 md:w-7 cursor-pointer hover:text-white" /></a>
               </div>
             </div>
 
@@ -105,7 +102,7 @@ const AllLinks = () => {
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                className="w-7 h-7 text-green-500"
+                className="w-7 h-7 emred text-primary-btn"
               >
                 <path
                   fill="currentColor"
