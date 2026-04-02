@@ -50,6 +50,7 @@ const ProfileCompletionModal = ({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [autoClosing, setAutoClosing] = useState(false);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -70,33 +71,38 @@ const ProfileCompletionModal = ({
   }, []);
 
   useEffect(() => {
-  const fetchProfile = async () => {
-
-    try {
-      const currentUser = auth.currentUser;
-      if (!currentUser) return;
-
-      const existingProfile = await getUserProfile(currentUser.uid);
-       if (existingProfile.profileCompleted) {
-        onSuccess?.(existingProfile);
-        return;
-      }
-      
-      if (existingProfile) {
-        setForm({
-          fullName: existingProfile.fullName || "",
-          phone: existingProfile.phone || "",
-        });
-      }
-    } catch (err) {
-      console.error("Error fetching profile:", err);
+    if (!isOpen) {
+      setAutoClosing(false);
+      setSuccess(false);
+      setError("");
+      return;
     }
-  };
 
-  if (isOpen) {
+    const fetchProfile = async () => {
+      try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) return;
+
+        const existingProfile = await getUserProfile(currentUser.uid);
+        if (existingProfile?.profileCompleted) {
+          setAutoClosing(true);
+          onSuccess?.(existingProfile);
+          return;
+        }
+
+        if (existingProfile) {
+          setForm({
+            fullName: existingProfile.fullName || "",
+            phone: existingProfile.phone || "",
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    };
+
     fetchProfile();
-  }
-}, [isOpen]);
+  }, [isOpen]);
 
 
   const input =
@@ -196,7 +202,12 @@ const ProfileCompletionModal = ({
               </div>
 
             <div className="px-6 py-6">
-              {success ? (
+              {autoClosing ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Loader2 className="w-10 h-10 text-zinc-400 animate-spin mb-4" />
+                  <p className="text-zinc-400">Verifying profile...</p>
+                </div>
+              ) : success ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
                   <h3 className="text-white text-xl font-semibold">

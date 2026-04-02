@@ -235,7 +235,9 @@ const TaskModal = ({ isOpen, onClose, defaultTaskType = "online" }) => {
   const checkUserProfileAndSetup = async (user) => {
     if (!user) return;
     try {
-      const profile = contextProfile || await getUserProfile(user.uid);
+      const profile = contextProfile?.profileCompleted === true
+        ? contextProfile
+        : await getUserProfile(user.uid);
       const complete = profile?.profileCompleted === true;
       if (complete) {
         setUserProfile(profile);
