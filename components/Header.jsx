@@ -452,7 +452,7 @@ const Header = () => {
                 </motion.div>
 
                 {/* Phone */}
-                {userProfile?.mobile && (
+                {(userProfile?.phone || userProfile?.mobile) && (
                   <motion.div
                     variants={modalItem}
                     className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100"
@@ -465,7 +465,7 @@ const Header = () => {
                       </p>
 
                       <p className="text-sm font-semibold text-gray-700">
-                        {userProfile.mobile}
+                        {userProfile.phone || userProfile.mobile}
                       </p>
                     </div>
                   </motion.div>
@@ -490,6 +490,8 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      
       {/* MOBILE DROPDOWN */}
       <AnimatePresence>
         {open && (

@@ -61,7 +61,7 @@ export default function SignupPage() {
           createdAt: new Date().toISOString(),
         });
       }
-      router.push("/notifications");
+      router.push("/");
     } catch (err) {
       setError(err.message || "Google sign-up failed.");
     } finally {
