@@ -95,10 +95,11 @@ export default function TrackTasksPage() {
 
   // Subscribe to applications when a task is selected (real-time)
   useEffect(() => {
-    if (!selectedTaskId) return
+    if (!selectedTaskId || !user) return
 
     const unsubscribe = subscribeToApplicationsByTask(
       selectedTaskId,
+      user.uid,
       (apps) => {
         setApplications(prev => ({
           ...prev,
@@ -112,7 +113,7 @@ export default function TrackTasksPage() {
     )
 
     return () => unsubscribe()
-  }, [selectedTaskId])
+  }, [selectedTaskId, user])
 
   // Use ref to track cached doer tasks to avoid stale closures
   const doerTasksRef = useRef(doerTasks)

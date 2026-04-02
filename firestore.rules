@@ -2,64 +2,169 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── In-app notifications ─────────────────────────────────────────────────
-    // Users can only read / update their own notifications.
-    // Any authenticated user can push a notification to someone else (client lib).
-    match /users/{userId}/notifications/{notifId} {
-      allow read, update: if request.auth != null && request.auth.uid == userId;
-      allow create:       if request.auth != null;
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // ── Notification queue ───────────────────────────────────────────────────
-    // Client may enqueue a job; only the server worker (Admin SDK) processes it.
-    match /notification_queue/{jobId} {
-      allow create:       if request.auth != null;
-      allow read, update: if false;  // Admin SDK only – no client access ever
+    function isOwner(uid) {
+      return request.auth.uid == uid;
     }
 
-    // ── Tasks ────────────────────────────────────────────────────────────────
-    // Public read  : approved / active / completed tasks (browse page).
-    // Private read : the giver can always read their own tasks (any status).
-    // Create       : authenticated; caller must declare themselves as giverId.
-    // Update/delete: only the owning giver.
+    // Reads the adminRole custom claim embedded in the Firebase JWT.
+    // Zero extra Firestore reads; works in all security contexts.
+    function callerRole() {
+      return request.auth.token.get('adminRole', null);
+    }
+
+    function isAdmin() {
+      return isSignedIn() && callerRole() != null;
+    }
+
+    function hasPermission(perm) {
+      let rolePerms = {
+        'SUPER_ADMIN':  ['tasks:read','tasks:write','tasks:approve','tasks:delete',
+                         'metrics:read','jobs:read','jobs:write','jobs:delete',
+                         'jobs:apps:read','blogs:read','blogs:write','blogs:delete',
+                         'admin:manage'],
+        'ADMIN':        ['tasks:read','tasks:write','tasks:approve','tasks:delete',
+                         'metrics:read','jobs:read','jobs:write','jobs:delete',
+                         'jobs:apps:read','blogs:read','blogs:write','blogs:delete'],
+        'TASK_MANAGER': ['tasks:read','tasks:write','tasks:approve','tasks:delete',
+                         'metrics:read'],
+        'JOB_MANAGER':  ['jobs:read','jobs:write','jobs:delete','jobs:apps:read'],
+        'BLOGGER':      ['blogs:read','blogs:write','blogs:delete'],
+        'VIEWER':       ['tasks:read','jobs:read','blogs:read','metrics:read']
+      };
+      return perm in rolePerms.get(callerRole(), []);
+    }
+
+    // ── Users ─────────────────────────────────────────────────────────────────
+    match /users/{userId} {
+      // Any signed-in user can read profiles (needed for task card lookups).
+      // Sensitive adminRole fields are not exposed in the UI for non-admins.
+      allow read: if isSignedIn();
+
+      // Users can write their own doc (profile updates, onboarding).
+      allow write: if isSignedIn() && isOwner(userId);
+
+      // SUPER_ADMIN can update admin-role fields on any user doc.
+      allow update: if isSignedIn()
+                    && hasPermission('admin:manage')
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                       .hasAny(['isAdmin','adminRole','adminGrantedBy','adminGrantedAt']);
+
+      match /notifications/{notificationId} {
+        allow read, update: if isSignedIn() && isOwner(userId);
+        allow create:       if isSignedIn();
+      }
+
+      match /tracking/{docId} {
+        allow read, write: if isSignedIn() && isOwner(userId);
+      }
+    }
+
+    // ── User Profiles (legacy collection) ────────────────────────────────────
+    match /userProfiles/{profileId} {
+      allow read, write: if isSignedIn() && isOwner(profileId);
+    }
+
+    // ── Tasks ─────────────────────────────────────────────────────────────────
     match /tasks/{taskId} {
+      // Public read for approved/active/completed tasks (browse page).
+      // Giver can always read their own task. Admins with tasks:read see all.
       allow read: if resource.data.status in ['approved', 'active', 'completed']
-                  || (request.auth != null
-                      && request.auth.uid == resource.data.giverId);
+                  || (isSignedIn() && request.auth.uid == resource.data.giverId)
+                  || hasPermission('tasks:read');
 
-      allow create: if request.auth != null
+      // Auth users can create; caller must declare themselves as giverId.
+      allow create: if isSignedIn()
                     && request.auth.uid == request.resource.data.giverId;
 
-      allow update: if request.auth != null
-                    && request.auth.uid == resource.data.giverId;
+      // Giver can update their own task (but not status/admin fields).
+      // Admins with tasks:write or tasks:approve can update freely.
+      allow update: if isSignedIn() && (
+                      (request.auth.uid == resource.data.giverId
+                        && !request.resource.data.diff(resource.data)
+                              .affectedKeys()
+                              .hasAny(['status','adminRejectionReason','approvedAt']))
+                      || hasPermission('tasks:write')
+                      || hasPermission('tasks:approve')
+                    );
 
-      allow delete: if request.auth != null
-                    && request.auth.uid == resource.data.giverId;
+      // Only giver or admin with tasks:delete can delete.
+      allow delete: if isSignedIn() && (
+                      request.auth.uid == resource.data.giverId
+                      || hasPermission('tasks:delete')
+                    );
+
+      // In-task chat: only the giver and the assigned doer may read/write.
+      match /chat/{messageId} {
+        allow read, write: if isSignedIn() && (
+          get(/databases/$(database)/documents/tasks/$(taskId)).data.giverId == request.auth.uid
+          || get(/databases/$(database)/documents/tasks/$(taskId)).data.assignedDoerId == request.auth.uid
+        );
+      }
     }
 
-    // ── Applications ─────────────────────────────────────────────────────────
-    // Read  : only the applicant or the task giver.
-    // Create: authenticated; caller must declare themselves as applicantId.
-    // Update: giver (accept/reject) or applicant (withdraw).
-    match /applications/{appId} {
-      allow read: if request.auth != null
-                  && (request.auth.uid == resource.data.applicantId
-                      || request.auth.uid == resource.data.giverId);
+    // ── Task Applications ─────────────────────────────────────────────────────
+    match /applications/{applicationId} {
+      // Applicant, the task giver (stored on the doc), or admin with metrics:read.
+      allow read: if isSignedIn() && (
+                    request.auth.uid == resource.data.applicantId
+                    || request.auth.uid == resource.data.giverId
+                    || hasPermission('metrics:read')
+                  );
 
-      allow create: if request.auth != null
+      allow create: if isSignedIn()
                     && request.auth.uid == request.resource.data.applicantId;
 
-      allow update: if request.auth != null
-                    && (request.auth.uid == resource.data.giverId
-                        || request.auth.uid == resource.data.applicantId);
+      // Giver can accept/reject; applicant can withdraw; admin can approve.
+      allow update: if isSignedIn() && (
+                      request.auth.uid == resource.data.giverId
+                      || request.auth.uid == resource.data.applicantId
+                      || hasPermission('tasks:approve')
+                    );
+
+      allow delete: if isAdmin();
     }
 
-    // ── Users ────────────────────────────────────────────────────────────────
-    // Any authenticated user can read public profiles (needed for task cards).
-    // Users can only write their own profile document.
-    match /users/{userId} {
-      allow read:  if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == userId;
+    // ── Jobs ──────────────────────────────────────────────────────────────────
+    match /jobs/{jobId} {
+      allow read:           if resource.data.published == true || hasPermission('jobs:read');
+      allow create, update: if isSignedIn() && hasPermission('jobs:write');
+      allow delete:         if isSignedIn() && hasPermission('jobs:delete');
+    }
+
+    // ── Job Applications ──────────────────────────────────────────────────────
+    match /jobApplications/{appId} {
+      allow read: if isSignedIn() && (
+                    request.auth.uid == resource.data.applicantId
+                    || hasPermission('jobs:apps:read')
+                  );
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && hasPermission('jobs:write');
+    }
+
+    // ── Blogs ─────────────────────────────────────────────────────────────────
+    match /blogs/{blogId} {
+      allow read:           if resource.data.published == true || hasPermission('blogs:read');
+      allow create, update: if isSignedIn() && hasPermission('blogs:write');
+      allow delete:         if isSignedIn() && hasPermission('blogs:delete');
+    }
+
+    // ── Notification Queue ────────────────────────────────────────────────────
+    // Client enqueues; only the server worker (Admin SDK) processes.
+    match /notification_queue/{jobId} {
+      allow create:       if isSignedIn();
+      allow read, update: if false;
+    }
+
+    // ── Health Check ──────────────────────────────────────────────────────────
+    match /_health/{docId} {
+      allow read:  if true;
+      allow write: if false;
     }
   }
 }
