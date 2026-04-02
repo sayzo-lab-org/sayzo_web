@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { signupWithEmail, loginWithGoogle, saveUserProfile, getUserProfile } from "@/lib/firebase";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, MailCheck } from "lucide-react";
 import { sendEmailVerification } from "firebase/auth";
 
 export default function SignupPage() {
@@ -18,6 +18,7 @@ export default function SignupPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [showVerifyDialog, setShowVerifyDialog] = useState(false);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -34,8 +35,7 @@ export default function SignupPage() {
         createdAt: new Date().toISOString()
       });
 
-      alert("Verification email sent. Please verify your email before logging in.");
-      router.replace("/login");
+      setShowVerifyDialog(true);
 
     } catch (err) {
       setError(err.message || "Failed to create account.");
@@ -71,6 +71,50 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-[#F3F4F6] flex items-center justify-center p-4 py-6 md:p-6">
+      {/* Email Verification Dialog */}
+      {showVerifyDialog && (
+        <motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+  className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-white/40 backdrop-blur-md"
+>
+  <motion.div
+    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    transition={{ type: "spring", damping: 25, stiffness: 400 }}
+    className="relative w-full max-w-[380px] bg-white p-10 md:p-12 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] flex flex-col items-center text-center border border-gray-50"
+  >
+    {/* Icon Section - Glassmorphism touch */}
+    <div className="relative mb-8">
+      <div className="absolute inset-0 bg-[#0ca37f] blur-2xl opacity-10 rounded-full" />
+     
+        <MailCheck className="text-[#0ca37f]" size={26} strokeWidth={1.5} />
+      
+    </div>
+
+    {/* Content */}
+    <div className="space-y-3 mb-10">
+      <h2 className="text-xl md:text-2xl font-semibold tracking-tight text-gray-900">
+        Verify your email
+      </h2>
+      <p className="text-gray-400 text-sm md:text-base leading-relaxed font-light">
+        We sent a link to <span className="text-gray-900 font-medium">{email}</span>. 
+        It expires in 24 hours.
+      </p>
+    </div>
+
+    {/* Action */}
+    <button
+      onClick={() => { setShowVerifyDialog(false); router.replace("/login"); }}
+      className="group relative w-full py-4 bg-[#111] hover:bg-black text-white rounded-2xl text-sm font-semibold transition-all duration-300 active:scale-[0.97] overflow-hidden"
+    >
+      <span className="relative z-10">Back to Login</span>
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+    </button>
+  </motion.div>
+</motion.div>
+      )}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
