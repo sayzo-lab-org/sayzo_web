@@ -211,7 +211,7 @@ const HomeMap = () => {
                     ))}
                 </MapContainer>
 
-                {/* Recent Tasks Ticker */}
+                {/* Recent Tasks Ticker - auto-scrolling marquee */}
                 <div className="absolute bottom-0 left-0 right-0 z-[500] bg-white/95 backdrop-blur-sm border-t border-gray-200 py-2 overflow-hidden">
                     <div className="flex items-center gap-2 px-3">
                         <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 flex items-center gap-1">
