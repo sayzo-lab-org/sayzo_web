@@ -118,6 +118,22 @@ const HomeMap = () => {
         { id: 4, pos: [baseLat - 0.005, baseLng - 0.010], title: "Digital Marketing and Lead generation" },
         { id: 5, pos: [baseLat + 0.012, baseLng - 0.006], title: "I need a Shopify Developer" },
         { id: 6, pos: [baseLat + 0.007, baseLng + 0.013], title: "Distribute flyers" },
+        { id: 7, pos: [baseLat - 0.009, baseLng + 0.004], title: "Need a Logo Designer urgently" },
+        { id: 8, pos: [baseLat + 0.015, baseLng + 0.009], title: "Hiring Freelance Web Developer" },
+        { id: 9, pos: [baseLat - 0.011, baseLng - 0.015], title: "Instagram Reels Creator Wanted" },
+        { id: 10, pos: [baseLat + 0.004, baseLng - 0.008], title: "Social Media Manager Required" },
+        { id: 11, pos: [baseLat - 0.007, baseLng + 0.018], title: "Need a Photographer for Event" },
+        { id: 12, pos: [baseLat + 0.018, baseLng - 0.012], title: "Looking for UI/UX Designer" },
+        { id: 13, pos: [baseLat - 0.014, baseLng - 0.004], title: "Content Writer for Blog Posts" },
+        { id: 14, pos: [baseLat + 0.009, baseLng + 0.021], title: "SEO Expert needed for Startup" },
+        { id: 15, pos: [baseLat - 0.016, baseLng + 0.011], title: "Voice Over Artist Required" },
+        { id: 16, pos: [baseLat + 0.003, baseLng - 0.024], title: "Hiring Mobile App Developer" },
+        { id: 17, pos: [baseLat - 0.002, baseLng + 0.025], title: "Need Help with WordPress Site" },
+        { id: 18, pos: [baseLat + 0.021, baseLng + 0.003], title: "Animation Artist for YouTube" },
+        { id: 19, pos: [baseLat - 0.019, baseLng - 0.008], title: "Data Entry Operators Needed" },
+        { id: 20, pos: [baseLat + 0.011, baseLng - 0.017], title: "Graphic Designer for Posters" },
+        { id: 21, pos: [baseLat - 0.006, baseLng - 0.022], title: "Looking for Translator Hindi-English" },
+        { id: 22, pos: [baseLat + 0.014, baseLng + 0.016], title: "Event Promoter for College Fest" },
     ];
 
     if (!icons.sayzoIcon) return null;
@@ -194,6 +210,29 @@ const HomeMap = () => {
                         </Marker>
                     ))}
                 </MapContainer>
+
+                {/* Recent Tasks Ticker */}
+                <div className="absolute bottom-0 left-0 right-0 z-[500] bg-white/95 backdrop-blur-sm border-t border-gray-200 py-2 overflow-hidden">
+                    <div className="flex items-center gap-2 px-3">
+                        <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Recent
+                        </span>
+                        <div className="flex-1 overflow-hidden relative">
+                            <div className="flex gap-2 animate-marquee whitespace-nowrap">
+                                {[...mockTasks, ...mockTasks].map((task, idx) => (
+                                    <Link
+                                        key={`${task.id}-${idx}`}
+                                        href="/live-tasks"
+                                        className="shrink-0 text-xs px-3 py-1 rounded-full bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 text-gray-700 transition-colors border border-gray-200"
+                                    >
+                                        {task.title}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
