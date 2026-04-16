@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { MapPin, Expand, ChevronUp } from "lucide-react";
+import { MapPin, Expand, ChevronUp, IndianRupee } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Button } from '@/components/ui/button';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import Link from 'next/link';
+import TaskDetailsModal from '@/components/TaskDetailsModal';
 
 function RecenterMap({ coords }) {
     const map = useMap();
@@ -20,6 +20,7 @@ const HomeMap = () => {
     const [userLoc, setUserLoc] = useState(null);
     const [locationName, setLocationName] = useState("Bengaluru");
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null);
     const autoOpenMarkerRef = useRef(null);
     const mapWrapperRef = useRef(null);
     const defaultCenter = [12.9716, 77.5946];
@@ -112,29 +113,37 @@ const HomeMap = () => {
     const baseLng = userLoc?.lng || defaultCenter[1];
 
     const mockTasks = [
-        { id: 1, pos: [baseLat + 0.002, baseLng + 0.002], title: "SAYZO is looking for Best Video Editor" },
-        { id: 2, pos: [baseLat - 0.003, baseLng + 0.007], title: "Video Editing" },
-        { id: 3, pos: [baseLat + 0.006, baseLng - 0.020], title: "Looking For 10 Content Creators" },
-        { id: 4, pos: [baseLat - 0.005, baseLng - 0.010], title: "Digital Marketing and Lead generation" },
-        { id: 5, pos: [baseLat + 0.012, baseLng - 0.006], title: "I need a Shopify Developer" },
-        { id: 6, pos: [baseLat + 0.007, baseLng + 0.013], title: "Distribute flyers" },
-        { id: 7, pos: [baseLat - 0.009, baseLng + 0.004], title: "Need a Logo Designer urgently" },
-        { id: 8, pos: [baseLat + 0.015, baseLng + 0.009], title: "Hiring Freelance Web Developer" },
-        { id: 9, pos: [baseLat - 0.011, baseLng - 0.015], title: "Instagram Reels Creator Wanted" },
-        { id: 10, pos: [baseLat + 0.004, baseLng - 0.008], title: "Social Media Manager Required" },
-        { id: 11, pos: [baseLat - 0.007, baseLng + 0.018], title: "Need a Photographer for Event" },
-        { id: 12, pos: [baseLat + 0.018, baseLng - 0.012], title: "Looking for UI/UX Designer" },
-        { id: 13, pos: [baseLat - 0.014, baseLng - 0.004], title: "Content Writer for Blog Posts" },
-        { id: 14, pos: [baseLat + 0.009, baseLng + 0.021], title: "SEO Expert needed for Startup" },
-        { id: 15, pos: [baseLat - 0.016, baseLng + 0.011], title: "Voice Over Artist Required" },
-        { id: 16, pos: [baseLat + 0.003, baseLng - 0.024], title: "Hiring Mobile App Developer" },
-        { id: 17, pos: [baseLat - 0.002, baseLng + 0.025], title: "Need Help with WordPress Site" },
-        { id: 18, pos: [baseLat + 0.021, baseLng + 0.003], title: "Animation Artist for YouTube" },
-        { id: 19, pos: [baseLat - 0.019, baseLng - 0.008], title: "Data Entry Operators Needed" },
-        { id: 20, pos: [baseLat + 0.011, baseLng - 0.017], title: "Graphic Designer for Posters" },
-        { id: 21, pos: [baseLat - 0.006, baseLng - 0.022], title: "Looking for Translator Hindi-English" },
-        { id: 22, pos: [baseLat + 0.014, baseLng + 0.016], title: "Event Promoter for College Fest" },
+        { id: 1, pos: [baseLat + 0.002, baseLng + 0.002], title: "SAYZO is looking for Best Video Editor", prize: 15000, category: "Video Editing", taskType: "online", experience: "intermediate", duration: "2 weeks", description: "Edit short-form and long-form videos for our marketing channels.", customerName: "SAYZO" },
+        { id: 2, pos: [baseLat - 0.003, baseLng + 0.007], title: "Video Editing", prize: 5000, category: "Video Editing", taskType: "online", experience: "beginner", duration: "1 week", description: "Edit 5 reels with music and captions.", customerName: "Rahul K" },
+        { id: 3, pos: [baseLat + 0.006, baseLng - 0.020], title: "Looking For 10 Content Creators", prize: 8000, category: "Content Creation", taskType: "online", experience: "beginner", duration: "1 month", description: "Create engaging content for Instagram and YouTube.", customerName: "Creator Hub" },
+        { id: 4, pos: [baseLat - 0.005, baseLng - 0.010], title: "Digital Marketing and Lead generation", prize: 25000, category: "Marketing", taskType: "online", experience: "expert", duration: "1 month", description: "Run ad campaigns and generate qualified leads.", customerName: "GrowthX" },
+        { id: 5, pos: [baseLat + 0.012, baseLng - 0.006], title: "I need a Shopify Developer", prize: 35000, category: "Development", taskType: "online", experience: "expert", duration: "3 weeks", description: "Build a custom Shopify storefront with payment integration.", customerName: "StoreFront" },
+        { id: 6, pos: [baseLat + 0.007, baseLng + 0.013], title: "Distribute flyers", prize: 2000, category: "Marketing", taskType: "offline", experience: "beginner", duration: "2 days", location: "Koramangala", description: "Distribute 500 flyers at metro stations.", customerName: "LocalBiz" },
+        { id: 7, pos: [baseLat - 0.009, baseLng + 0.004], title: "Need a Logo Designer urgently", prize: 3500, category: "Design", taskType: "online", experience: "intermediate", duration: "3 days", description: "Design a modern minimal logo for a fintech startup.", customerName: "FinNova" },
+        { id: 8, pos: [baseLat + 0.015, baseLng + 0.009], title: "Hiring Freelance Web Developer", prize: 45000, category: "Development", taskType: "online", experience: "expert", duration: "1 month", description: "Build a responsive Next.js web app.", customerName: "TechCo" },
+        { id: 9, pos: [baseLat - 0.011, baseLng - 0.015], title: "Instagram Reels Creator Wanted", prize: 6000, category: "Content Creation", taskType: "online", experience: "intermediate", duration: "2 weeks", description: "Create 10 viral-style reels per week.", customerName: "SocialPro" },
+        { id: 10, pos: [baseLat + 0.004, baseLng - 0.008], title: "Social Media Manager Required", prize: 18000, category: "Marketing", taskType: "online", experience: "intermediate", duration: "1 month", description: "Manage all social handles and grow engagement.", customerName: "BrandHouse" },
+        { id: 11, pos: [baseLat - 0.007, baseLng + 0.018], title: "Need a Photographer for Event", prize: 12000, category: "Photography", taskType: "offline", experience: "intermediate", duration: "1 day", location: "Indiranagar", description: "Cover a corporate event, deliver edited photos.", customerName: "Events Ltd" },
+        { id: 12, pos: [baseLat + 0.018, baseLng - 0.012], title: "Looking for UI/UX Designer", prize: 30000, category: "Design", taskType: "online", experience: "expert", duration: "3 weeks", description: "Design the UX for a new mobile banking app.", customerName: "NeoBank" },
+        { id: 13, pos: [baseLat - 0.014, baseLng - 0.004], title: "Content Writer for Blog Posts", prize: 7000, category: "Writing", taskType: "online", experience: "intermediate", duration: "2 weeks", description: "Write 10 SEO-optimised blog posts of 1500 words.", customerName: "BlogHouse" },
+        { id: 14, pos: [baseLat + 0.009, baseLng + 0.021], title: "SEO Expert needed for Startup", prize: 22000, category: "Marketing", taskType: "online", experience: "expert", duration: "1 month", description: "Audit and improve our SEO ranking.", customerName: "Startly" },
+        { id: 15, pos: [baseLat - 0.016, baseLng + 0.011], title: "Voice Over Artist Required", prize: 4500, category: "Audio", taskType: "online", experience: "intermediate", duration: "1 week", description: "Record a 5-minute voiceover in English.", customerName: "Podcastr" },
+        { id: 16, pos: [baseLat + 0.003, baseLng - 0.024], title: "Hiring Mobile App Developer", prize: 55000, category: "Development", taskType: "online", experience: "expert", duration: "6 weeks", description: "Build a cross-platform Flutter app.", customerName: "Appify" },
+        { id: 17, pos: [baseLat - 0.002, baseLng + 0.025], title: "Need Help with WordPress Site", prize: 6500, category: "Development", taskType: "online", experience: "intermediate", duration: "1 week", description: "Fix bugs and optimise speed of an existing WP site.", customerName: "WebGuru" },
+        { id: 18, pos: [baseLat + 0.021, baseLng + 0.003], title: "Animation Artist for YouTube", prize: 20000, category: "Design", taskType: "online", experience: "expert", duration: "3 weeks", description: "Create animated explainer videos for a YT channel.", customerName: "AnimateIt" },
+        { id: 19, pos: [baseLat - 0.019, baseLng - 0.008], title: "Data Entry Operators Needed", prize: 8000, category: "Admin", taskType: "online", experience: "beginner", duration: "2 weeks", description: "Enter data from scanned PDFs into Excel.", customerName: "DataLogix" },
+        { id: 20, pos: [baseLat + 0.011, baseLng - 0.017], title: "Graphic Designer for Posters", prize: 5500, category: "Design", taskType: "online", experience: "intermediate", duration: "1 week", description: "Design 15 social media posters.", customerName: "Poster Co" },
+        { id: 21, pos: [baseLat - 0.006, baseLng - 0.022], title: "Looking for Translator Hindi-English", prize: 4000, category: "Writing", taskType: "online", experience: "intermediate", duration: "5 days", description: "Translate a 20-page document from Hindi to English.", customerName: "LinguaPro" },
+        { id: 22, pos: [baseLat + 0.014, baseLng + 0.016], title: "Event Promoter for College Fest", prize: 3000, category: "Marketing", taskType: "offline", experience: "beginner", duration: "3 days", location: "Whitefield", description: "Promote a college fest on campus.", customerName: "FestHub" },
     ];
+
+    const openTaskModal = (task) => {
+        setSelectedTask({
+            ...task,
+            taskName: task.title,
+            amount: task.prize,
+        });
+    };
 
     if (!icons.sayzoIcon) return null;
 
@@ -193,18 +202,25 @@ const HomeMap = () => {
                         >
                             <Popup className="custom-popup">
                                 {/* Reduced min-width from 120px to 110px for a slimmer look */}
-                                <div className="min-w-[110px]">
+                                <div className="min-w-[140px]">
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                                         <span className="text-[10px] uppercase tracking-wider text-gray-400">Available</span>
                                     </div>
-                                    <h3 className="text-gray-900 leading-tight mb-3 text-sm">{task.title}</h3>
+                                    <h3 className="text-gray-900 leading-tight mb-2 text-sm">{task.title}</h3>
 
-                                    <Link href={`/live-tasks`}>
-                                        <Button size="sayzobtn"  className="w-full text-xs transition-all">
-                                            View Details
-                                        </Button>
-                                    </Link>
+                                    <div className="flex items-center gap-1 mb-3 text-emerald-600 font-semibold text-sm">
+                                        <IndianRupee className="w-3.5 h-3.5" />
+                                        <span>{task.prize.toLocaleString('en-IN')}</span>
+                                    </div>
+
+                                    <Button
+                                        size="sayzobtn"
+                                        onClick={() => openTaskModal(task)}
+                                        className="w-full text-xs transition-all"
+                                    >
+                                        View Details
+                                    </Button>
                                 </div>
                             </Popup>
                         </Marker>
@@ -221,19 +237,31 @@ const HomeMap = () => {
                         <div className="flex-1 overflow-hidden relative">
                             <div className="flex gap-2 animate-marquee whitespace-nowrap">
                                 {[...mockTasks, ...mockTasks].map((task, idx) => (
-                                    <Link
+                                    <button
                                         key={`${task.id}-${idx}`}
-                                        href="/live-tasks"
-                                        className="shrink-0 text-xs px-3 py-1 rounded-full bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 text-gray-700 transition-colors border border-gray-200"
+                                        type="button"
+                                        onClick={() => openTaskModal(task)}
+                                        className="shrink-0 text-xs px-3 py-1 rounded-full bg-gray-100 hover:bg-emerald-50 hover:text-emerald-700 text-gray-700 transition-colors border border-gray-200 flex items-center gap-1.5"
                                     >
-                                        {task.title}
-                                    </Link>
+                                        <span>{task.title}</span>
+                                        <span className="text-emerald-600 font-semibold flex items-center">
+                                            <IndianRupee className="w-3 h-3" />
+                                            {task.prize.toLocaleString('en-IN')}
+                                        </span>
+                                    </button>
                                 ))}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <TaskDetailsModal
+                task={selectedTask}
+                isOpen={!!selectedTask}
+                onClose={() => setSelectedTask(null)}
+                onApply={() => setSelectedTask(null)}
+            />
         </div>
     );
 };
