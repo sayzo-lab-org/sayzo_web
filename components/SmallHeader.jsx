@@ -1,42 +1,36 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { Bell, ArrowUpRight } from 'lucide-react';
+import CreatorHiringModal from './CreatorHiringModal';
 
 const SmallHeader = () => {
-  const [duration, setDuration] = useState(20);
-
-  useEffect(() => {
-   
-    const handleResize = () => {
-      const width = window.innerWidth;
-      
-      const calculatedDuration = width / 80; 
-      setDuration(Math.max(12, Math.min(calculatedDuration, 30)));
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <div className="bg-black text-white relative z-50 h-10 flex items-center overflow-hidden border-b border-zinc-800">
-      <motion.div
-        className="whitespace-nowrap font-medium text-sm md:text-base inline-block"
-        initial={{ x: "100vw" }} 
-        animate={{ x: "-100%" }} 
-        transition={{
-          duration: duration,
-          ease: 'linear',
-          repeat: Infinity,
-        }}
-      >
-        <span className="px-10">
-          A Community First Hyperlocal Task Infrastructure | SAYZO is not just a gig app | It is infrastructure for the neighbourhood economy
-        </span>
-      </motion.div>
-    </div>
+    <>
+      <div className="bg-black text-white relative z-50 h-12 sm:h-11 flex items-center justify-between px-4 md:px-10 border-b border-zinc-800">
+        {/* Center group — bell + message + CTA */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-center min-w-0">
+          <Bell size={15} className="text-[#10b981] shrink-0" strokeWidth={2.5} />
+
+          <p className="text-[10px] sm:text-[13px] font-semibold tracking-wide text-zinc-100 truncate">
+            We&apos;re hiring creators at Sayzo&nbsp;— saw us on Instagram?
+          </p>
+
+          <button
+            onClick={() => setModalOpen(true)}
+            className="flex items-center gap-0.5 text-[10px] sm:text-[12px] font-bold text-[#10b981] hover:text-emerald-400 transition-colors whitespace-nowrap shrink-0"
+          >
+            Apply now
+            <ArrowUpRight size={11} strokeWidth={3} />
+          </button>
+        </div>
+
+      </div>
+
+      <CreatorHiringModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+    </>
   );
 };
 
