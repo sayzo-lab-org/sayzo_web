@@ -1,14 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Bell, X, ArrowUpRight } from 'lucide-react';
+import { Bell, ArrowUpRight } from 'lucide-react';
 import CreatorHiringModal from './CreatorHiringModal';
 
 const SmallHeader = () => {
-  const [bannerVisible, setBannerVisible] = useState(true);
-  const [modalOpen, setModalOpen]         = useState(false);
-
-  if (!bannerVisible) return null;
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <>
@@ -30,14 +27,6 @@ const SmallHeader = () => {
           </button>
         </div>
 
-        {/* Dismiss */}
-        <button
-          onClick={() => setBannerVisible(false)}
-          aria-label="Dismiss banner"
-          className="text-zinc-500 hover:text-white transition-colors shrink-0 ml-3"
-        >
-          <X size={14} />
-        </button>
       </div>
 
       <CreatorHiringModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
