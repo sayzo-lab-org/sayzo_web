@@ -161,6 +161,15 @@ service cloud.firestore {
       allow read, update: if false;
     }
 
+    // ── Creator Applications ──────────────────────────────────────────────────
+    match /creator-applications/{docId} {
+      // Public form — no login required to submit.
+      allow create: if true;
+      // Only admins can read applications.
+      allow read: if isSignedIn() && hasPermission('jobs:apps:read');
+      allow update, delete: if false;
+    }
+
     // ── Health Check ──────────────────────────────────────────────────────────
     match /_health/{docId} {
       allow read:  if true;

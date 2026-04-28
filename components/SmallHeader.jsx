@@ -1,42 +1,45 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { Bell, X, ArrowUpRight } from 'lucide-react';
+import CreatorHiringModal from './CreatorHiringModal';
 
 const SmallHeader = () => {
-  const [duration, setDuration] = useState(20);
+  const [bannerVisible, setBannerVisible] = useState(true);
+  const [modalOpen, setModalOpen]         = useState(false);
 
-  useEffect(() => {
-   
-    const handleResize = () => {
-      const width = window.innerWidth;
-      
-      const calculatedDuration = width / 80; 
-      setDuration(Math.max(12, Math.min(calculatedDuration, 30)));
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  if (!bannerVisible) return null;
 
   return (
-    <div className="bg-black text-white relative z-50 h-10 flex items-center overflow-hidden border-b border-zinc-800">
-      <motion.div
-        className="whitespace-nowrap font-medium text-sm md:text-base inline-block"
-        initial={{ x: "100vw" }} 
-        animate={{ x: "-100%" }} 
-        transition={{
-          duration: duration,
-          ease: 'linear',
-          repeat: Infinity,
-        }}
-      >
-        <span className="px-10">
-          A Community First Hyperlocal Task Infrastructure | SAYZO is not just a gig app | It is infrastructure for the neighbourhood economy
-        </span>
-      </motion.div>
-    </div>
+    <>
+      <div className="bg-black text-white relative z-50 h-10 flex items-center justify-between px-4 md:px-10 border-b border-zinc-800">
+        {/* Center group — bell + message + CTA */}
+        <div className="flex items-center gap-3 flex-1 justify-center min-w-0">
+          <Bell size={14} className="text-[#10b981] shrink-0" strokeWidth={2.5} />
+          <p className="text-[11px] sm:text-xs font-medium tracking-wide text-zinc-200 truncate">
+            We&apos;re hiring creators at Sayzo&nbsp;— saw us on Instagram?
+          </p>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="hidden sm:flex items-center gap-0.5 text-[11px] font-semibold text-[#10b981] hover:text-emerald-400 transition-colors whitespace-nowrap shrink-0"
+          >
+            Apply now
+            <ArrowUpRight size={12} strokeWidth={3} />
+          </button>
+        </div>
+
+        {/* Dismiss */}
+        <button
+          onClick={() => setBannerVisible(false)}
+          aria-label="Dismiss banner"
+          className="text-zinc-500 hover:text-white transition-colors shrink-0 ml-2"
+        >
+          <X size={13} />
+        </button>
+      </div>
+
+      <CreatorHiringModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+    </>
   );
 };
 
